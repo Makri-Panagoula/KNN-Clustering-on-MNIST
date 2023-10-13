@@ -13,13 +13,15 @@ using namespace std;
 int LittleEndian (int word);
 
 class SearchStruct {
-    public:
-        SearchStruct(int L, int k, std::string inputFile);
+
     private:
         int k;
         int w;
         int L;
         int M;
-        hashTable* hashTables;
-        hFunc* hFuncs;
-    };
+        hashTable** hashTables;
+        hFunc** hFuncs;
+    public:
+        SearchStruct(int L, int k, std::string inputFile);
+        ~SearchStruct();
+};

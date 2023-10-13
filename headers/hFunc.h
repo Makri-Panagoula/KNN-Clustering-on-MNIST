@@ -10,11 +10,13 @@ using namespace std;
 
 class hFunc {
     private:
+
         vector<double> v;
+        //W parameter for function 
         int w;
     public :
 
-        hFunc(int w , int d);
+        hFunc(int w ,int d);
         int h(vector<unsigned int> p);
         ~hFunc();
 };

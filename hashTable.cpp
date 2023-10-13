@@ -2,7 +2,7 @@
 
 using namespace std;
 
-hashTable::hashTable(int k , int H_size, hFunc* funcs, int TableSize) {
+hashTable::hashTable(int k , int H_size, hFunc** funcs, int TableSize) {
 
     this->k = k;
     //Initialize uniform distributor
@@ -30,7 +30,7 @@ unsigned int hashTable::g(vector<unsigned int> p) {
     vector<unsigned int> h_values;
 
     for(int i = 0; i < this->k; i++) 
-        h_values.push_back(funcs[i].h(p));
+        h_values.push_back(funcs[i]->h(p));
     
     unsigned int linear_comb = inner_product(h_values.begin(),h_values.end(),this->r.begin(),0);
     unsigned int chosen = linear_comb % this->TableSize;

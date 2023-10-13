@@ -35,6 +35,25 @@ SearchStruct::SearchStruct(int L,int k,string inputFile) {
     this->w = 50;
     this->L = L;
     this->M = imgs / 8;
-    this->hashTables = new hashTable[L];
-    this->hFuncs = new hFunc[2*k];
+    this->hFuncs = new hFunc*[2*k];
+    for(int i = 0; i < 2*k; i++)
+        this->hFuncs[i] = new hFunc(w,rows*cols);
+    
+    this->hashTables = new hashTable*[L];
+    for(int i = 0; i < L; i++)
+        this->hashTables[i] = new hashTable(k,2*k,this->hFuncs,M);
+}
+
+SearchStruct::~SearchStruct() {
+
+    // Deallocate dynamically stored memory
+    for (int i = 0; i < 2 * this->k; i++) 
+        delete this->hFuncs[i];
+    
+    delete[] this->hFuncs;     
+
+    for (int i = 0; i < this->L; i++) 
+        delete this->hashTables[i];
+    
+    delete[] this->hashTables;    
 }
