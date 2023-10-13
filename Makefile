@@ -8,7 +8,7 @@ LSH = lsh
 
 OBJL = lsh.o
 
-ARGSL = –d input –q –k 3 -L 5 -ο output -Ν 11 -R 10
+ARGSL = –d datasets/input.dat –q –k 3 -L 5 -ο output -Ν 11 -R 10
 
 $(LSH): $(OBJL)
 	$(CC) $(CFLAGS) $(OBJL) -o $(LSH)
