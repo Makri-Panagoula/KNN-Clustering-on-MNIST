@@ -1,3 +1,5 @@
+#include "../headers/lsh.h"
+
 //Swaps endian-ness since MNIST is in big endian architecture in contrast with our system 
 int LittleEndian (int i) {
 
@@ -33,6 +35,6 @@ SearchStruct::SearchStruct(int L,int k,string inputFile) {
     this->w = 50;
     this->L = L;
     this->M = imgs / 8;
-    this->hashTables = new HashTable[L];
-    this->hFunctions = new HFunc[2*k];
+    this->hashTables = new hashTable[L];
+    this->hFuncs = new hFunc[2*k];
 }

@@ -1,6 +1,10 @@
 #pragma once
 #include <random>
 #include <vector>
+#include <algorithm>
+#include <functional> 
+#include <cmath> 
+#include <numeric>
 
 using namespace std;
 
@@ -13,6 +17,4 @@ class hFunc {
         hFunc(int w , int d);
         int h(vector<unsigned int> p);
         ~hFunc();
-
-        // double magnitude(vector<double> v);
 };

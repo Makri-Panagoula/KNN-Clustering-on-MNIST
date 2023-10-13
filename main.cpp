@@ -4,9 +4,12 @@
 #include <stdlib.h> 
 #include <unistd.h>
 #include <iostream>
-#include <fstream>
-using namespace std;
+// #include "../headers/hFunc.h"
+#include <vector>
+#include <numeric>  
+#include <cmath> 
 
+using namespace std;
 
 int main (int argc, char* argv[]) {
 
@@ -75,6 +78,5 @@ int main (int argc, char* argv[]) {
         
     }while(answer == "y");
 
-    input.close(); 
     return 0;
 }
