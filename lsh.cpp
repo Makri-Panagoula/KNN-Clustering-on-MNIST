@@ -1,12 +1,3 @@
-#include <stdio.h>
-#include <string> 
-#include <cstring>
-#include <stdlib.h> 
-#include <unistd.h>
-#include <iostream>
-#include <fstream>
-using namespace std;
-
 //Swaps endian-ness since MNIST is in big endian architecture in contrast with our system 
 int LittleEndian (int i) {
 
@@ -17,54 +8,9 @@ int LittleEndian (int i) {
     return (b1<<24) | (b2<<16) | (b3<<8) | b4;
 }
 
-int main (int argc, char* argv[]) {
+SearchStruct::SearchStruct(int L,int k,string inputFile) {
 
-    string input_file = argv[2] ;
-    string query_file ;
-
-    //Query file is an optional command line argument
-    if ( strcmp(argv[4],"–k") ) {
-        query_file = argv[4] ;
-        argv++;                     //Next character will be "-k" => skip reading it , move into next one 
-    }
-
-    //Number of h-functions out of which every g function will be constructed
-    int k = 4 ;                       
-    //If there is a value after "-k",update k with that
-    if ( strcmp(argv[5],"-L") ) {
-        k = atoi(argv[5]) ;
-        argv++;                     
-    }
-    
-    //Number of Hashtables we will use
-    int L = 5 ;                       //Default Value
-    if ( strcmp(argv[6],"-ο") ) {
-        L = atoi(argv[6]) ;
-        argv++;                     
-    }
-
-    //Output file is optional command line argument
-    string output_file ;
-    if ( strcmp(argv[7],"-Ν")) {
-        output_file = argv[7] ;
-        argv++;                     
-    }  
-
-    //Number of Nearest Neighbours
-    int N = 1 ;                       //Default Value
-    if ( strcmp(argv[8],"-R")) {
-        N = atoi(argv[8]) ;
-        argv++;                     
-    }    
-
-    //Radius Size
-    int R = 10000 ;                       //Default Value
-    if ( argv[9] != NULL ) 
-        R = atoi(argv[9]);
-    
-    //Create Search Structure...
-
-    ifstream input(input_file, ios::binary | ios::in);
+    ifstream input(inputFile, ios::binary | ios::in);
     if(! input.is_open()) {
         cout << "Failed to read input dataset file!" << endl;
         exit;
@@ -81,29 +27,12 @@ int main (int argc, char* argv[]) {
     input.read((char*)&rows,4);
     rows = LittleEndian(rows);    
     input.read((char*)&cols,4);
-    cols = LittleEndian(cols);    
-    cout<<"magic number "<<magic_num<<" imgs "<<imgs<<" rows "<<rows<<" columns "<<cols<<endl;
+    cols = LittleEndian(cols);  
 
-    int runs = 0 ;
-    string answer;
-
-    do {
-        if ( runs > 0 || query_file.empty())  {  //If user hasn't passed it as command line argument 
-            cout<<"Please give the path to query dataset file !"<<endl;
-            cin >> query_file;
-        }
-        if ( runs++ > 0 || output_file.empty())  {  //If user hasn't passed it as command line argument 
-            cout<<"Please give the path to output file !"<<endl;
-            cin >> output_file;
-        }        
-
-        do {
-            cout<<"Would you like to continue execution for a different query dataset? Please enter y / N !"<<endl;
-            cin >> answer;
-        } while (answer == "y" || answer == "N");
-        
-    }while(answer == "y");
-
-    input.close(); 
-    return 0;
+    this->k = k;
+    this->w = 50;
+    this->L = L;
+    this->M = imgs / 8;
+    this->hashTables = new HashTable[L];
+    this->hFunctions = new HFunc[2*k];
 }
