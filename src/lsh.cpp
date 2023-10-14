@@ -37,7 +37,8 @@ LSH::LSH(int L,int k,string inputFile) {
     this->k = k;
     this->w = 50;
     this->L = L;
-    this->M = imgs / 8;
+    this->M = pow(2.0,32.0) - 5;
+    this->TableSize = imgs / 8;
 
     //Creating the data structures
     this->hFuncs = new hFunc*[2*k];
@@ -46,10 +47,10 @@ LSH::LSH(int L,int k,string inputFile) {
     
     this->hashTables = new hashTable*[L];
     for(int i = 0; i < L; i++)
-        this->hashTables[i] = new hashTable(k,2*k,this->hFuncs,M);
+        this->hashTables[i] = new hashTable(k,2*k,this->hFuncs,TableSize,M);
     
     //For every image in the training dataset we read
-    for(int i = 0; i < imgs; i++) {
+    for(int i = 0; i < 100; i++) {
         Img* img = new Img(pixs,i,input);
         //For every hashtable we save it into the proper bucket
         for(int i = 0; i < L ; i++) 

@@ -18,5 +18,5 @@ class hFunc {
 
         hFunc(int w ,int d);
         int h(vector<unsigned int> p);
-        ~hFunc();
+        ~hFunc(){};
 };

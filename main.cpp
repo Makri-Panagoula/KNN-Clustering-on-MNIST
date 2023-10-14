@@ -52,7 +52,7 @@ int main (int argc, char* argv[]) {
     if ( argv[9] != NULL ) 
         R = atoi(argv[9]);
     
-    //Create Search Structure...  
+    LSH lsh( L,k,input_file);
 
     int runs = 0 ;
     string answer;
@@ -70,7 +70,7 @@ int main (int argc, char* argv[]) {
         do {
             cout<<"Would you like to continue execution for a different query dataset? Please enter y / N !"<<endl;
             cin >> answer;
-        } while (answer == "y" || answer == "N");
+        }while(answer == "y" || answer == "N");
         
     }while(answer == "y");
 

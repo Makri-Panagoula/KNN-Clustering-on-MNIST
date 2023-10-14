@@ -13,6 +13,8 @@ class hashTable {
         int k;
         //Number of Buckets
         int TableSize;
+        //Number we will use for the first mod(we follow the amplified lsh approach)
+        int M;
         //A vector consisting of the numerings of the k h-functions needed for the g-function
         vector<hFunc*> funcs;
         //A vector consisting of the k r operands needed for the linear combination
@@ -21,8 +23,8 @@ class hashTable {
         vector<vector<Img*>> buckets;
     public :
 
-        hashTable(int k ,int H_size, hFunc** funcs, int TableSize);
+        hashTable(int k ,int H_size, hFunc** funcs, int TableSize,int M);
         //g-function for inserting image to appropriate bucket
-        unsigned int g(Img* img);
+        void g(Img* img);
         ~hashTable();
 };

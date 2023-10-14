@@ -18,7 +18,8 @@ class LSH {
         int k;
         int w;
         int L;
-        int M;
+        double M;
+        int TableSize;
         hashTable** hashTables;
         hFunc** hFuncs;
     public:

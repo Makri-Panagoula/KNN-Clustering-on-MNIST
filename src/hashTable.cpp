@@ -2,7 +2,7 @@
 
 using namespace std;
 
-hashTable::hashTable(int k , int H_size, hFunc** funcs, int TableSize) {
+hashTable::hashTable(int k , int H_size, hFunc** funcs, int TableSize,int M) {
 
     this->k = k;
     //Initialize uniform distributor
@@ -17,6 +17,7 @@ hashTable::hashTable(int k , int H_size, hFunc** funcs, int TableSize) {
         this->r.push_back(rand());
     }
     this->TableSize = TableSize;
+    this->M = M;
     //Create a vector for every bucket
     for(int i = 0; i < TableSize; i++) {
         vector<Img*> bucket;
@@ -24,7 +25,7 @@ hashTable::hashTable(int k , int H_size, hFunc** funcs, int TableSize) {
     }
 }
 
-unsigned int hashTable::g(Img* img) {
+void hashTable::g(Img* img) {
 
     //Accessing pixels' vector
     vector<unsigned int> p = img->get_p();
@@ -36,7 +37,7 @@ unsigned int hashTable::g(Img* img) {
         h_values.push_back(funcs[i]->h(p));
     
     unsigned int linear_comb = inner_product(h_values.begin(),h_values.end(),this->r.begin(),0);
-    unsigned int chosen = linear_comb % this->TableSize;
+    unsigned int chosen = (linear_comb % this->M) % this->TableSize;
     //Store image in chosen bucket
     this->buckets[chosen].push_back(img);
 }

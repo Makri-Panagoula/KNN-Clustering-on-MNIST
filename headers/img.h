@@ -18,5 +18,5 @@ class Img {
         Img(int pxs,int num,ifstream& input);
         vector<unsigned int> get_p(){   return p;}
         int imgNum() {  return num; }
-        ~Img();
+        ~Img(){};
 };

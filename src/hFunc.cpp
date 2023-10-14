@@ -25,7 +25,7 @@ int hFunc:: h(vector<unsigned int> p) {
         double norm_p = sqrt(sum_squares);        
         transform(p.begin(), p.end(), p.begin(), [norm_p](unsigned int &c){ return c/norm_p; });
         //Repeat for v
-        int sum_squares = inner_product( v.begin(), v.end(), v.begin(), 0 );
+        sum_squares = inner_product( v.begin(), v.end(), v.begin(), 0 );
         double norm_v = sqrt(norm_v);          
         transform(v.begin(), v.end(), v.begin(), [norm_v](double &c){ return c/norm_v; });
         //Estimate new dot product

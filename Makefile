@@ -1,12 +1,16 @@
+# Paths
+SRC = ./src
+HEADERS = ../headers
+
 # Compiler
 CC = g++
 
 # Compile Options
-CFLAGS = -Wall -Werror -I -g 
+CFLAGS = -Wall -Werror -I -g -I$(HEADERS)
 
 LSH = main 
 
-OBJL = main.o
+OBJL = main.o $(SRC)/lsh.o $(SRC)/img.o $(SRC)/hFunc.o $(SRC)/hashTable.o
 
 ARGSL = –d datasets/input.dat –q –k 3 -L 5 -ο output -Ν 11 -R 10
 
