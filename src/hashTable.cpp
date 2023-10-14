@@ -44,8 +44,8 @@ void hashTable::g(Img* img) {
 
 hashTable::~hashTable() {
     // //Deallocate Img pointers inside the buckets
-    // for(int i = 0; i < this->TableSize; i++) {
-    //     for(int j = 0 ; j < this->buckets[i].size(); j++)
-    //         delete this->buckets[i][j];
-    // }    
+    for(int i = 0; i < this->TableSize; i++) {
+        for(int j = 0 ; j < this->buckets[i].size(); j++)
+            delete this->buckets[i][j];
+    }    
 }
