@@ -19,10 +19,13 @@ class LSH {
         int w;
         int L;
         double M;
+        int pxs;
         int TableSize;
         hashTable** hashTables;
         hFunc** hFuncs;
+        vector<Img*> imgs;
     public:
         LSH(int L, int k, std::string inputFile);
+        int get_pxs() { return this->pxs;};
         ~LSH();
 };

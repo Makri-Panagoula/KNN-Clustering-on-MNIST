@@ -9,6 +9,8 @@ using namespace std;
 
 class hashTable {
     private:
+
+    public :
         //Number of hash functions out of which the g function will be constructed
         int k;
         //Number of Buckets
@@ -21,10 +23,8 @@ class hashTable {
         vector<unsigned int> r;        
         //A vector consisted of images' vectors , one for each bucket
         vector<vector<Img*>> buckets;
-    public :
-
         hashTable(int k ,int H_size, hFunc** funcs, int TableSize,int M);
         //g-function for inserting image to appropriate bucket
         void g(Img* img);
-        ~hashTable();
+        ~hashTable(){};
 };

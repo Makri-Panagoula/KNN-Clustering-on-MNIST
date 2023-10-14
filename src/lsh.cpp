@@ -52,6 +52,7 @@ LSH::LSH(int L,int k,string inputFile) {
     //For every image in the training dataset we read
     for(int i = 0; i < 100; i++) {
         Img* img = new Img(pixs,i,input);
+        this->imgs.push_back(img);
         //For every hashtable we save it into the proper bucket
         for(int j = 0; j < L ; j++) 
             hashTables[j]->g(img);
@@ -66,11 +67,10 @@ LSH::~LSH() {
     // Deallocate dynamically stored memory
     for (int i = 0; i < 2 * this->k; i++) 
         delete this->hFuncs[i];
-    
     delete[] this->hFuncs;     
 
+    //For every hashTable 
     for (int i = 0; i < this->L; i++) 
-        delete this->hashTables[i];
-    
+        delete this->hashTables[i];    
     delete[] this->hashTables;    
 }
