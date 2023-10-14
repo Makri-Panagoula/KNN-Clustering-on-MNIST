@@ -43,11 +43,9 @@ void hashTable::g(Img* img) {
 }
 
 hashTable::~hashTable() {
-    //Deallocate Img pointers inside the buckets
-    for(int i = 0; i < TableSize; i++) {
-        int imgs = this->buckets[i].size();
-        vector<Img*> bucket =  this->buckets[i];
-        for(int j = 0 ; j < imgs; i++)
-            delete bucket[j];
-    }    
+    // //Deallocate Img pointers inside the buckets
+    // for(int i = 0; i < this->TableSize; i++) {
+    //     for(int j = 0 ; j < this->buckets[i].size(); j++)
+    //         delete this->buckets[i][j];
+    // }    
 }

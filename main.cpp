@@ -70,7 +70,7 @@ int main (int argc, char* argv[]) {
         do {
             cout<<"Would you like to continue execution for a different query dataset? Please enter y / N !"<<endl;
             cin >> answer;
-        }while(answer == "y" || answer == "N");
+        }while(answer != "y" && answer != "N");
         
     }while(answer == "y");
 

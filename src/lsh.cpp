@@ -53,8 +53,8 @@ LSH::LSH(int L,int k,string inputFile) {
     for(int i = 0; i < 100; i++) {
         Img* img = new Img(pixs,i,input);
         //For every hashtable we save it into the proper bucket
-        for(int i = 0; i < L ; i++) 
-            hashTables[i]->g(img);
+        for(int j = 0; j < L ; j++) 
+            hashTables[j]->g(img);
     }
     
     //We have processed input dataset, we won't need it anymore
