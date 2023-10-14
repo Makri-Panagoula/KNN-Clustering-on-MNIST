@@ -3,11 +3,7 @@
 #include <cstring>
 #include <stdlib.h> 
 #include <unistd.h>
-#include <iostream>
-// #include "../headers/hFunc.h"
-#include <vector>
-#include <numeric>  
-#include <cmath> 
+#include "headers/lsh.h"
 
 using namespace std;
 

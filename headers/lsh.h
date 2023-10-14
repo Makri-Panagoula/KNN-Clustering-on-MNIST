@@ -12,7 +12,7 @@ using namespace std;
 
 int LittleEndian (int word);
 
-class SearchStruct {
+class LSH {
 
     private:
         int k;
@@ -22,6 +22,6 @@ class SearchStruct {
         hashTable** hashTables;
         hFunc** hFuncs;
     public:
-        SearchStruct(int L, int k, std::string inputFile);
-        ~SearchStruct();
+        LSH(int L, int k, std::string inputFile);
+        ~LSH();
 };

@@ -10,7 +10,7 @@ using namespace std;
 
 class hFunc {
     private:
-
+        //Randomized v vector of the function
         vector<double> v;
         //W parameter for function 
         int w;

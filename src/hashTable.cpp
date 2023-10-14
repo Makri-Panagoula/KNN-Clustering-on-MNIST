@@ -19,12 +19,15 @@ hashTable::hashTable(int k , int H_size, hFunc** funcs, int TableSize) {
     this->TableSize = TableSize;
     //Create a vector for every bucket
     for(int i = 0; i < TableSize; i++) {
-        vector<Img> bucket;
+        vector<Img*> bucket;
         this->buckets.push_back(bucket);
     }
 }
 
-unsigned int hashTable::g(vector<unsigned int> p) {
+unsigned int hashTable::g(Img* img) {
+
+    //Accessing pixels' vector
+    vector<unsigned int> p = img->get_p();
 
     //Estimate all the h-values and get the dot product with the stored k r-operands 
     vector<unsigned int> h_values;
@@ -35,5 +38,15 @@ unsigned int hashTable::g(vector<unsigned int> p) {
     unsigned int linear_comb = inner_product(h_values.begin(),h_values.end(),this->r.begin(),0);
     unsigned int chosen = linear_comb % this->TableSize;
     //Store image in chosen bucket
-    this->buckets[chosen].push_back(p);
+    this->buckets[chosen].push_back(img);
+}
+
+hashTable::~hashTable() {
+    //Deallocate Img pointers inside the buckets
+    for(int i = 0; i < TableSize; i++) {
+        int imgs = this->buckets[i].size();
+        vector<Img*> bucket =  this->buckets[i];
+        for(int j = 0 ; j < imgs; i++)
+            delete bucket[j];
+    }    
 }
