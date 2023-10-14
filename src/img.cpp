@@ -25,5 +25,6 @@ double Img::euclideanDistance(Img* img_b) {
     for (size_t i = 0; i < a.size(); i++) {
         distance += pow(a[i] - b[i], 2);
     }
+    cout<<endl<<sqrt(distance)<<endl;
     return sqrt(distance);
 }

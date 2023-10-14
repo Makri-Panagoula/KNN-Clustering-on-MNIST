@@ -52,7 +52,7 @@ int main (int argc, char* argv[]) {
     if ( argv[9] != NULL ) 
         R = atoi(argv[9]);
     
-    LSH lsh( L,k,input_file);
+    LSH lsh(L,k,input_file);
 
     int runs = 0 ;
     string answer;
@@ -65,7 +65,17 @@ int main (int argc, char* argv[]) {
         if ( runs++ > 0 || output_file.empty())  {  //If user hasn't passed it as command line argument 
             cout<<"Please give the path to output file !"<<endl;
             cin >> output_file;
+        }    
+        ifstream query(query_file, ios::binary | ios::in);
+        if(! query.is_open()) {
+            cout << "Failed to read query dataset file!" << endl;
+            exit;
         }        
+        //Read a small sample of images in the query dataset and perform the algorithms on them
+        for(int i = 0; i < 2; i++) {
+            Img* query_point = new Img(lsh.get_pxs(),i,query);
+            lsh.findNearestNeighbors(query_point,N,output_file);
+        }    
 
         do {
             cout<<"Would you like to continue execution for a different query dataset? Please enter y / N !"<<endl;

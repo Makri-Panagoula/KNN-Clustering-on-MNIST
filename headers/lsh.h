@@ -30,7 +30,7 @@ class LSH {
         vector<Img*> imgs;
     public:
         LSH(int L, int k, std::string inputFile);
-        int findNearestNeighbors(Img* query,int n);
+        int findNearestNeighbors(Img* query,int n,string output);
         int get_pxs() { return this->pxs;};
         ~LSH();
 };

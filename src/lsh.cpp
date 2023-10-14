@@ -37,7 +37,7 @@ LSH::LSH(int L,int k,string inputFile) {
     this->k = k;
     this->w = 50;
     this->L = L;
-    this->M = pow(2.0,32.0) - 5;
+    this->M = 10;
     this->TableSize = imgs / 8;
 
     //Creating the data structures
@@ -50,7 +50,7 @@ LSH::LSH(int L,int k,string inputFile) {
         this->hashTables[i] = new hashTable(k,2*k,this->hFuncs,TableSize,M);
     
     //For every image in the training dataset we read
-    for(int i = 0; i < 100; i++) {
+    for(int i = 0; i < imgs; i++) {
         Img* img = new Img(pixs,i,input);
         this->imgs.push_back(img);
         //For every hashtable we save it into the proper bucket
@@ -62,7 +62,8 @@ LSH::LSH(int L,int k,string inputFile) {
     input.close();
 }
 
-int LSH::findNearestNeighbors(Img* query,int n){
+int LSH::findNearestNeighbors(Img* query,int n,string output){
+
     //Images where we will compute the distance,aka possible neighbours out of all the buckets
     vector<Img*> neighbours;
 
@@ -75,6 +76,13 @@ int LSH::findNearestNeighbors(Img* query,int n){
         neighbours.insert(neighbours.end(), in_bucket.begin(), in_bucket.end());
     }
 
+    ofstream outFile(output);
+    if (!outFile.is_open()) {
+        cout << "Failed to open the output file." << endl;
+        exit;
+    }    
+    outFile << "Query: "<<query->imgNum()<<endl;
+
     priority_queue<pair<double, int>> minHeap;
     //Out of all the potential neighbours, we compute euclidean distances, save them in a min heap and keep the best N ones
     for (int i = 0; i < neighbours.size(); i++) {
@@ -83,18 +91,17 @@ int LSH::findNearestNeighbors(Img* query,int n){
         //save num of image i with the distance
         minHeap.push(make_pair(distance, cur_img->imgNum()));
     }
-
+    cout<<neighbours.size()<<endl;
     //takes the first n neighbors or less if there aren't enough
-    int maxNeighbors = min(static_cast<int>(neighbours.size() - 1), n); 
+    int maxNeighbors = min((int)neighbours.size(), n); 
     pair<int,int> n_neigh;
 
     for (int i = 0; i < maxNeighbors; ++i) {
         n_neigh = minHeap.top();
+        outFile<<"Nearest Neighbour-" << n << " :" << n_neigh.second << "distanceLSH: <double> " << n_neigh.first <<endl<< "distanceTrue: <double> "<<endl;        
         minHeap.pop();
     }
-
-    cout << "neighbour" << n << ": " << n_neigh.second << " (Distance: " << n_neigh.first << ")\n";
-
+    outFile.close();
     return 0;
 }
 
