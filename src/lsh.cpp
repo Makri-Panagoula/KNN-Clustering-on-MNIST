@@ -55,11 +55,47 @@ LSH::LSH(int L,int k,string inputFile) {
         this->imgs.push_back(img);
         //For every hashtable we save it into the proper bucket
         for(int j = 0; j < L ; j++) 
-            hashTables[j]->g(img);
+            hashTables[j]->store(img);
     }
     
     //We have processed input dataset, we won't need it anymore
     input.close();
+}
+
+int LSH::findNearestNeighbors(Img* query,int n){
+    //Images where we will compute the distance,aka possible neighbours out of all the buckets
+    vector<Img*> neighbours;
+
+    //For every hashtable find query's bucket(without saving)
+    for(int i = 0; i < L; i++) {
+        pair<int,int> hashed = hashTables[i]->g(query);
+        //Get a vector of images in the same bucket as the query that have the same id as well
+        vector<Img*> in_bucket = hashTables[i]->same_bucket(hashed);
+        //Concatenate with larger vector 
+        neighbours.insert(neighbours.end(), in_bucket.begin(), in_bucket.end());
+    }
+
+    priority_queue<pair<double, int>> minHeap;
+    //Out of all the potential neighbours, we compute euclidean distances, save them in a min heap and keep the best N ones
+    for (int i = 0; i < neighbours.size(); i++) {
+        Img* cur_img = neighbours[i];
+        double distance = query->euclideanDistance(cur_img);
+        //save num of image i with the distance
+        minHeap.push(make_pair(distance, cur_img->imgNum()));
+    }
+
+    //takes the first n neighbors or less if there aren't enough
+    int maxNeighbors = min(static_cast<int>(neighbours.size() - 1), n); 
+    pair<int,int> n_neigh;
+
+    for (int i = 0; i < maxNeighbors; ++i) {
+        n_neigh = minHeap.top();
+        minHeap.pop();
+    }
+
+    cout << "neighbour" << n << ": " << n_neigh.second << " (Distance: " << n_neigh.first << ")\n";
+
+    return 0;
 }
 
 LSH::~LSH() {
@@ -67,10 +103,14 @@ LSH::~LSH() {
     // Deallocate dynamically stored memory
     for (int i = 0; i < 2 * this->k; i++) 
         delete this->hFuncs[i];
-    delete[] this->hFuncs;     
+    
+    delete[] this->hFuncs;    
 
-    //For every hashTable 
+    for(int i = 0; i < this->imgs.size(); i++)
+        delete this->imgs[i]; 
+
     for (int i = 0; i < this->L; i++) 
-        delete this->hashTables[i];    
+        delete this->hashTables[i];
+    
     delete[] this->hashTables;    
 }

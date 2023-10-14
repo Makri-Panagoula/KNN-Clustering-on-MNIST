@@ -4,13 +4,10 @@
 #include "../headers/hFunc.h"
 #include "../headers/img.h"
 
-
 using namespace std;
 
 class hashTable {
     private:
-
-    public :
         //Number of hash functions out of which the g function will be constructed
         int k;
         //Number of Buckets
@@ -20,11 +17,17 @@ class hashTable {
         //A vector consisting of the numerings of the k h-functions needed for the g-function
         vector<hFunc*> funcs;
         //A vector consisting of the k r operands needed for the linear combination
-        vector<unsigned int> r;        
-        //A vector consisted of images' vectors , one for each bucket
-        vector<vector<Img*>> buckets;
+        vector<unsigned int> r; 
+        //A vector consisted of other vectors, one for each bucket,where we save a pair of the id and the Img*
+        vector<vector<pair<Img*, int>>> buckets;        
+    public :
+
         hashTable(int k ,int H_size, hFunc** funcs, int TableSize,int M);
-        //g-function for inserting image to appropriate bucket
-        void g(Img* img);
+        //g-function for hashing,returns a pair where fist is id and second bucket
+        pair<int, int> g(Img* img);
+        //stores img into appropriate bucket
+        void store(Img* img);
+        //Returns a vector of images in the same bucket deemed as neighbours
+        vector<Img*> same_bucket(pair<int, int>);
         ~hashTable(){};
 };
