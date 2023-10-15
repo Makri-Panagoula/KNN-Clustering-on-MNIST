@@ -21,4 +21,4 @@ run_lsh : $(LSH)
 	./$(LSH) $(ARGSL)
 
 clean:
-	rm -f $(OBJL) $(LSH)
+	rm -f $(OBJL) $(LSH) output

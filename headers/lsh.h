@@ -9,6 +9,9 @@
 #include <fstream>
 #include <queue>
 #include <cmath>
+#include <set>
+#include <utility>
+#include <bits/stdc++.h> 
 #include "../headers/hashTable.h"
 #include "../headers/img.h"
 

@@ -56,8 +56,8 @@ void hashTable::store(Img* img) {
 }
 
 vector<Img*> hashTable::same_bucket(pair<int, int> query) {
-    int buck_num = query.first;
-    int query_id = query.second;
+    int query_id = query.first;
+    int buck_num = query.second;
     vector<Img*> neighbours;
     //Access vector of wanted bucket
     vector<pair<Img*, int>> bucket = this->buckets[buck_num];
