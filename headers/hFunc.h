@@ -5,6 +5,7 @@
 #include <functional> 
 #include <cmath> 
 #include <numeric>
+#include <iostream>
 
 using namespace std;
 

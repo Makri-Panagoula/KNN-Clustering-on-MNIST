@@ -6,7 +6,7 @@ hashTable::hashTable(int k , int H_size, hFunc** funcs, int TableSize,int M) {
 
     this->k = k;
     //Initialize uniform distributor
-    default_random_engine generator;
+    static default_random_engine generator;
     uniform_real_distribution<double> distribution(0.0,H_size);
     //Initialize random seed
     srand (time(NULL));    
@@ -37,6 +37,7 @@ pair<int, int> hashTable::g(Img* img) {
         h_values.push_back(funcs[i]->h(p));
     
     unsigned int linear_comb = inner_product(h_values.begin(),h_values.end(),this->r.begin(),0);
+    // cout<<"linear comb : "<<linear_comb<<endl;
     int id = linear_comb % this->M;
     unsigned int chosen = id % this->TableSize;
     pair<int, int> to_return;

@@ -1,12 +1,5 @@
 #include "../headers/lsh.h"
 
-//Comparator for the set (distance,img_num),we sort based on the distance
-struct Comparator {
-    bool operator() (const std::pair<double, int>& a, const std::pair<double, int>& b) const {
-        return a.first < b.first;
-    }
-};
-
 //Swaps endian-ness since MNIST is in big endian architecture in contrast with our system 
 int LittleEndian (int i) {
 
@@ -42,21 +35,22 @@ LSH::LSH(int L,int k,string inputFile) {
 
     //Setting algorithm's parameters
     this->k = k;
-    this->w = 50;
+    this->w = 5;
     this->L = L;
     this->M = pow(2.0,32.0) - 5;
     this->TableSize = imgs / 8;
+    this->H_size = 30*k;
 
     //Creating the data structures
-    this->hFuncs = new hFunc*[2*k];
-    for(int i = 0; i < 2*k; i++)
+    this->hFuncs = new hFunc*[this->H_size];
+    for(int i = 0; i < this->H_size; i++)
         this->hFuncs[i] = new hFunc(w,this->pxs);
     
     this->hashTables = new hashTable*[L];
     for(int i = 0; i < L; i++)
-        this->hashTables[i] = new hashTable(k,2*k,this->hFuncs,TableSize,M);
+        this->hashTables[i] = new hashTable(k,this->H_size,this->hFuncs,TableSize,M);
     
-    //For every image in the training dataset we read
+    //For every image in the training dataset we store it in a vector
     for(int i = 0; i < imgs; i++) {
         Img* img = new Img(this->pxs,i,input);
         this->imgs.push_back(img);
@@ -70,9 +64,9 @@ LSH::LSH(int L,int k,string inputFile) {
 }
 
 // Brute-force function to calculate the distance of q to all points in the dataset and return an ordered set containing pairs in the format (distance,img number)
-set<pair<double, int>, Comparator>  Nexact(Img* query, const vector<Img*>& imgs) {
+set <pair<double, int>>  Nexact(Img* query, const vector<Img*>& imgs) {
 
-    set<pair<double, int>, Comparator> distances;
+    set<pair<double, int>> distances;
 
     for (int i = 0; i < imgs.size(); i++) {
         double distance = query->euclideanDistance(imgs[i]);
@@ -85,7 +79,7 @@ set<pair<double, int>, Comparator>  Nexact(Img* query, const vector<Img*>& imgs)
 int LSH::findNearestNeighbors(Img* query,int n,string output){
 
     //Out of all the potential neighbours, we compute euclidean distances, save them in an ascending ordered set and keep the best N ones
-    set<pair<double, int>, Comparator> N_approx; 
+    set<pair<double, int>> N_approx; 
     time_t start_LSH;
     time(&start_LSH);
 
@@ -102,14 +96,14 @@ int LSH::findNearestNeighbors(Img* query,int n,string output){
             N_approx.insert(make_pair(distance, cur_img->imgNum()));
         }
     }
-
+    cout<<N_approx.size()<<endl;
     time_t end_LSH;
     time(&end_LSH);
     time_t tLSH = end_LSH - start_LSH;
 
     time_t start_exact;
     time(&start_exact);
-    set<pair<double, int>, Comparator> N_exact = Nexact(query,this->imgs);
+    set<pair<double, int>> N_exact = Nexact(query,this->imgs);
     time_t end_exact;
     time(&end_exact);
     time_t tTrue = end_exact - start_exact;
@@ -142,7 +136,7 @@ int LSH::findNearestNeighbors(Img* query,int n,string output){
 LSH::~LSH() {
 
     // Deallocate dynamically stored memory
-    for (int i = 0; i < 2 * this->k; i++) 
+    for (int i = 0; i < this->H_size; i++) 
         delete this->hFuncs[i];
     
     delete[] this->hFuncs;    

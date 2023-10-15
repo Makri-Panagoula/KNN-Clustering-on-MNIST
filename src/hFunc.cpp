@@ -3,12 +3,12 @@
 using namespace std;
 
 hFunc::hFunc(int w, int d) {
-    default_random_engine generator;
+    static default_random_engine v_generator;
     normal_distribution <double> distribution(0.0, 1.0);
 
     vector<double> v(d);
     for (int i = 0; i < d; i++) {
-        double number = distribution(generator);
+        double number = distribution(v_generator);
         v[i] = number;
     }
     this->v = v;
@@ -32,9 +32,9 @@ int hFunc:: h(vector<unsigned int> p) {
         dot_prod = inner_product(p.begin(),p.end(),this->v.begin(),0);
     }
 
-    default_random_engine generator;
+    static default_random_engine t_generator;
     uniform_real_distribution<double> distribution(0.0,this->w);
-    double t = distribution(generator);  
+    double t = distribution(t_generator);  
       
     unsigned int result = (dot_prod + t) / this->w;
     return result;

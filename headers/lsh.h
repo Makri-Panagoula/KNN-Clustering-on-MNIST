@@ -28,6 +28,8 @@ class LSH {
         int L;
         double M;
         int pxs;
+        //Number of h-functions we construct and out from we will choose
+        int H_size;
         int TableSize;
         hashTable** hashTables;
         hFunc** hFuncs;
