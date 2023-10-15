@@ -4,17 +4,17 @@ Img::Img(int pxs,int num,ifstream& input) {
 
     this->pxs = pxs;
     this->num = num;
-    char pixel;
+    unsigned char pixel;
     for (int i = 0; i < pxs; i++) {
         input.read((char*)&pixel,1);
-        this->p.push_back(pixel);
+        this->p.push_back((unsigned char)pixel);
     }
 }
 
 double Img::euclideanDistance(Img* img_b) {
 
-    vector<char> a = this->get_p();
-    vector<char> b = img_b->get_p();
+    vector<unsigned char> a = this->get_p();
+    vector<unsigned char> b = img_b->get_p();
 
     if (a.size() != b.size()) {
         //checking if vectors have same number of elements

@@ -64,7 +64,7 @@ LSH::LSH(int L,int k,string inputFile) {
 }
 
 // Brute-force function to calculate the distance of q to all points in the dataset and return an ordered set containing pairs in the format (distance,img number)
-set <pair<double, int>>  Nexact(Img* query, const vector<Img*>& imgs) {
+set <pair<double, int>>  N_Exact(Img* query, const vector<Img*>& imgs) {
 
     set<pair<double, int>> distances;
 
@@ -76,13 +76,11 @@ set <pair<double, int>>  Nexact(Img* query, const vector<Img*>& imgs) {
     return distances;    
 }
 
-int LSH::findNearestNeighbors(Img* query,int n,string output){
+//Returns a set holding a pair (distnce,img_number) with the n-approximate neighbours
+set <pair<double, int>>  LSH::N_Approx(Img* query,int n) {
 
     //Out of all the potential neighbours, we compute euclidean distances, save them in an ascending ordered set and keep the best N ones
-    set<pair<double, int>> N_approx; 
-    time_t start_LSH;
-    time(&start_LSH);
-
+    set<pair<double, int>> N_approx;
     //For every hashtable find query's bucket(without saving)
     for(int i = 0; i < L; i++) {
         pair<int,int> hashed = hashTables[i]->g(query);
@@ -96,14 +94,29 @@ int LSH::findNearestNeighbors(Img* query,int n,string output){
             N_approx.insert(make_pair(distance, cur_img->imgNum()));
         }
     }
+    return N_approx;
+}
+
+
+void LSH::findNearestNeighbors(Img* query,int n,string output){
+
+    //Get n-approximate neighbours along with time metrics
+    time_t start_LSH;
+    time(&start_LSH);
+
+    set<pair<double, int>> N_approx = N_Approx(query,n); 
+
     cout<<N_approx.size()<<endl;
     time_t end_LSH;
     time(&end_LSH);
     time_t tLSH = end_LSH - start_LSH;
 
+    //Get n-exact neighbours along with time metrics
     time_t start_exact;
     time(&start_exact);
-    set<pair<double, int>> N_exact = Nexact(query,this->imgs);
+
+    set<pair<double, int>> N_exact = N_Exact(query,this->imgs);
+
     time_t end_exact;
     time(&end_exact);
     time_t tTrue = end_exact - start_exact;
@@ -121,6 +134,7 @@ int LSH::findNearestNeighbors(Img* query,int n,string output){
     auto approx = N_approx.begin();
     auto exact = N_exact.begin();
 
+    //Iterate through sets and write in output file
     for (int i = 0; i < maxNeighbors; i++) { 
         outFile<<"Nearest Neighbour-" << i + 1 << " :" << approx->second <<endl<< "distanceLSH: <double> " << approx->first <<endl<< "distanceTrue: <double> "<< exact->first<<endl;
         approx++;
@@ -128,9 +142,12 @@ int LSH::findNearestNeighbors(Img* query,int n,string output){
     }
 
     outFile<<"tLSH: <double> "<<tLSH<<" sec."<<endl<<"tTrue: <double> "<<tTrue<<" sec."<<endl<<endl;
-
     outFile.close();
-    return 0;
+}
+
+//Finds all neighbours in distance R from query point and updates output file with results        
+void LSH::rangeSearch(Img* query,int R,string output) {
+    
 }
 
 LSH::~LSH() {

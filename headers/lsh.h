@@ -34,9 +34,13 @@ class LSH {
         hashTable** hashTables;
         hFunc** hFuncs;
         vector<Img*> imgs;
+        set <pair<double, int>>  N_Approx(Img* query,int n);
     public:
         LSH(int L, int k, std::string inputFile);
-        int findNearestNeighbors(Img* query,int n,string output);
+        //Finds the n approximate and exact nearest neighbours from query point and updates output file with data and metrics
+        void findNearestNeighbors(Img* query,int n,string output);
+        //Finds all neighbours in distance R from query point and updates output file with results        
+        void rangeSearch(Img* query,int R,string output);
         int get_pxs() { return this->pxs;};
         ~LSH();
 };

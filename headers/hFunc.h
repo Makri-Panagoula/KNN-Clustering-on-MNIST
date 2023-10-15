@@ -18,6 +18,6 @@ class hFunc {
     public :
 
         hFunc(int w ,int d);
-        int h(vector<char> p);
+        unsigned int h(vector<unsigned char> p);
         ~hFunc(){};
 };
