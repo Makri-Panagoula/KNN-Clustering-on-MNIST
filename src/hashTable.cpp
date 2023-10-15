@@ -28,7 +28,7 @@ hashTable::hashTable(int k , int H_size, hFunc** funcs, int TableSize,int M) {
 pair<int, int> hashTable::g(Img* img) {
 
     //Accessing pixels' vector
-    vector<unsigned int> p = img->get_p();
+    vector<char> p = img->get_p();
 
     //Estimate all the h-values and get the dot product with the stored k r-operands 
     vector<unsigned int> h_values;

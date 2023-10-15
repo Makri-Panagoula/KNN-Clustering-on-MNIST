@@ -13,8 +13,8 @@ Img::Img(int pxs,int num,ifstream& input) {
 
 double Img::euclideanDistance(Img* img_b) {
 
-    vector<unsigned int> a = this->get_p();
-    vector<unsigned int> b = img_b->get_p();
+    vector<char> a = this->get_p();
+    vector<char> b = img_b->get_p();
 
     if (a.size() != b.size()) {
         //checking if vectors have same number of elements
@@ -23,6 +23,7 @@ double Img::euclideanDistance(Img* img_b) {
 
     double distance = 0.0;
     for (size_t i = 0; i < a.size(); i++) {
+        // cout<<"a "<<(int)a[i]<<"b "<<(int)b[i]<<endl;
         distance += pow(a[i] - b[i], 2);
     }
     distance = sqrt(distance);

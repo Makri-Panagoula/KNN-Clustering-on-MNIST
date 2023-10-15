@@ -38,7 +38,7 @@ LSH::LSH(int L,int k,string inputFile) {
     this->w = 5;
     this->L = L;
     this->M = pow(2.0,32.0) - 5;
-    this->TableSize = imgs / 8;
+    this->TableSize = imgs / 4;
     this->H_size = 30*k;
 
     //Creating the data structures
