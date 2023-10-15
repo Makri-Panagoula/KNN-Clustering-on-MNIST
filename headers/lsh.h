@@ -10,6 +10,7 @@
 #include <queue>
 #include <cmath>
 #include <set>
+#include <ctime>
 #include <utility>
 #include <bits/stdc++.h> 
 #include "../headers/hashTable.h"

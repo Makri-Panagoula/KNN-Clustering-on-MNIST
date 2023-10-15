@@ -42,9 +42,9 @@ LSH::LSH(int L,int k,string inputFile) {
 
     //Setting algorithm's parameters
     this->k = k;
-    this->w = 15;
+    this->w = 50;
     this->L = L;
-    this->M = pow(2.0,32.0) - 1;
+    this->M = pow(2.0,32.0) - 5;
     this->TableSize = imgs / 8;
 
     //Creating the data structures
@@ -69,10 +69,25 @@ LSH::LSH(int L,int k,string inputFile) {
     input.close();
 }
 
+// Brute-force function to calculate the distance of q to all points in the dataset and return an ordered set containing pairs in the format (distance,img number)
+set<pair<double, int>, Comparator>  Nexact(Img* query, const vector<Img*>& imgs) {
+
+    set<pair<double, int>, Comparator> distances;
+
+    for (int i = 0; i < imgs.size(); i++) {
+        double distance = query->euclideanDistance(imgs[i]);
+        distances.insert(make_pair(distance, imgs[i]->imgNum()));
+    }
+
+    return distances;    
+}
+
 int LSH::findNearestNeighbors(Img* query,int n,string output){
 
     //Out of all the potential neighbours, we compute euclidean distances, save them in an ascending ordered set and keep the best N ones
-    set<pair<double, int>, Comparator> neighbours; 
+    set<pair<double, int>, Comparator> N_approx; 
+    time_t start_LSH;
+    time(&start_LSH);
 
     //For every hashtable find query's bucket(without saving)
     for(int i = 0; i < L; i++) {
@@ -84,9 +99,20 @@ int LSH::findNearestNeighbors(Img* query,int n,string output){
             Img* cur_img = in_bucket[j];
             double distance = query->euclideanDistance(cur_img);
             //save num of image i with the distance
-            neighbours.insert(make_pair(distance, cur_img->imgNum()));
+            N_approx.insert(make_pair(distance, cur_img->imgNum()));
         }
     }
+
+    time_t end_LSH;
+    time(&end_LSH);
+    time_t tLSH = end_LSH - start_LSH;
+
+    time_t start_exact;
+    time(&start_exact);
+    set<pair<double, int>, Comparator> N_exact = Nexact(query,this->imgs);
+    time_t end_exact;
+    time(&end_exact);
+    time_t tTrue = end_exact - start_exact;
 
     ofstream outFile(output, ios::app);
     if (!outFile.is_open()) {
@@ -97,16 +123,17 @@ int LSH::findNearestNeighbors(Img* query,int n,string output){
     outFile << "Query: "<<query->imgNum()<<endl;
    
     //takes the first n neighbors or less if there aren't enough
-    int maxNeighbors = min((int)neighbours.size(), n); 
-    pair<double,int> n_neigh;
-    int i = 0;
+    int maxNeighbors = min((int)N_approx.size(), n); 
+    auto approx = N_approx.begin();
+    auto exact = N_exact.begin();
 
-    for (auto const &n_neigh : neighbours) { 
-        outFile<<"Nearest Neighbour-" << ++i << " :" << n_neigh.second <<endl<< "distanceLSH: <double> " << n_neigh.first <<endl<< "distanceTrue: <double> "<<endl;
-        if( i == maxNeighbors) {
-            break;
-        }        
+    for (int i = 0; i < maxNeighbors; i++) { 
+        outFile<<"Nearest Neighbour-" << i + 1 << " :" << approx->second <<endl<< "distanceLSH: <double> " << approx->first <<endl<< "distanceTrue: <double> "<< exact->first<<endl;
+        approx++;
+        exact++;
     }
+
+    outFile<<"tLSH: <double> "<<tLSH<<" sec."<<endl<<"tTrue: <double> "<<tTrue<<" sec."<<endl<<endl;
 
     outFile.close();
     return 0;
