@@ -35,9 +35,9 @@ LSH::LSH(int L,int k,string inputFile) {
 
     //Setting algorithm's parameters
     this->k = k;
-    this->w = 50;
+    this->w = 4;
     this->L = L;
-    this->M = 10;
+    this->M = 1;
     this->TableSize = imgs / 8;
 
     //Creating the data structures
@@ -96,9 +96,9 @@ int LSH::findNearestNeighbors(Img* query,int n,string output){
     int maxNeighbors = min((int)neighbours.size(), n); 
     pair<int,int> n_neigh;
 
-    for (int i = 0; i < maxNeighbors; ++i) {
+    for (int i = 1; i <= maxNeighbors; ++i) {
         n_neigh = minHeap.top();
-        outFile<<"Nearest Neighbour-" << n << " :" << n_neigh.second << "distanceLSH: <double> " << n_neigh.first <<endl<< "distanceTrue: <double> "<<endl;        
+        outFile<<"Nearest Neighbour-" << i << " :" << n_neigh.second <<endl<< "distanceLSH: <double> " << n_neigh.first <<endl<< "distanceTrue: <double> "<<endl;        
         minHeap.pop();
     }
     outFile.close();
