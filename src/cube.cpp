@@ -27,15 +27,19 @@ Cube::Cube(int d,int M,int probes,Input* input) {
         store(input->get_image(i));    
 }
 
+int Cube::map_func(int h_value , hFunc* h) {
+    return h_value > h->get_median();
+}
+
 //Gets the pixels' vector and maps to a d-vector in {0,1}^d
 int Cube::f(Img* img) {
 
     int bucket = 0; 
     //Apply (f o h) function to p d times 
     for(int i = 0; i < this->d; i++) {
-
+        int h_value = hFuncs[i]->h(img->get_p());
         //Since the f(h(p)) contains binary values, we convert it to number by treating it as a binary
-        bucket += map_func(h(p)) * 2;
+        bucket += map_func(h_value,hFuncs[i]) * 2;
     }
 
 }

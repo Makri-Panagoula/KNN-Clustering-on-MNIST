@@ -22,7 +22,7 @@ class Cube {
         //A vector consisting of 2^d vectors,one for each bucket holding the images hashed to it
         vector<vector<Img*>> buckets;
         //Maps h result to {0,1}
-        int map_func(int h);           
+        int map_func(int h_value, hFunc* h);           
     public:
         Cube(int d,int M,int probes,Input* imgs);
         //Gets the pixels' vector and hashes tp bucket
