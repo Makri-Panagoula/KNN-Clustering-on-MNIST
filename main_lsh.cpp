@@ -52,11 +52,11 @@ int main (int argc, char* argv[]) {
     if ( argv[9] != NULL ) 
         R = atoi(argv[9]);
     
-    LSH lsh(L,k,input_file);
+    Input* imgs = new Input(input_file);
+    LSH lsh(L,k,imgs);
 
     int runs = 0 ;
     string answer;
-
     do {
         if ( runs > 0 || query_file.empty())  {  //If user hasn't passed it as command line argument 
             cout<<"Please give the path to query dataset file !"<<endl;
@@ -73,7 +73,7 @@ int main (int argc, char* argv[]) {
         }        
         //Read a small sample of images in the query dataset and perform the algorithms on them
         for(int i = 0; i < 2; i++) {
-            Img* query_point = new Img(lsh.get_pxs(),i+1,query);
+            Img* query_point = new Img(imgs->get_pxs(),i+1,query);
             lsh.findNearestNeighbors(query_point,N,output_file);
         }   
         do {

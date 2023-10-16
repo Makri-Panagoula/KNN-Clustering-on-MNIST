@@ -1,78 +1,47 @@
 #include "../headers/lsh.h"
 
-//Swaps endian-ness since MNIST is in big endian architecture in contrast with our system 
-int LittleEndian (int i) {
 
-    unsigned char b1 = i & 0x000000FF;
-    unsigned char b2 = (i & 0x00FF0000) >> 8;
-    unsigned char b3 = (i & 0x00FF0000) >> 16;
-    unsigned char b4 = (i & 0xFF000000) >> 24;
-    return (b1<<24) | (b2<<16) | (b3<<8) | b4;
-}
-
-LSH::LSH(int L,int k,string inputFile) {
-
-    ifstream input(inputFile, ios::binary | ios::in);
-    if(! input.is_open()) {
-        cout << "Failed to read input dataset file!" << endl;
-        exit;
-    }
-
-    //Processsing the first four words of the input file that contain general info about the dataset
-    int magic_num = 0;
-    int imgs = 0;
-    int rows = 0;    
-    int cols = 0;        
-    input.read((char*)&magic_num,4);
-    magic_num = LittleEndian(magic_num);
-    input.read((char*)&imgs,4);
-    imgs = LittleEndian(imgs);    
-    input.read((char*)&rows,4);
-    rows = LittleEndian(rows);    
-    input.read((char*)&cols,4);
-    cols = LittleEndian(cols);  
-    this->pxs = rows*cols;
+LSH::LSH(int L,int k,Input* input){
 
     //Setting algorithm's parameters
     this->k = k;
     this->w = 5;
     this->L = L;
     this->M = pow(2.0,32.0) - 5;
-    this->TableSize = imgs / 4;
+    this->TableSize = input->get_imgs() / 4;
     this->H_size = 30*k;
     this->t_lsh = 0;
     this->t_true = 0;
+    this->imgs = input;
 
     //Creating the data structures
     this->hFuncs = new hFunc*[this->H_size];
     for(int i = 0; i < this->H_size; i++)
-        this->hFuncs[i] = new hFunc(w,this->pxs);
+        this->hFuncs[i] = new hFunc(w,input->get_pxs());
     
     this->hashTables = new hashTable*[L];
     for(int i = 0; i < L; i++)
         this->hashTables[i] = new hashTable(k,this->H_size,this->hFuncs,TableSize,M);
     
     //For every image in the training dataset we store it in a vector
-    for(int i = 0; i < imgs; i++) {
-        Img* img = new Img(this->pxs,i,input);
-        this->imgs.push_back(img);
+    for(int i = 0; i < input->get_imgs(); i++) {
+
+        Img* img = input->get_image(i);
         //For every hashtable we save it into the proper bucket
         for(int j = 0; j < L ; j++) 
             hashTables[j]->store(img);
     }
-    
-    //We have processed input dataset, we won't need it anymore
-    input.close();
 }
 
 // Brute-force function to calculate the distance of q to all points in the dataset and return an ordered set containing pairs in the format (distance,img number)
-set <pair<double, int>>  N_Exact(Img* query, const vector<Img*>& imgs) {
+set <pair<double, int>>  N_Exact(Img* query, Input* imgs) {
 
     set<pair<double, int>> distances;
 
-    for (int i = 0; i < imgs.size(); i++) {
-        double distance = query->euclideanDistance(imgs[i]);
-        distances.insert(make_pair(distance, imgs[i]->imgNum()));
+    for (int i = 0; i < imgs->get_imgs(); i++) {
+        Img* img = imgs->get_image(i);
+        double distance = query->euclideanDistance(img);
+        distances.insert(make_pair(distance, img->imgNum()));
     }
 
     return distances;    
@@ -117,7 +86,7 @@ void LSH::findNearestNeighbors(Img* query,int n,string output){
     time_t start_exact;
     time(&start_exact);
 
-    set<pair<double, int>> N_exact = N_Exact(query,this->imgs);
+    set<pair<double, int>> N_exact = N_Exact(query,imgs);
 
     time_t end_exact;
     time(&end_exact);
@@ -157,13 +126,11 @@ LSH::~LSH() {
     for (int i = 0; i < this->H_size; i++) 
         delete this->hFuncs[i];
     
-    delete[] this->hFuncs;    
-
-    for(int i = 0; i < this->imgs.size(); i++)
-        delete this->imgs[i]; 
+    delete[] this->hFuncs;     
 
     for (int i = 0; i < this->L; i++) 
         delete this->hashTables[i];
     
     delete[] this->hashTables;    
+
 }
