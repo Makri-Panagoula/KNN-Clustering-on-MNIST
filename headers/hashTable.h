@@ -12,7 +12,7 @@ class hashTable {
         int k;
         //Number of Buckets
         int TableSize;
-        //Number we will use for the first mod(we follow the amplified lsh approach)
+        //Number we will use for the first mod(we follow the querying trick approach)
         int M;
         //A vector consisting of the numerings of the k h-functions needed for the g-function
         vector<hFunc*> funcs;

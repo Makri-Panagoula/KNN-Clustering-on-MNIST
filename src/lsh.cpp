@@ -23,13 +23,12 @@ LSH::LSH(int L,int k,Input* input){
     for(int i = 0; i < L; i++)
         this->hashTables[i] = new hashTable(k,this->H_size,this->hFuncs,TableSize,M);
     
-    //For every image in the training dataset we store it in a vector
+    //For every image in the training dataset save it into the appropriate structures
     for(int i = 0; i < input->get_imgs(); i++) {
-
-        Img* img = input->get_image(i);
+        
         //For every hashtable we save it into the proper bucket
         for(int j = 0; j < L ; j++) 
-            hashTables[j]->store(img);
+            hashTables[j]->store(input->get_image(i));
     }
 }
 
@@ -115,10 +114,6 @@ void LSH::findNearestNeighbors(Img* query,int n,string output){
     outFile.close();
 }
 
-//Finds all neighbours in distance R from query point and updates output file with results        
-void LSH::rangeSearch(Img* query,int R,string output) {
-    
-}
 
 LSH::~LSH() {
 

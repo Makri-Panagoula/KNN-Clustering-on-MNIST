@@ -3,7 +3,7 @@
 #include <cstring>
 #include <stdlib.h> 
 #include <unistd.h>
-#include "headers/lsh.h"
+#include "headers/cube.h"
 
 using namespace std;
 
@@ -59,7 +59,10 @@ int main (int argc, char* argv[]) {
     if ( argv[10] != NULL ) 
         R = atoi(argv[10]);
     
+    //Read image input dataset
+    Input* imgs = new Input(input_file);
     //Create Search Structure
+    Cube cube(k,M,probes,imgs);
 
     int runs = 0 ;
     string answer;
@@ -80,8 +83,8 @@ int main (int argc, char* argv[]) {
         }        
         //Read a small sample of images in the query dataset and perform the algorithms on them
         for(int i = 0; i < 2; i++) {
-            Img* query_point = new Img(lsh.get_pxs(),i+1,query);
-            lsh.findNearestNeighbors(query_point,N,output_file);
+            Img* query_point = new Img(imgs->get_pxs(),i+1,query);
+            cube.findNearestNeighbors(query_point,N,output_file);
         }    
 
         do {
@@ -91,5 +94,6 @@ int main (int argc, char* argv[]) {
         
     }while(answer == "y");
 
+    delete imgs;
     return 0;
 }

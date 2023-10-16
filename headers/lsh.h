@@ -51,8 +51,6 @@ class LSH {
         LSH(int L, int k, Input* input);
         //Finds the n approximate and exact nearest neighbours from query point and updates output file with data and metrics
         void findNearestNeighbors(Img* query,int n,string output);
-        //Finds all neighbours in distance R from query point and updates output file with results        
-        void rangeSearch(Img* query,int R,string output);
         //Returns total seconds for all the query runs of LSH algorithm
         double get_tLSH(){return this->t_lsh;};
         //Returns total seconds for all the query runs of bruteforce algorithm

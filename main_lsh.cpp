@@ -52,7 +52,9 @@ int main (int argc, char* argv[]) {
     if ( argv[9] != NULL ) 
         R = atoi(argv[9]);
     
+    //Read image input dataset
     Input* imgs = new Input(input_file);
+    //Create Search Structure
     LSH lsh(L,k,imgs);
 
     int runs = 0 ;
@@ -88,5 +90,6 @@ int main (int argc, char* argv[]) {
     outFile<<"tLSH: <double> "<<lsh.get_tLSH()<<" sec."<<endl<<"tTrue: <double> "<<lsh.get_tTrue()<<" sec."<<endl<<endl;
     outFile.close();
     
+    delete imgs;
     return 0;
 }
