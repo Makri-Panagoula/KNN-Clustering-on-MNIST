@@ -40,6 +40,8 @@ LSH::LSH(int L,int k,string inputFile) {
     this->M = pow(2.0,32.0) - 5;
     this->TableSize = imgs / 4;
     this->H_size = 30*k;
+    this->t_lsh = 0;
+    this->t_true = 0;
 
     //Creating the data structures
     this->hFuncs = new hFunc*[this->H_size];
@@ -97,7 +99,6 @@ set <pair<double, int>>  LSH::N_Approx(Img* query,int n) {
     return N_approx;
 }
 
-
 void LSH::findNearestNeighbors(Img* query,int n,string output){
 
     //Get n-approximate neighbours along with time metrics
@@ -107,9 +108,10 @@ void LSH::findNearestNeighbors(Img* query,int n,string output){
     set<pair<double, int>> N_approx = N_Approx(query,n); 
 
     cout<<N_approx.size()<<endl;
+
     time_t end_LSH;
     time(&end_LSH);
-    time_t tLSH = end_LSH - start_LSH;
+    this->t_lsh += end_LSH - start_LSH;
 
     //Get n-exact neighbours along with time metrics
     time_t start_exact;
@@ -119,7 +121,7 @@ void LSH::findNearestNeighbors(Img* query,int n,string output){
 
     time_t end_exact;
     time(&end_exact);
-    time_t tTrue = end_exact - start_exact;
+    this->t_true += end_exact - start_exact;
 
     ofstream outFile(output, ios::app);
     if (!outFile.is_open()) {
@@ -141,7 +143,6 @@ void LSH::findNearestNeighbors(Img* query,int n,string output){
         exact++;
     }
 
-    outFile<<"tLSH: <double> "<<tLSH<<" sec."<<endl<<"tTrue: <double> "<<tTrue<<" sec."<<endl<<endl;
     outFile.close();
 }
 

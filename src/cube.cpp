@@ -15,6 +15,14 @@ Cube::Cube(int d,int M,int probes,string inputFile) {
         this->hFuncs[i] = new hFunc(w,this->pxs);    
 }
 
+vector<int> Cube::f(vector<unsigned char> p) {
+
+    vector<int> cube_v 
+    for(int i = 0; i < this->d; i++) {
+
+    }
+}
+
 Cube::~Cube() {
 
     // Deallocate dynamically stored memory

@@ -75,8 +75,7 @@ int main (int argc, char* argv[]) {
         for(int i = 0; i < 2; i++) {
             Img* query_point = new Img(lsh.get_pxs(),i+1,query);
             lsh.findNearestNeighbors(query_point,N,output_file);
-        }    
-
+        }   
         do {
             cout<<"Would you like to continue execution for a different query dataset? Please enter y / N !"<<endl;
             cin >> answer;
@@ -84,5 +83,10 @@ int main (int argc, char* argv[]) {
         
     }while(answer == "y");
 
+    //Write time metrics into output file
+    ofstream outFile(output_file, ios::app); 
+    outFile<<"tLSH: <double> "<<lsh.get_tLSH()<<" sec."<<endl<<"tTrue: <double> "<<lsh.get_tTrue()<<" sec."<<endl<<endl;
+    outFile.close();
+    
     return 0;
 }
