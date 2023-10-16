@@ -46,7 +46,6 @@ int Cube::f(Img* img) {
 
 //Stores img into appropriate bucket
 void Cube::store(Img* img) {
-
     //Save image to its hashed bucket
     this->buckets[f(img)].push_back(img);
 }

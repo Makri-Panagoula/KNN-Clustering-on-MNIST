@@ -21,7 +21,6 @@ class hashTable {
         //A vector consisted of other vectors, one for each bucket,where we save a pair of the id and the Img*
         vector<vector<pair<Img*, int>>> buckets;        
     public :
-
         hashTable(int k ,int H_size, hFunc** funcs, int TableSize,int M);
         //g-function for hashing,returns a pair where fist is id and second bucket
         pair<int, int> g(Img* img);

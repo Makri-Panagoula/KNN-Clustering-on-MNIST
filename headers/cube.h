@@ -5,7 +5,6 @@
 #include "../headers/input.h"
 
 class Cube {
-
     private:
         //Input images dataset
         Input* imgs;     
