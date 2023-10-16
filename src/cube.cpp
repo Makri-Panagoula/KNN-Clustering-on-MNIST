@@ -28,21 +28,23 @@ Cube::Cube(int d,int M,int probes,Input* input) {
 }
 
 //Gets the pixels' vector and maps to a d-vector in {0,1}^d
-vector<int> Cube::f(Img* img) {
+int Cube::f(Img* img) {
 
-    vector<int> cube_v; 
+    int bucket = 0; 
     //Apply (f o h) function to p d times 
     for(int i = 0; i < this->d; i++) {
 
+        //Since the f(h(p)) contains binary values, we convert it to number by treating it as a binary
+        bucket += map_func(h(p)) * 2;
     }
+
 }
 
 //Stores img into appropriate bucket
 void Cube::store(Img* img) {
 
-    vector<int> project = f(img);
-    //Somehow convert to bucket number 
-    this->buckets[bucket].push_back(img);
+    //Save image to its hashed bucket
+    this->buckets[f(img)].push_back(img);
 }
 
 Cube::~Cube() {

@@ -20,13 +20,13 @@ class Cube {
         //H set functions
         hFunc** hFuncs;
         //A vector consisting of 2^d vectors,one for each bucket holding the images hashed to it
-        vector<vector<Img*>> buckets;   
+        vector<vector<Img*>> buckets;
+        //Maps h result to {0,1}
+        int map_func(int h);           
     public:
         Cube(int d,int M,int probes,Input* imgs);
-        //Maps h result to {0,1}
-        int map_function(int h);
-        //Gets the pixels' vector and maps to a d-vector in {0,1}^d
-        vector<int> f(Img* img);
+        //Gets the pixels' vector and hashes tp bucket
+        int f(Img* img);
         //stores img into appropriate bucket
         void store(Img* img);
         //Finds the n approximate and exact nearest neighbours from query point and updates output file with data and metrics

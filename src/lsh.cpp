@@ -47,7 +47,7 @@ set <pair<double, int>>  N_Exact(Img* query, Input* imgs) {
 }
 
 //Returns a set holding a pair (distnce,img_number) with the n-approximate neighbours
-set <pair<double, int>>  LSH::N_Approx(Img* query,int n) {
+set <pair<double, int>>  LSH::N_Approx(Img* query,int n, set<pair<double, int>>& r, int range) {
 
     //Out of all the potential neighbours, we compute euclidean distances, save them in an ascending ordered set and keep the best N ones
     set<pair<double, int>> N_approx;
@@ -62,18 +62,22 @@ set <pair<double, int>>  LSH::N_Approx(Img* query,int n) {
             double distance = query->euclideanDistance(cur_img);
             //save num of image i with the distance
             N_approx.insert(make_pair(distance, cur_img->imgNum()));
+            if (distance <= range) {
+                r.insert(make_pair(distance, cur_img->imgNum()));
+            }
         }
     }
     return N_approx;
 }
 
-void LSH::findNearestNeighbors(Img* query,int n,string output){
+void LSH::findNearestNeighbors(Img* query,int n,string output, int R){
 
     //Get n-approximate neighbours along with time metrics
     time_t start_LSH;
     time(&start_LSH);
 
-    set<pair<double, int>> N_approx = N_Approx(query,n); 
+    set<pair<double, int>> r;
+    set<pair<double, int>> N_approx = N_Approx(query, n, r, R); 
 
     cout<<N_approx.size()<<endl;
 
@@ -109,6 +113,12 @@ void LSH::findNearestNeighbors(Img* query,int n,string output){
         outFile<<"Nearest Neighbour-" << i + 1 << " :" << approx->second <<endl<< "distanceLSH: <double> " << approx->first <<endl<< "distanceTrue: <double> "<< exact->first<<endl;
         approx++;
         exact++;
+    }
+
+    // Write the contents of the set 'r' to the output file
+    outFile << "Set r:" << endl;
+    for (const auto& entry : r) {
+        outFile << "Distance: " << entry.first << " Image Number: " << entry.second << endl;
     }
 
     outFile.close();

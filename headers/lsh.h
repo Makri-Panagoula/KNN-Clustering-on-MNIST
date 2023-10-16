@@ -42,7 +42,7 @@ class LSH {
         //Input images dataset
         Input* imgs;
         //Returns a set with the n approximate neighbours of query point q stored as (distance, image number)
-        set <pair<double, int>>  N_Approx(Img* query,int n);
+        set <pair<double, int>>  N_Approx(Img* query,int n, set<pair<double, int>>& r, int range);
         //Total seconds for all the query runs of LSH algorithm
         double t_lsh;
         //Total seconds for all the query runs of bruteforce algorithm
@@ -50,7 +50,7 @@ class LSH {
     public:
         LSH(int L, int k, Input* input);
         //Finds the n approximate and exact nearest neighbours from query point and updates output file with data and metrics
-        void findNearestNeighbors(Img* query,int n,string output);
+        void findNearestNeighbors(Img* query,int n,string output,int R);
         //Returns total seconds for all the query runs of LSH algorithm
         double get_tLSH(){return this->t_lsh;};
         //Returns total seconds for all the query runs of bruteforce algorithm

@@ -12,7 +12,7 @@ LSH = main_lsh
 
 OBJL = main_lsh.o $(SRC)/lsh.o $(SRC)/img.o $(SRC)/hFunc.o $(SRC)/hashTable.o $(SRC)/input.o
 
-ARGSL = –d datasets/input.dat –q datasets/query.dat –k 3 -L 5 -ο output_lsh -Ν 11 -R 10
+ARGSL = –d datasets/input.dat –q datasets/query.dat –k 3 -L 5 -ο output_lsh -Ν 11 -R 2500
 
 $(LSH): $(OBJL)
 	$(CC) $(CFLAGS) $(OBJL) -o $(LSH) -lm -g
