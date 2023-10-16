@@ -32,11 +32,13 @@ class LSH {
         int H_size;
         int TableSize;
         hashTable** hashTables;
+        //H set functions
         hFunc** hFuncs;
+        //Input images dataset
         vector<Img*> imgs;
         set <pair<double, int>>  N_Approx(Img* query,int n);
     public:
-        LSH(int L, int k, std::string inputFile);
+        LSH(int L, int k, string inputFile);
         //Finds the n approximate and exact nearest neighbours from query point and updates output file with data and metrics
         void findNearestNeighbors(Img* query,int n,string output);
         //Finds all neighbours in distance R from query point and updates output file with results        

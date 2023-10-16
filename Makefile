@@ -8,7 +8,7 @@ CC = g++
 # Compile Options
 CFLAGS = -Wall -Werror -I -g -I$(HEADERS)
 
-LSH = main _lsh
+LSH = main_lsh
 
 OBJL = main_lsh.o $(SRC)/lsh.o $(SRC)/img.o $(SRC)/hFunc.o $(SRC)/hashTable.o
 
