@@ -24,11 +24,11 @@ class Cube {
         double t_cube;
         //Total seconds for all the query runs of bruteforce algorithm
         double t_true;        
-        //Maps h result to {0,1}
-        int map_func(int h_value, hFunc* h);           
+        //Returns a set holding a pair (distnce,img_number) with the n-approximate neighbours and initializes set r with approximate neighbours in radius r
+        set <pair<double, int>>  Approx(Img* query,int n, set<pair<double, int>>& r, int range);         
     public:
         Cube(int d,int M,int probes,Input* imgs);
-        //Gets the pixels' vector and hashes tp bucket
+        //Gets the pixels' vector and hashes to a bucket
         int f(Img* img);
         //stores img into appropriate bucket
         void store(Img* img);

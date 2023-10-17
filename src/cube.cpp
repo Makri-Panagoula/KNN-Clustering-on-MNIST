@@ -29,7 +29,16 @@ Cube::Cube(int d,int M,int probes,Input* input) {
         store(input->get_image(i));    
 }
 
-int Cube::map_func(int h_value , hFunc* h) {
+//Returns a set holding a pair (distnce,img_number) with the n-approximate neighbours and initializes set r with approximate neighbours in radius r
+set <pair<double, int>> Cube::Approx(Img* query,int n, set<pair<double, int>>& r, int range) {
+
+    //Out of all the potential neighbours, we compute euclidean distances, save them in an ascending ordered set and keep the best N ones
+    set<pair<double, int>> N_approx;
+    //Find query's bucket applying f
+    int bucket = f(query);
+    //Check neighbour buckets with increasing hamming distance until you have reached M datapoints(how are we supposed to use probes??)
+
+    return N_approx;
 }
 
 //Finds the n approximate and exact nearest neighbours as well as neighbours in radius R from query point and updates output file with data and metrics
@@ -88,15 +97,16 @@ void Cube::queryNeighbours(Img* query,int n,string output,int R) {
     outFile.close();    
 }
 
-//Gets the pixels' vector and maps to a d-vector in {0,1}^d
+//Gets the pixels' vector and maps to a d-vector in {0,1}^d which then converts to a decimal being its hashed bucket
 int Cube::f(Img* img) {
 
     int bucket = 0; 
-    //Apply (f o h) function to p d times 
+    //Apply (f o h)_i function to p for every value of it
     for(int i = 0; i < this->d; i++) {
         int h_value = hFuncs[i]->h(img->get_p());
+        int binary = ;
         //Since the f(h(p)) contains binary values, we convert it to number by treating it as a binary
-        bucket += map_func(h_value,hFuncs[i]) * 2;
+        bucket += binary * 2;
     }
 
 }
