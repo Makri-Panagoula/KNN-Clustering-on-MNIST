@@ -94,6 +94,10 @@ int main (int argc, char* argv[]) {
         
     }while(answer == "y");
 
+    //Write time metrics into output file
+    ofstream outFile(output_file, ios::app); 
+    outFile<<"tHypercube: <double> "<<cube.get_tCube()<<" sec."<<endl<<"tTrue: <double> "<<cube.get_tTrue()<<" sec."<<endl<<endl;
+    outFile.close();
     delete imgs;
     return 0;
 }

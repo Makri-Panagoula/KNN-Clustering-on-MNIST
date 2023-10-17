@@ -83,7 +83,7 @@ void Cube::queryNeighbours(Img* query,int n,string output,int R) {
 
     //Iterate through sets and write in output file
     for (int i = 0; i < maxNeighbors; i++) { 
-        outFile<<"Nearest Neighbour-" << i + 1 << " :" << approx->second <<endl<< "distanceLSH: <double> " << approx->first <<endl<< "distanceTrue: <double> "<< exact->first<<endl;
+        outFile<<"Nearest Neighbour-" << i + 1 << " :" << approx->second <<endl<< "distanceHypercube: <double> " << approx->first <<endl<< "distanceTrue: <double> "<< exact->first<<endl;
         approx++;
         exact++;
     }
