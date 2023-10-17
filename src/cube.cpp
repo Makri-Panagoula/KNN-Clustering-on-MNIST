@@ -7,7 +7,9 @@ Cube::Cube(int d,int M,int probes,Input* input) {
     this->M = M;
     this->probes = 5;
     this->w = 5;
-    this->imgs = imgs;
+    this->imgs = input;
+    this->t_cube = 0;
+    this->t_true = 0;
 
     //Creating d h_functions (one for every dimension)
     this->hFuncs = new hFunc*[d];
@@ -28,7 +30,62 @@ Cube::Cube(int d,int M,int probes,Input* input) {
 }
 
 int Cube::map_func(int h_value , hFunc* h) {
-    return h_value > h->get_median();
+}
+
+//Finds the n approximate and exact nearest neighbours as well as neighbours in radius R from query point and updates output file with data and metrics
+void Cube::queryNeighbours(Img* query,int n,string output,int R) {
+
+    //Get n-approximate,r-approximate neighbours along with time metrics
+    time_t startCube;
+    time(&startCube);
+
+    set<pair<double, int>> r;
+    set<pair<double, int>> N_approx = Approx(query, n, r, R); 
+
+    cout<<N_approx.size()<<endl;
+
+    time_t endCube;
+    time(&endCube);
+    this->t_cube += endCube - startCube;
+
+    //Get n-exact neighbours along with time metrics
+    time_t start_exact;
+    time(&start_exact);
+
+    set<pair<double, int>> N_exact = imgs->N_Exact(query);
+
+    time_t end_exact;
+    time(&end_exact);
+    this->t_true += end_exact - start_exact;
+
+
+    ofstream outFile(output, ios::app);
+    if (!outFile.is_open()) {
+        cout << "Failed to open the output file." << endl;
+        exit;
+    }    
+
+    outFile << "Query: "<<query->imgNum()<<endl;
+   
+    //takes the first n neighbors or less if there aren't enough
+    int maxNeighbors = min((int)N_approx.size(), n); 
+    auto approx = N_approx.begin();
+    auto exact = N_exact.begin();
+
+    //Iterate through sets and write in output file
+    for (int i = 0; i < maxNeighbors; i++) { 
+        outFile<<"Nearest Neighbour-" << i + 1 << " :" << approx->second <<endl<< "distanceLSH: <double> " << approx->first <<endl<< "distanceTrue: <double> "<< exact->first<<endl;
+        approx++;
+        exact++;
+    }
+
+    // Write the contents of the set 'r' to the output file
+    outFile << "Set r:" << endl;
+    for (const auto& entry : r) {
+        outFile << "Distance: " << entry.first << " Image Number: " << entry.second << endl;
+    }
+
+    outFile.close();    
 }
 
 //Gets the pixels' vector and maps to a d-vector in {0,1}^d

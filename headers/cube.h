@@ -20,6 +20,10 @@ class Cube {
         hFunc** hFuncs;
         //A vector consisting of 2^d vectors,one for each bucket holding the images hashed to it
         vector<vector<Img*>> buckets;
+        //Total seconds for all the query runs of cube algorithm
+        double t_cube;
+        //Total seconds for all the query runs of bruteforce algorithm
+        double t_true;        
         //Maps h result to {0,1}
         int map_func(int h_value, hFunc* h);           
     public:
@@ -30,5 +34,9 @@ class Cube {
         void store(Img* img);
         //Finds the n approximate and exact nearest neighbours as well as neighbours in radius R from query point and updates output file with data and metrics
         void queryNeighbours(Img* query,int n,string output,int R);
+        //Returns total seconds for all the query runs of LSH algorithm
+        double get_tCube(){return this->t_cube;}
+        //Returns total seconds for all the query runs of bruteforce algorithm
+        double get_tTrue(){return this->t_true;}     
         ~Cube();
 };

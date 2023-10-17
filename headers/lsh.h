@@ -41,8 +41,8 @@ class LSH {
         hFunc** hFuncs;
         //Input images dataset
         Input* imgs;
-        //Returns a set with the n approximate neighbours of query point q stored as (distance, image number)
-        set <pair<double, int>>  N_Approx(Img* query,int n, set<pair<double, int>>& r, int range);
+        //Returns a set holding a pair (distnce,img_number) with the n-approximate neighbours and initializes set r with approximate neighbours in radius r
+        set <pair<double, int>>  Approx(Img* query,int n, set<pair<double, int>>& r, int range);
         //Total seconds for all the query runs of LSH algorithm
         double t_lsh;
         //Total seconds for all the query runs of bruteforce algorithm
