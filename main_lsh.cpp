@@ -76,7 +76,7 @@ int main (int argc, char* argv[]) {
         //Read a small sample of images in the query dataset and perform the algorithms on them
         for(int i = 0; i < 2; i++) {
             Img* query_point = new Img(imgs->get_pxs(),i+1,query);
-            lsh.findNearestNeighbors(query_point,N,output_file,R);
+            lsh.queryNeighbours(query_point,N,output_file,R);
         }   
         do {
             cout<<"Would you like to continue execution for a different query dataset? Please enter y / N !"<<endl;

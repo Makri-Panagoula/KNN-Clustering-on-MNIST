@@ -7,15 +7,12 @@ hFunc::hFunc(int w, int d) {
     normal_distribution <double> distribution(0.0, 1.0);
 
     vector<double> v(d);
-    vector<unsigned char> max(d);
 
     for (int i = 0; i < d; i++) {
         double number = distribution(v_generator);
         v[i] = number;
-        max[i] = 255;
     }
-    int max_h = h(max);
-    this->median = max_h/2 ;
+
     this->v = v;
     this->w = w;
 }

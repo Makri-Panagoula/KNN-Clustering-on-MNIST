@@ -43,6 +43,20 @@ Input::Input(string inputFile) {
     input.close();
 }
 
+// Brute-force function to calculate the distance of q to all points in the dataset and return an ordered set containing pairs in the format (distance,img number)
+set <pair<double, int>>  Input::N_Exact(Img* query) {
+
+    set<pair<double, int>> distances;
+
+    for (int i = 0; i < img_count; i++) {
+        Img* img = imgs[i];
+        double distance = query->euclideanDistance(img);
+        distances.insert(make_pair(distance, img->imgNum()));
+    }
+
+    return distances;    
+}
+
 Input::~Input() {
     //Release dynamically allocated memory
     for(int i = 0; i < this->img_count; i++)

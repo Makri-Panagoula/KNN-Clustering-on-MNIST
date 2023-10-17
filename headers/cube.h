@@ -28,7 +28,7 @@ class Cube {
         int f(Img* img);
         //stores img into appropriate bucket
         void store(Img* img);
-        //Finds the n approximate and exact nearest neighbours from query point and updates output file with data and metrics
-        void findNearestNeighbors(Img* query,int n,string output);  
+        //Finds the n approximate and exact nearest neighbours as well as neighbours in radius R from query point and updates output file with data and metrics
+        void queryNeighbours(Img* query,int n,string output,int R);
         ~Cube();
 };

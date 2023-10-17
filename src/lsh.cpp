@@ -32,19 +32,6 @@ LSH::LSH(int L,int k,Input* input){
     }
 }
 
-// Brute-force function to calculate the distance of q to all points in the dataset and return an ordered set containing pairs in the format (distance,img number)
-set <pair<double, int>>  N_Exact(Img* query, Input* imgs) {
-
-    set<pair<double, int>> distances;
-
-    for (int i = 0; i < imgs->get_imgs(); i++) {
-        Img* img = imgs->get_image(i);
-        double distance = query->euclideanDistance(img);
-        distances.insert(make_pair(distance, img->imgNum()));
-    }
-
-    return distances;    
-}
 
 //Returns a set holding a pair (distnce,img_number) with the n-approximate neighbours
 set <pair<double, int>>  LSH::N_Approx(Img* query,int n, set<pair<double, int>>& r, int range) {
@@ -70,8 +57,8 @@ set <pair<double, int>>  LSH::N_Approx(Img* query,int n, set<pair<double, int>>&
     return N_approx;
 }
 
-void LSH::findNearestNeighbors(Img* query,int n,string output, int R){
-
+//Finds the n approximate and exact nearest neighbours as well as neighbours in radius R from query point and updates output file with data and metrics
+void LSH::queryNeighbours(Img* query,int n,string output,int R){
     //Get n-approximate neighbours along with time metrics
     time_t start_LSH;
     time(&start_LSH);
@@ -89,7 +76,7 @@ void LSH::findNearestNeighbors(Img* query,int n,string output, int R){
     time_t start_exact;
     time(&start_exact);
 
-    set<pair<double, int>> N_exact = N_Exact(query,imgs);
+    set<pair<double, int>> N_exact = imgs->N_Exact(query);
 
     time_t end_exact;
     time(&end_exact);
