@@ -160,7 +160,7 @@ int Cube::f(Img* img) {
     map<unsigned long,int>::iterator existing;
     //We need a probability distribution that considers all outcomes equally likely (as in flipping a coin) therefore uniform is the only option
     static default_random_engine b_generator;
-    static uniform_int_distribution<int> distribution(0,1);    
+    uniform_int_distribution<int> distribution(0,1);    
     //Apply (f o h)_i function to p d times
     for(int i = 0; i < this->d; i++) {
 

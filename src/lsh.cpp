@@ -40,7 +40,7 @@ set <pair<double, int>>  LSH::Approx(Img* query,int n, set<pair<double, int>>& r
     set<pair<double, int>> N_approx;
     //For every hashtable find query's bucket(without saving)
     for(int i = 0; i < L; i++) {
-        pair<int,int> hashed = hashTables[i]->g(query);
+        pair<unsigned int,unsigned int> hashed = hashTables[i]->g(query);
         //Get a vector of images in the same bucket as the query that have the same id as well
         vector<Img*> in_bucket = hashTables[i]->same_bucket(hashed);
         //Compute distance for every neighbour image in the same bucket and save alon with img number in the set

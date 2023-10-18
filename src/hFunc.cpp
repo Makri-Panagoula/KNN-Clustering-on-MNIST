@@ -22,8 +22,9 @@ unsigned int hFunc:: h(vector<unsigned char> p) {
     int dot_prod = inner_product(p.begin(),p.end(),this->v.begin(),0);
 
     if (dot_prod < 0) {
+
         //A vector's magnitude is the square root of its inner product with itself
-        int sum_squares = inner_product( p.begin(), p.end(), p.begin(), 0 );
+        unsigned int sum_squares = inner_product( p.begin(), p.end(), p.begin(), 0 );
         double norm_p = sqrt(sum_squares);        
         transform(p.begin(), p.end(), p.begin(), [norm_p](unsigned char &c){ return c/norm_p; });
         //Repeat for v
