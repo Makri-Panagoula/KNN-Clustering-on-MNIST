@@ -26,14 +26,13 @@ Cube::Cube(int d,int M,int probes,Input* input) {
         vector<Img*> bucket;
         this->buckets.push_back(bucket);
     }      
-    cout<<"before inserting"<<endl;
 
     //For every image in the training dataset save it into the appropriate structures
-    for(int i = 0; i < 2; i++) 
+    for(int i = 0; i < input->get_imgs(); i++) 
         store(input->get_image(i));    
 }
 
-set<int> Hamming(string binary,int i,int ham_dist,set<string>& buckets) {
+void Hamming(string binary,int i,int ham_dist,set<string>& buckets) {
     if (ham_dist == 0) {
         buckets.insert(binary);
         return;
@@ -85,12 +84,12 @@ set <pair<double, int>> Cube::Approx(Img* query,int n, set<pair<double, int>>& r
                     r.insert(make_pair(distance, cur_img->imgNum()));
 
                 //We have examined max datapoints 
-                if(++datapoints == M)
+                if(++datapoints == this->M)
                     return N_approx;
             }
 
             //We have examined max neighbour buckets
-            if(++checked_buckets == probes )
+            if(++checked_buckets == this->probes )
                 return N_approx;
         }
     }

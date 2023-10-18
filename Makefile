@@ -22,9 +22,9 @@ run_lsh : $(LSH)
 
 CUBE = main_cube 
 
-OBJC = main_cube.o $(SRC)/img.o $(SRC)/hFunc.o $(SRC)/input.o $(SRC)/cube.o $(SRC)/hamming.o
+OBJC = main_cube.o $(SRC)/img.o $(SRC)/hFunc.o $(SRC)/input.o $(SRC)/cube.o 
 
-ARGSC =  –d datasets/input.dat –q datasets/query.dat –k 14 -M 10 -probes 2 -ο output_cube -Ν 1 -R 10000
+ARGSC =  –d datasets/input.dat –q datasets/query.dat –k 14 -M 20000 -probes 200 -ο output_cube -Ν 10 -R 10000
 
 $(CUBE): $(OBJC)
 	$(CC) $(CFLAGS) $(OBJC) -o $(CUBE) -lm -g

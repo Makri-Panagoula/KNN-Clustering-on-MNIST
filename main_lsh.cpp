@@ -77,6 +77,7 @@ int main (int argc, char* argv[]) {
         for(int i = 0; i < 2; i++) {
             Img* query_point = new Img(imgs->get_pxs(),i+1,query);
             lsh.queryNeighbours(query_point,N,output_file,R);
+            delete query_point;
         }   
         do {
             cout<<"Would you like to continue execution for a different query dataset? Please enter y / N !"<<endl;

@@ -44,6 +44,5 @@ class Cube {
         double get_tCube(){return this->t_cube;}
         //Returns total seconds for all the query runs of bruteforce algorithm
         double get_tTrue(){return this->t_true;}     
-        set<int> searchHammingDistance(int bucket, int hammingDistance, int maxDistance);
         ~Cube();
 };
