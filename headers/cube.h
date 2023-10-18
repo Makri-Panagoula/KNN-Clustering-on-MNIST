@@ -1,6 +1,7 @@
 #pragma once
 #include <stdlib.h>  
-#include <vector>  
+#include <vector> 
+#include <map>  
 #include "../headers/hFunc.h"
 #include "../headers/input.h"
 
@@ -16,6 +17,8 @@ class Cube {
         int d;
         //Parameter for h functions
         int w; 
+        //d maps of h values -> {0,1} , one for every f_i in order to ensure constistency
+        vector<map<unsigned int, int>> f_values;
         //H set functions
         hFunc** hFuncs;
         //A vector consisting of 2^d vectors,one for each bucket holding the images hashed to it

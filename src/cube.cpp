@@ -11,10 +11,13 @@ Cube::Cube(int d,int M,int probes,Input* input) {
     this->t_cube = 0;
     this->t_true = 0;
 
-    //Creating d h_functions (one for every dimension)
+    //Creating d h_functions (one for every dimension) and d maps (one for every f_i)
     this->hFuncs = new hFunc*[d];
-    for(int i = 0; i < d; i++)
+    for(int i = 0; i < d; i++) {
         this->hFuncs[i] = new hFunc(w,imgs->get_pxs());  
+        map<unsigned int, int> f_value;
+        this->f_values[i] = f_value;
+    }
 
     //The vertices are essentially our buckets
     double vertices = pow(2.0,d);
@@ -100,15 +103,27 @@ void Cube::queryNeighbours(Img* query,int n,string output,int R) {
 //Gets the pixels' vector and maps to a d-vector in {0,1}^d which then converts to a decimal being its hashed bucket
 int Cube::f(Img* img) {
 
-    int bucket = 0; 
+    int bucket = 0;
+    int binary;
+    map<unsigned int,int>::iterator existing;
+    //We need a probability distribution that considers all outcomes equally likely (as in flipping a coin) therefore uniform is the only option
+    static default_random_engine b_generator;
+    uniform_int_distribution<int> distribution(0,1);    
     //Apply (f o h)_i function to p for every value of it
     for(int i = 0; i < this->d; i++) {
         int h_value = hFuncs[i]->h(img->get_p());
-        int binary = ;
+        if((existing = f_values[i].find(h_value)) != f_values[i].end())
+            binary = existing->second;
+        else {
+            //Randomly decide on {0,1}
+            binary = distribution(b_generator);
+            //Insert new h_value to reference later on
+            f_values[i].insert({h_value,binary});
+        }
         //Since the f(h(p)) contains binary values, we convert it to number by treating it as a binary
         bucket += binary * 2;
     }
-
+    return bucket;
 }
 
 //Stores img into appropriate bucket
