@@ -81,11 +81,11 @@ int main (int argc, char* argv[]) {
             cout << "Failed to read query dataset file!" << endl;
             exit;
         }        
-        //Read a small sample of images in the query dataset and perform the algorithms on them
-        for(int i = 0; i < 2; i++) {
-            Img* query_point = new Img(imgs->get_pxs(),i+1,query);
-            cube.queryNeighbours(query_point,N,output_file,R);
-        }    
+        // //Read a small sample of images in the query dataset and perform the algorithms on them
+        // for(int i = 0; i < 2; i++) {
+        //     Img* query_point = new Img(imgs->get_pxs(),i+1,query);
+        //     cube.queryNeighbours(query_point,N,output_file,R);
+        // }    
 
         do {
             cout<<"Would you like to continue execution for a different query dataset? Please enter y / N !"<<endl;
@@ -94,6 +94,15 @@ int main (int argc, char* argv[]) {
         
     }while(answer == "y");
 
+    set<int> neighbours = cube.searchHammingDistance(0,0,2);
+    set<int>::iterator itr;
+    cout<<neighbours.size()<<endl;
+    // Displaying set elements
+    for (itr = neighbours.begin(); 
+        itr != neighbours.end(); itr++) 
+    {
+        cout << *itr << "Hamming 1 "<<endl;
+    }    
     //Write time metrics into output file
     ofstream outFile(output_file, ios::app); 
     outFile<<"tHypercube: <double> "<<cube.get_tCube()<<" sec."<<endl<<"tTrue: <double> "<<cube.get_tTrue()<<" sec."<<endl<<endl;

@@ -15,8 +15,8 @@ Cube::Cube(int d,int M,int probes,Input* input) {
     this->hFuncs = new hFunc*[d];
     for(int i = 0; i < d; i++) {
         this->hFuncs[i] = new hFunc(w,imgs->get_pxs());  
-        map<unsigned int, int> f_value;
-        this->f_values[i] = f_value;
+        map<unsigned long, int> f_value;
+        this->f_values.push_back(f_value);
     }
 
     //The vertices are essentially our buckets
@@ -26,10 +26,25 @@ Cube::Cube(int d,int M,int probes,Input* input) {
         vector<Img*> bucket;
         this->buckets.push_back(bucket);
     }      
+    cout<<"before inserting"<<endl;
 
     //For every image in the training dataset save it into the appropriate structures
-    for(int i = 0; i < input->get_imgs(); i++) 
+    for(int i = 0; i < 2; i++) 
         store(input->get_image(i));    
+}
+
+set<int> Hamming(string binary,int i,int ham_dist,set<string>& buckets) {
+    if (ham_dist == 0) {
+        buckets.insert(binary);
+        return;
+    }
+    if (i < 0) return;
+    // flip current bit doing xor with 1
+    binary[i] ^= 1;
+    Hamming(binary, i-1, ham_dist-1, buckets);
+    // or don't flip it (flip it again to undo)
+    binary[i] ^= 1;
+    Hamming(binary, i-1, ham_dist, buckets);
 }
 
 //Returns a set holding a pair (distnce,img_number) with the n-approximate neighbours and initializes set r with approximate neighbours in radius r
@@ -39,8 +54,46 @@ set <pair<double, int>> Cube::Approx(Img* query,int n, set<pair<double, int>>& r
     set<pair<double, int>> N_approx;
     //Find query's bucket applying f
     int bucket = f(query);
-    //Check neighbour buckets with increasing hamming distance until you have reached M datapoints(how are we supposed to use probes??)
+    //Convert to binary string in order to perform hamming distance
+    string binary = bitset<32>(bucket).to_string();   
+    //Neighbour vertices from bucket
+    set<string> vertices;
+    set<string>::iterator vertex;
+    //Total datapoints checked
+    int datapoints = 0;
+    //Total buckets checked    
+    int checked_buckets = 0;
+    //Check buckets with increasing Hamming distance from 0 (for hashed bucket) to d 
+    for(int dist = 0; dist <= d; dist++) { 
 
+        //Check neighbour buckets with increasing hamming distance until you have reached M datapoints or probes neighbour buckets
+        Hamming(binary,31,dist,vertices);
+        for(vertex = vertices.begin(); vertex!= vertices.end(); vertex++) {
+
+            unsigned long neighbour = stoul(*vertex, nullptr, 10);
+            vector<Img*> in_bucket = this->buckets[neighbour];
+
+            //Traverse datapoints of its bucket and add them to N_approx and r set if suitable
+            for(int i = 0; i < in_bucket.size(); i++) {
+
+                Img* cur_img = in_bucket[i];
+                double distance = query->euclideanDistance(cur_img);
+                //save num of image i with the distance
+                N_approx.insert(make_pair(distance, cur_img->imgNum()));
+
+                if (distance <= range) 
+                    r.insert(make_pair(distance, cur_img->imgNum()));
+
+                //We have examined max datapoints 
+                if(++datapoints == M)
+                    return N_approx;
+            }
+
+            //We have examined max neighbour buckets
+            if(++checked_buckets == probes )
+                return N_approx;
+        }
+    }
     return N_approx;
 }
 
@@ -105,13 +158,15 @@ int Cube::f(Img* img) {
 
     int bucket = 0;
     int binary;
-    map<unsigned int,int>::iterator existing;
+    map<unsigned long,int>::iterator existing;
     //We need a probability distribution that considers all outcomes equally likely (as in flipping a coin) therefore uniform is the only option
     static default_random_engine b_generator;
-    uniform_int_distribution<int> distribution(0,1);    
-    //Apply (f o h)_i function to p for every value of it
+    static uniform_int_distribution<int> distribution(0,1);    
+    //Apply (f o h)_i function to p d times
     for(int i = 0; i < this->d; i++) {
-        int h_value = hFuncs[i]->h(img->get_p());
+
+    unsigned int h_value = hFuncs[i]->h(img->get_p());
+        //Check if h value has already been matched with an f value,where in that case for consistency we have to keep that f value
         if((existing = f_values[i].find(h_value)) != f_values[i].end())
             binary = existing->second;
         else {

@@ -1,7 +1,9 @@
 #pragma once
 #include <stdlib.h>  
 #include <vector> 
-#include <map>  
+#include <map> 
+#include <bitset>  
+#include <string>
 #include "../headers/hFunc.h"
 #include "../headers/input.h"
 
@@ -18,7 +20,7 @@ class Cube {
         //Parameter for h functions
         int w; 
         //d maps of h values -> {0,1} , one for every f_i in order to ensure constistency
-        vector<map<unsigned int, int>> f_values;
+        vector<map<unsigned long, int>> f_values;
         //H set functions
         hFunc** hFuncs;
         //A vector consisting of 2^d vectors,one for each bucket holding the images hashed to it
@@ -29,6 +31,7 @@ class Cube {
         double t_true;        
         //Returns a set holding a pair (distnce,img_number) with the n-approximate neighbours and initializes set r with approximate neighbours in radius r
         set <pair<double, int>>  Approx(Img* query,int n, set<pair<double, int>>& r, int range);         
+       
     public:
         Cube(int d,int M,int probes,Input* imgs);
         //Gets the pixels' vector and hashes to a bucket
@@ -41,5 +44,6 @@ class Cube {
         double get_tCube(){return this->t_cube;}
         //Returns total seconds for all the query runs of bruteforce algorithm
         double get_tTrue(){return this->t_true;}     
+        set<int> searchHammingDistance(int bucket, int hammingDistance, int maxDistance);
         ~Cube();
 };

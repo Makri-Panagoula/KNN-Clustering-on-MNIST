@@ -20,11 +20,17 @@ $(LSH): $(OBJL)
 run_lsh : $(LSH)
 	./$(LSH) $(ARGSL)
 
-CUBE = main_cube $(SRC)/img.o $(SRC)/hFunc.o
+CUBE = main_cube 
 
-OBJC = main_cube.o 
+OBJC = main_cube.o $(SRC)/img.o $(SRC)/hFunc.o $(SRC)/input.o $(SRC)/cube.o $(SRC)/hamming.o
 
 ARGSC =  –d datasets/input.dat –q datasets/query.dat –k 14 -M 10 -probes 2 -ο output_cube -Ν 1 -R 10000
+
+$(CUBE): $(OBJC)
+	$(CC) $(CFLAGS) $(OBJC) -o $(CUBE) -lm -g
+
+run_cube : $(CUBE)
+	./$(CUBE) $(ARGSC)
 
 clean:
 	rm -f $(OBJL) $(LSH) $(OBJC) $(CUBE) output*
