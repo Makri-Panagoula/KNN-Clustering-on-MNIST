@@ -5,8 +5,7 @@
 #include <unistd.h>
 #include <sstream>
 #include "headers/lsh.h"
-#include "headers/img.h"
-// #include "headers/input.h"
+#include "headers/cluster.h"
 #include <map>
 
 using namespace std;
@@ -52,56 +51,43 @@ int main (int argc, char* argv[]) {
         argv++;                     
     }    
 
+    //Read image input dataset
+    Input* imgs = new Input(input_file);
+    int clusters = parameters["number_of_clusters:"];
+    //Initialization of centroids
+    vector<Img*> centroids = kmeans_init(imgs, clusters);
 
-    // //Read image input dataset
-    // Input* imgs = new Input(input_file);
-    // //Create Search Structure where we are only gonna be saving the centroids
-    // //(since we want to find the nearest neighbour out of them and non-centroid point in its iteration)
-    // if ( ! strcmp(argv[8],"Classic") ) {
+    int changed;
+    do {
+        //Number of clusters whose centroids have changed
+        changed = 0;
+        //For every datapoint , assign it to closest centroid and if datapoint updated , update centroid
+        for(int i = 0 ; i < imgs->get_imgs(); i++) {
 
-    // }
-    // else if(! strcmp(argv[8],"LSH") ) {
+            Img* point = imgs->get_image(i);
+            int prev_cluster = point->get_flag();
+            //Find closest cluster according to method asked
+            int closest = find_cluster(point, centroids);
+            if(point->update_flag(closest)) {
+                //Update centroids in previous cluster(if it wasn't -1) and closest
+            }
+        }
 
-    // }
-    // else if(! strcmp(argv[8],"Hypercube") ) {
-
-    // }    
-    // LSH lsh(L,k,imgs);
-
-    // int runs = 0 ;
-    // string answer;
-    // do {
-    //     if ( runs > 0 || query_file.empty())  {  //If user hasn't passed it as command line argument 
-    //         cout<<"Please give the path to query dataset file !"<<endl;
-    //         cin >> query_file;
-    //     }
-    //     if ( runs++ > 0 || output_file.empty())  {  //If user hasn't passed it as command line argument 
-    //         cout<<"Please give the path to output file !"<<endl;
-    //         cin >> output_file;
-    //     }    
-    //     ifstream query(query_file, ios::binary | ios::in);
-    //     if(! query.is_open()) {
-    //         cout << "Failed to read query dataset file!" << endl;
-    //         exit;
-    //     }        
-    //     //Read a small sample of images in the query dataset and perform the algorithms on them
-    //     for(int i = 0; i < 2; i++) {
-    //         Img* query_point = new Img(imgs->get_pxs(),i+1,query);
-    //         lsh.queryNeighbours(query_point,N,output_file,R);
-    //         delete query_point;
-    //     }   
-    //     do {
-    //         cout<<"Would you like to continue execution for a different query dataset? Please enter y / N !"<<endl;
-    //         cin >> answer;
-    //     }while(answer != "y" && answer != "N");
-        
-    // }while(answer == "y");
-
-    // //Write time metrics into output file
-    // ofstream outFile(output_file, ios::app); 
-    // outFile<<"tLSH: <double> "<<lsh.get_tLSH()<<" sec."<<endl<<"tTrue: <double> "<<lsh.get_tTrue()<<" sec."<<endl<<endl;
-    // outFile.close();
+    } while (changed < 2); 
     
-    // delete imgs;
+    //Create Search Structure where we are only gonna be saving the centroids
+    //(since we want to find the nearest neighbour out of them and non-centroid point in its iteration)
+    if (!strcmp(argv[8],"Classic") ) {
+
+    }
+    else if(!strcmp(argv[8],"LSH") ) {
+
+    }
+    else if(!strcmp(argv[8],"Hypercube") ) {
+
+    }    
+
+    
+    delete imgs;
     return 0;
 }

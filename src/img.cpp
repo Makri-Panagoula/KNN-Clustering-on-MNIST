@@ -9,6 +9,13 @@ Img::Img(int pxs,int num,ifstream& input) {
         input.read((char*)&pixel,1);
         this->p.push_back((unsigned char)pixel);
     }
+    this->flag = -1;     //-1 means it's not yet part of any cluster
+}
+
+int Img::update_flag(int new_cluster) {
+    int changed = new_cluster != this->flag;
+    this->flag = new_cluster;
+    return changed;
 }
 
 double Img::euclideanDistance(Img* img_b) {
