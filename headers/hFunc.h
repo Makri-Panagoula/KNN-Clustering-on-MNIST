@@ -11,12 +11,12 @@ using namespace std;
 
 class hFunc {
     private:
-        //Randomized v vector of the function
+        //Randomized single precision v vector of the function
         vector<double> v;
         //W parameter for function 
         int w;
-    public :
-        hFunc(int w ,int d);
+    public:
+        hFunc(int w, int d);
         unsigned int h(vector<unsigned char> p);
         ~hFunc(){};
 };

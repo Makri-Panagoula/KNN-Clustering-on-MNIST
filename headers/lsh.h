@@ -21,7 +21,6 @@ using namespace std;
 int LittleEndian (int word);
 
 class LSH {
-
     private:
         //Number of h-functions out of which every g function will be constructed
         int k;

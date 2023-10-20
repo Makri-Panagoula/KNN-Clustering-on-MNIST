@@ -32,5 +32,17 @@ $(CUBE): $(OBJC)
 run_cube : $(CUBE)
 	./$(CUBE) $(ARGSC)
 
+CLUSTER = main_cluster
+
+OBJCL = main_cluster.o $(SRC)/img.o $(SRC)/hFunc.o $(SRC)/input.o $(SRC)/cube.o 
+
+ARGSCL = –i datasets/input.dat –c cluster.conf -o output_cluster -complete <optional> -m <method: Classic OR LSH or Hypercube>
+
+$(CLUSTER): $(OBJCL)
+	$(CC) $(CFLAGS) $(OBJCL) -o $(CLUSTER) -lm -g
+
+run_cluster : $(CLUSTER)
+	./$(CLUSTER) $(ARGSCL)
+
 clean:
-	rm -f $(OBJL) $(LSH) $(OBJC) $(CUBE) output*
+	rm -f $(OBJL) $(LSH) $(OBJC) $(CUBE) $(OBJCL) $(CLUSTER) output*
