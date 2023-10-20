@@ -16,7 +16,7 @@ hFunc::hFunc(int w, int d) : v(d){
 unsigned int hFunc:: h(vector<unsigned char> p) {
     // for(int i = 0; i < this->v.size(); i++)
     //     cout<<"v : "<<this->v[i]<<endl;    
-    // double inner_prod = inner_product(p.begin(),p.end(),this->v.begin(),0.0);
+    double inner_prod = inner_product(p.begin(),p.end(),this->v.begin(),0.0);
 
     if (inner_prod < 0) {
         //A vector's magnitude is the square root of its inner product with itself
