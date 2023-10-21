@@ -45,4 +45,4 @@ run_cluster : $(CLUSTER) $(LSH) $(CUBE)
 	./$(CLUSTER) $(ARGSCL)
 
 clean:
-	rm -f $(OBJ_LSH) $(LSH) $(OBJC) $(CUBE) $(OBJL) $(CLUSTER) output*
+	rm -f *.o output*
