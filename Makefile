@@ -34,7 +34,7 @@ run_cube : $(CUBE)
 
 CLUSTER = main_cluster
 OBJC = $(SRC)/img.o $(SRC)/hFunc.o $(SRC)/input.o $(SRC)/cube.o 
-OBJ_CL = main_cluster.o $(OBJ_L) $(SRC)/cube.o
+OBJ_CL = main_cluster.o $(OBJ_L) $(SRC)/cube.o $(SRC)/cluster.o
 
 ARGSCL = –i datasets/input.dat –c cluster.conf -o output_cluster -m Classic
 

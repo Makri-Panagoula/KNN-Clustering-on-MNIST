@@ -53,11 +53,19 @@ int main (int argc, char* argv[]) {
 
     //Read image input dataset
     Input* imgs = new Input(input_file);
-    int clusters = parameters["number_of_clusters:"];
+    int k_clusters = parameters["number_of_clusters:"];
     //Initialization of centroids
-    vector<Img*> centroids = kmeans_init(imgs, clusters);
-
+    vector<Img*> centroids = kmeans_init(imgs, k_clusters);
+    vector<Cluster*> clusters;
+    //Initialize clusters with centroid
+    for(int i = 1; i <= k_clusters; i++) {
+        Cluster* cluster = new Cluster(centroids[i],i);
+        clusters.push_back(cluster);
+    }
     int changed;
+    int closest;
+    time_t startCluster;
+    time(&startCluster);    
     do {
         //Number of clusters whose centroids have changed
         changed = 0;
@@ -67,27 +75,56 @@ int main (int argc, char* argv[]) {
             Img* point = imgs->get_image(i);
             int prev_cluster = point->get_flag();
             //Find closest cluster according to method asked
-            int closest = find_cluster(point, centroids);
+            if(!strcmp(argv[8],"Classic") ) {
+                closest = find_cluster(point, clusters);
+            }
+            //If datapoint has changed cluster
             if(point->update_flag(closest)) {
                 //Update centroids in previous cluster(if it wasn't -1) and closest
+                if(prev_cluster != -1)
+                    clusters[prev_cluster]->remove_point(point, changed); 
+                clusters[closest]->insert_point(point, changed);
             }
         }
-
     } while (changed < 2); 
-    
+    //Keep track of ending time
+    time_t endCluster;
+    time(&endCluster);
+    double tCluster = endCluster - startCluster ;       
     //Create Search Structure where we are only gonna be saving the centroids
     //(since we want to find the nearest neighbour out of them and non-centroid point in its iteration)
-    if (!strcmp(argv[8],"Classic") ) {
 
+    // else if(!strcmp(argv[8],"LSH") ) {
+
+    // }
+    // else if(!strcmp(argv[8],"Hypercube") ) {
+
+    // }  
+    //Write time metrics into output file
+    ofstream outFile(output_file, ios::app); 
+    outFile<<"Algorithm: "<<argv[8]<<endl;
+    for(int i = 0; i < k_clusters; i++) {
+        outFile<<"CLUSTER-"<<i<<" size: "<<clusters[i]->size()<<" , centroid : ";
+        vector<unsigned char> centroid = clusters[i]->centroid()->get_p();
+        for(int j = 0; j < centroid.size(); j++) {
+            outFile<<centroid[i]<<" , ";
+        }
+        if(complete)
+            clusters[i]->display(outFile);
     }
-    else if(!strcmp(argv[8],"LSH") ) {
-
+    outFile<<"clustering time: "<<tCluster<<endl;
+    outFile<<"Silhouette: [ ";
+    double total_s = 0.0;
+    for(int i = 0; i < k_clusters; i++) {
+        double s_i = clusters[i]->silhouette(clusters);
+        outFile<<" , ";
+        total_s += s_i ; 
     }
-    else if(!strcmp(argv[8],"Hypercube") ) {
+    total_s/=k_clusters;
+    outFile<<total_s<<" ]"<<endl;
+    outFile.close();      
 
-    }    
 
-    
     delete imgs;
     return 0;
 }

@@ -25,5 +25,6 @@ class Img {
         //Updates cluster where image is assigned and returns true if it has changed
         int update_flag(int new_cluster);
         int get_flag(){return this->flag;}
+        void update_p(int i , unsigned char new_val) { this->p[i] = new_val;}
         ~Img(){};
 };

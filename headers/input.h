@@ -1,6 +1,7 @@
-#include "../headers/img.h"
+#pragma once
 #include <vector>
 #include <set>
+#include "../headers/img.h"
 
 class Input {
     private:
