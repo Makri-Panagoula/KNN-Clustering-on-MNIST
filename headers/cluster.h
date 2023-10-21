@@ -11,7 +11,7 @@
 
 class Cluster{
     private:
-        //the number of the cluster
+        //the number of the cluster varying from 1 to k-clusters
         int cluster;
         //structure that has the datapoints of the cluster
         list<Img*> datapoints;

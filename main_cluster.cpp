@@ -58,14 +58,17 @@ int main (int argc, char* argv[]) {
     vector<Img*> centroids = kmeans_init(imgs, k_clusters);
     vector<Cluster*> clusters;
     //Initialize clusters with centroid
-    for(int i = 1; i <= k_clusters; i++) {
-        Cluster* cluster = new Cluster(centroids[i],i);
+    for(int i = 0; i < k_clusters; i++) {
+        Cluster* cluster = new Cluster(centroids[i],i+1);
         clusters.push_back(cluster);
     }
+
     int changed;
     int closest;
+    //Keep track of ending time
     time_t startCluster;
     time(&startCluster);    
+    cout<<"before loop"<<endl;
     do {
         //Number of clusters whose centroids have changed
         changed = 0;
@@ -87,6 +90,8 @@ int main (int argc, char* argv[]) {
             }
         }
     } while (changed < 2); 
+    cout<<"after loop"<<endl;
+
     //Keep track of ending time
     time_t endCluster;
     time(&endCluster);
@@ -101,29 +106,31 @@ int main (int argc, char* argv[]) {
 
     // }  
     //Write time metrics into output file
-    ofstream outFile(output_file, ios::app); 
+    ofstream outFile(output_file); 
     outFile<<"Algorithm: "<<argv[8]<<endl;
+
     for(int i = 0; i < k_clusters; i++) {
-        outFile<<"CLUSTER-"<<i<<" size: "<<clusters[i]->size()<<" , centroid : ";
-        vector<unsigned char> centroid = clusters[i]->centroid()->get_p();
-        for(int j = 0; j < centroid.size(); j++) {
-            outFile<<centroid[i]<<" , ";
-        }
+        outFile<<"CLUSTER-"<<i+1<<" size: "<<clusters[i]->size()<<" , centroid : ";
+        // clusters[i]->centroid()->display_p(outFile);
+        outFile<<endl;
         if(complete)
             clusters[i]->display(outFile);
     }
-    outFile<<"clustering time: "<<tCluster<<endl;
-    outFile<<"Silhouette: [ ";
+
+    outFile<<endl<<"clustering time: "<<tCluster<<" sec."<<endl<<"Silhouette [";
+
     double total_s = 0.0;
+
     for(int i = 0; i < k_clusters; i++) {
         double s_i = clusters[i]->silhouette(clusters);
-        outFile<<" , ";
+        outFile<<s_i<<" , ";
         total_s += s_i ; 
     }
+
     total_s/=k_clusters;
     outFile<<total_s<<" ]"<<endl;
-    outFile.close();      
 
+    outFile.close();      
 
     delete imgs;
     return 0;

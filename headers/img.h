@@ -26,5 +26,6 @@ class Img {
         int update_flag(int new_cluster);
         int get_flag(){return this->flag;}
         void update_p(int i , unsigned char new_val) { this->p[i] = new_val;}
+        void display_p();
         ~Img(){};
 };
