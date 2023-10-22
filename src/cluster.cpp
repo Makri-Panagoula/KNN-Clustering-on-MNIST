@@ -5,6 +5,7 @@ using namespace std;
 Cluster::Cluster(Img* centroid,int cluster_num) {
     this->cluster = cluster_num;
     this->center = centroid;
+    this->datapoints.push_front(centroid);
 }
 
 Img* chooseNextCenter(const vector<Img*>& centroids, Input* imgs) {
@@ -85,7 +86,7 @@ void Cluster::remove_point(Img* point,int &changed) {
     //Calculating the new mean by the previous one
     for(int i = 0 ; i < new_point.size(); i++) {
         unsigned char p_i = (old_center[i] * len - new_point[i]) / (len - 1);
-        cout<<"Old value "<<(int)old_center[i]<<endl<<" new value "<<(int)p_i<<endl;
+        // cout<<"Old value "<<(int)old_center[i]<<endl<<" new value "<<(int)p_i<<endl;
         if(p_i != old_center[i] )
             changed++;        
         center->update_p(i,p_i);

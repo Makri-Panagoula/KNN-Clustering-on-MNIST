@@ -30,7 +30,8 @@ class Cluster{
         int num(){return this->cluster;}
         //Computes average distance of datapoint to all the datapoints in the cluster
         double avg_dist(Img* datapoint);
-        double silhouette(vector<Cluster*>& clusters);
+        double silhouette(vector<Cluster*> &clusters);
+        void updateCentroid(int &changed);
         ~Cluster(){};
 };
 

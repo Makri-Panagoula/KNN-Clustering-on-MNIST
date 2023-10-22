@@ -37,8 +37,7 @@ double Img::euclideanDistance(Img* img_b) {
     return distance;
 }
 
-void Img::display_p() {
+void Img::display_p(ofstream& output) {
     for(int i = 0; i < p.size(); i++)
-        cout<<(int)p[i]<<" , ";
-    cout<<endl<<endl;
+        output<<(int)p[i]<<" , ";
 }
