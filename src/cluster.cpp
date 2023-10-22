@@ -94,7 +94,6 @@ void Cluster::remove_point(Img* point,int &changed) {
     datapoints.remove(point);
 }
 
-
 //Inserts datapoint into cluster and updates accordingly the centroid
 void Cluster::insert_point(Img* point, int &changed){
 
@@ -114,6 +113,26 @@ void Cluster::insert_point(Img* point, int &changed){
     }
     datapoints.push_front(point);
 }
+
+// void Cluster::updateCentroid(int &changed) {
+//     int len = this->datapoints.size();
+//     list<Img*>::iterator it;
+//     int pxs = this->center->get_p().size();
+//     vector<unsigned char> old_center = this->center->get_p();
+//     // Update the centroid to be the median of all the cluster's points
+//     for (int i = 0; i < pxs; i++) {
+//         int sum = 0;
+//         for (it = datapoints.begin(); it != datapoints.end(); ++it){
+//             vector<unsigned char> p = (*it)->get_p();
+//             unsigned char p_i = p[i];
+//             sum += p[i]; 
+//         }
+//         sum /= len;
+//         if(old_center[i] != sum)
+            
+//         this->center->update_p(i,sum);
+//     }
+// }
 
 void Cluster::display(ofstream& outFile) {
     outFile<<endl<<"Images : ";
@@ -141,9 +160,7 @@ double Cluster::avg_dist(Img* datapoint) {
 }
 
 double Cluster::silhouette(vector<Cluster*>& clusters){
-    
     double s = 0;
-
     for (auto point1 = datapoints.begin(); point1 != datapoints.end(); point1++){
 
         //minimum distance between point1 and the other centroids    

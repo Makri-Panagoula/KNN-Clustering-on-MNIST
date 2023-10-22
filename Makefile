@@ -45,6 +45,10 @@ run_cluster : $(CLUSTER) $(LSH) $(CUBE)
 	./$(CLUSTER) $(ARGSCL)
 
 valgrind_cluster :  $(OBJ_CL)
-	valgrind --leak-check=full ./$(CLUSTER) $(ARGSCL)
+	valgrind --track-origins=yes --leak-check=full ./$(CLUSTER) $(ARGSCL)
+
+valgrind_lsh :	$(LSH)
+	valgrind ./$(LSH) $(ARGSL)
+
 clean:
 	rm -f $(OBJ_CL) $(OBJ_LSH) $(OBJ_CUBE) $(CUBE) $(LSH) $(CLUSTER) output*

@@ -22,7 +22,7 @@ class Cube {
         //d maps of h values -> {0,1} , one for every f_i in order to ensure constistency
         vector<map<unsigned long, int>> f_values;
         //H set functions
-        hFunc** hFuncs;
+        vector <hFunc*> hFuncs;
         //A vector consisting of 2^d vectors,one for each bucket holding the images hashed to it
         vector<vector<Img*>> buckets;
         //Total seconds for all the query runs of cube algorithm

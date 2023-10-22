@@ -1,7 +1,7 @@
 #include "../headers/lsh.h"
 
 
-LSH::LSH(int L,int k,Input* input){
+LSH::LSH(int L,int k,Input* input) : hashTables(L){
 
     //Setting algorithm's parameters
     this->k = k;
@@ -15,22 +15,21 @@ LSH::LSH(int L,int k,Input* input){
     this->imgs = input;
 
     //Creating the data structures
-    this->hFuncs = new hFunc*[this->H_size];
-
-    for(int i = 0; i < this->H_size; i++) 
-        this->hFuncs[i] = new hFunc(w,input->get_pxs());
-
-    this->hashTables = new hashTable*[L];
+    for(int i = 0; i < this->H_size; i++)  {
+        hFunc* h_i = new hFunc(w,input->get_pxs());
+        this->hFuncs.push_back(h_i);
+    }
+ 
     for(int i = 0; i < L; i++)
         this->hashTables[i] = new hashTable(k,this->H_size,this->hFuncs,TableSize,M);
     
-    // //For every image in the training dataset save it into the appropriate structures
-    // for(int i = 0; i < input->get_imgs(); i++) {
+    //For every image in the training dataset save it into the appropriate structures
+    for(int i = 0; i < input->get_imgs(); i++) {
         
-    //     //For every hashtable we save it into the proper bucket
-    //     for(int j = 0; j < L ; j++) 
-    //         this->hashTables[j]->store(input->get_image(i));
-    // }
+        //For every hashtable we save it into the proper bucket
+        for(int j = 0; j < L ; j++) 
+            this->hashTables[j]->store(input->get_image(i));
+    }
 }
 
 
@@ -119,11 +118,7 @@ LSH::~LSH() {
     for (int i = 0; i < this->H_size; i++) 
         delete this->hFuncs[i];
     
-    delete[] this->hFuncs;     
-
     for (int i = 0; i < this->L; i++) 
         delete this->hashTables[i];
     
-    delete[] this->hashTables;    
-
 }

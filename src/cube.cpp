@@ -1,6 +1,6 @@
 #include "../headers/cube.h"
 
-Cube::Cube(int d,int M,int probes,Input* input) {
+Cube::Cube(int d,int M,int probes,Input* input) : hFuncs(d){
 
     //Setting algorithm's parameters
     this->d = d;
@@ -12,7 +12,6 @@ Cube::Cube(int d,int M,int probes,Input* input) {
     this->t_true = 0;
 
     //Creating d h_functions (one for every dimension) and d maps (one for every f_i)
-    this->hFuncs = new hFunc*[d];
     for(int i = 0; i < d; i++) {
         this->hFuncs[i] = new hFunc(w,imgs->get_pxs());  
         map<unsigned long, int> f_value;
@@ -191,6 +190,4 @@ Cube::~Cube() {
     // Deallocate dynamically stored memory
     for (int i = 0; i < this->d; i++) 
         delete this->hFuncs[i];
-    
-    delete[] this->hFuncs;        
 }

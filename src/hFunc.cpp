@@ -8,6 +8,7 @@ hFunc::hFunc(int w, int d) : v(d){
     normal_distribution<double> distribution(0.0, 1.0);
     for (int i = 0; i < d; i++) {
         this->v[i] = distribution(v_generator);
+        // cout<<"--valuee--"<<this->v[i]<<endl;
     }
     this->w = w;
 }

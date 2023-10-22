@@ -2,27 +2,22 @@
 
 using namespace std;
 
-hashTable::hashTable(int k , int H_size, hFunc** H, int TableSize,int M) : r(k) {
+hashTable::hashTable(int k , int H_size, vector <hFunc*>& H, int TableSize,int M) : r(k) , funcs(k) {
 
     this->k = k;
     this->TableSize = TableSize;
     this->M = M;    
-    vector<unsigned char> p;
-    for(int i = 0; i < 784; i++)
-        p.push_back(1);
     //Initialize uniform distributor
     static default_random_engine generator;
-    uniform_real_distribution<double> distribution(0.0,H_size - 1);
+    uniform_real_distribution<double> distribution(0.0,H_size);
     //Initialize random seed
     srand (time(NULL));    
-    this->funcs = new hFunc*[k];
     //Choose uniformly the k functions from H that will be used for g and randomly the r-operands
     for(int i = 0; i < k ; i++) {
         int chosen = distribution(generator);
         this->funcs[i] = H[chosen];
         this->r[i] = rand() % M;
     }
-    this->funcs[2]->h(p);
 
     //Create a vector for every bucket
     for(int i = 0; i < TableSize; i++) {

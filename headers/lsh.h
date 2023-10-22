@@ -35,9 +35,9 @@ class LSH {
         //Number of buckets we choose every Hashtable to have
         int TableSize;
         //Array containing the pointers to each and every Hashtable
-        hashTable** hashTables;
+        vector<hashTable*> hashTables;
         //H set functions
-        hFunc** hFuncs;
+        vector<hFunc*> hFuncs;
         //Input images dataset
         Input* imgs;
         //Returns a set holding a pair (distnce,img_number) with the n-approximate neighbours and initializes set r with approximate neighbours in radius r
