@@ -10,8 +10,6 @@ LSH::LSH(int L,int k,Input* input) : hashTables(L){
     this->M = pow(2.0,32.0) - 5;
     this->TableSize = input->get_imgs() / 4;
     this->H_size = 30*k;
-    this->t_lsh = 0;
-    this->t_true = 0;
     this->imgs = input;
 
     //Creating the data structures
@@ -70,7 +68,7 @@ void LSH::queryNeighbours(Img* query,int n,string output,int R){
 
     time_t end_LSH;
     time(&end_LSH);
-    this->t_lsh += end_LSH - start_LSH;
+    double t_lsh = end_LSH - start_LSH;
 
     //Get n-exact neighbours along with time metrics
     time_t start_exact;
@@ -80,7 +78,7 @@ void LSH::queryNeighbours(Img* query,int n,string output,int R){
 
     time_t end_exact;
     time(&end_exact);
-    this->t_true += end_exact - start_exact;
+    double t_true = end_exact - start_exact;
 
     ofstream outFile(output, ios::app);
     if (!outFile.is_open()) {
@@ -101,6 +99,7 @@ void LSH::queryNeighbours(Img* query,int n,string output,int R){
         approx++;
         exact++;
     }
+    outFile<<"tLSH: <double> "<<t_lsh<<" sec."<<endl<<"tTrue: <double> "<<t_true<<" sec."<<endl<<endl;
 
     // Write the contents of the set 'r' to the output file
     outFile << "Set r:" << endl;

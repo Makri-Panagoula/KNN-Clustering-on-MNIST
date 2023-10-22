@@ -24,11 +24,7 @@ class Cube {
         //H set functions
         vector <hFunc*> hFuncs;
         //A vector consisting of 2^d vectors,one for each bucket holding the images hashed to it
-        vector<vector<Img*>> buckets;
-        //Total seconds for all the query runs of cube algorithm
-        double t_cube;
-        //Total seconds for all the query runs of bruteforce algorithm
-        double t_true;        
+        vector<vector<Img*>> buckets;     
         //Returns a set holding a pair (distnce,img_number) with the n-approximate neighbours and initializes set r with approximate neighbours in radius r
         set <pair<double, int>>  Approx(Img* query,int n, set<pair<double, int>>& r, int range);         
     public:
@@ -38,10 +34,6 @@ class Cube {
         //stores img into appropriate bucket
         void store(Img* img);
         //Finds the n approximate and exact nearest neighbours as well as neighbours in radius R from query point and updates output file with data and metrics
-        void queryNeighbours(Img* query,int n,string output,int R);
-        //Returns total seconds for all the query runs of Hypercube algorithm
-        double get_tCube(){return this->t_cube;}
-        //Returns total seconds for all the query runs of bruteforce algorithm
-        double get_tTrue(){return this->t_true;}     
+        void queryNeighbours(Img* query,int n,string output,int R);    
         ~Cube();
 };

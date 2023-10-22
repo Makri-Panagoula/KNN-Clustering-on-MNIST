@@ -8,8 +8,6 @@ Cube::Cube(int d,int M,int probes,Input* input) : hFuncs(d){
     this->probes = 5;
     this->w = 5;
     this->imgs = input;
-    this->t_cube = 0;
-    this->t_true = 0;
 
     //Creating d h_functions (one for every dimension) and d maps (one for every f_i)
     for(int i = 0; i < d; i++) {
@@ -109,7 +107,7 @@ void Cube::queryNeighbours(Img* query,int n,string output,int R) {
 
     time_t endCube;
     time(&endCube);
-    this->t_cube += endCube - startCube;
+    double t_cube = endCube - startCube;
 
     //Get n-exact neighbours along with time metrics
     time_t start_exact;
@@ -119,7 +117,7 @@ void Cube::queryNeighbours(Img* query,int n,string output,int R) {
 
     time_t end_exact;
     time(&end_exact);
-    this->t_true += end_exact - start_exact;
+    double t_true = end_exact - start_exact;
 
 
     ofstream outFile(output, ios::app);
@@ -141,6 +139,7 @@ void Cube::queryNeighbours(Img* query,int n,string output,int R) {
         approx++;
         exact++;
     }
+    outFile<<"tHyperCube: <double> "<<t_cube<<" sec."<<endl<<"tTrue: <double> "<<t_true<<" sec."<<endl<<endl;
 
     // Write the contents of the set 'r' to the output file
     outFile << "Set r:" << endl;

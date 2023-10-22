@@ -85,12 +85,6 @@ int main (int argc, char* argv[]) {
         }while(answer != "y" && answer != "N");
         
     }while(answer == "y");
-
-    //Write time metrics into output file
-    ofstream outFile(output_file, ios::app); 
-    outFile<<"tLSH: <double> "<<lsh.get_tLSH()<<" sec."<<endl<<"tTrue: <double> "<<lsh.get_tTrue()<<" sec."<<endl<<endl;
-    outFile.close();
-    
     delete imgs;
     return 0;
 }
