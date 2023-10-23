@@ -48,7 +48,7 @@ valgrind_cluster :  $(OBJ_CL)
 	valgrind --track-origins=yes --leak-check=full ./$(CLUSTER) $(ARGSCL)
 
 valgrind_lsh :	$(LSH)
-	valgrind ./$(LSH) $(ARGSL)
+	valgrind --track-origins=yes --leak-check=full ./$(LSH) $(ARGSL)
 
 clean:
 	rm -f $(OBJ_CL) $(OBJ_LSH) $(OBJ_CUBE) $(CUBE) $(LSH) $(CLUSTER) output*
