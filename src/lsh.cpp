@@ -7,7 +7,7 @@ LSH::LSH(int L,int k,Input* input) : hashTables(L){
     this->k = k;
     this->w = 5;
     this->L = L;
-    this->M = pow(2.0,32.0) - 5;
+    this->M = pow(2.0,12.0) - 5;
     this->TableSize = input->get_imgs() / 4;
     this->H_size = 30*k;
     this->imgs = input;
