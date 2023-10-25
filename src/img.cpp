@@ -36,6 +36,10 @@ double Img::euclideanDistance(Img* img_b) {
 }
 
 void Img::display_p(ofstream& output) {
-    for(int i = 0; i < p.size(); i++)
-        output<<(int)p[i]<<" , ";
+    for(int i = 0; i < 28; i++) {
+        output<<endl;
+        for(int j = 0 ; j < 28; j++) {
+            output<<(int)this->p[28*i +j]<<" ";
+        }
+    }
 }

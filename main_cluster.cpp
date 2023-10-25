@@ -50,16 +50,18 @@ int main (int argc, char* argv[]) {
         complete = 1;
         argv++;                     
     }    
+    ofstream outFile(output_file); 
 
     //Read image input dataset
     Input* imgs = new Input(input_file);
     int k_clusters = parameters["number_of_clusters:"];
     //Initialization of centroids
-    vector<Img*> centroids = kmeans_init(imgs, k_clusters);
+    vector<Img*> centroids = kmeans_init(imgs, k_clusters,outFile);
+
     vector<Cluster*> clusters;
     //Initialize clusters with centroid
     for(int i = 0; i < k_clusters; i++) {
-        Cluster* cluster = new Cluster(centroids[i],i+1);
+        Cluster* cluster = new Cluster(centroids[i],i);
         clusters.push_back(cluster);
     }
 
@@ -67,7 +69,7 @@ int main (int argc, char* argv[]) {
     int closest;
     //Keep track of starting time
     const auto start_cluster{chrono::steady_clock::now()};
-    
+
     do {
         //Number of clusters whose centroids have changed
         changed = 0;
@@ -83,49 +85,51 @@ int main (int argc, char* argv[]) {
             //If datapoint has changed cluster
             if(point->update_flag(closest)) {
                 //Update centroids in previous cluster(if it wasn't -1) and closest
-                if(prev_cluster != -1)
-                    clusters[prev_cluster]->remove_point(point, changed); 
+                // if(prev_cluster != -1)
+                //     clusters[prev_cluster]->remove_point(point, changed); 
+                clusters[closest]->centroid()->display_p(outFile);
                 clusters[closest]->insert_point(point, changed);
+                clusters[closest]->centroid()->display_p(outFile);
+
             }
-        }
+        }       
     } while (changed < 2); 
 
     //Keep track of ending time
     const auto end_cluster{chrono::steady_clock::now()};
     chrono::duration<double> t_cluster{end_cluster - start_cluster};    
-    //Create Search Structure where we are only gonna be saving the centroids
-    //(since we want to find the nearest neighbour out of them and non-centroid point in its iteration)
+    // //Create Search Structure where we are only gonna be saving the centroids
+    // //(since we want to find the nearest neighbour out of them and non-centroid point in its iteration)
 
-    // else if(!strcmp(argv[8],"LSH") ) {
+    // // else if(!strcmp(argv[8],"LSH") ) {
 
-    // }
-    // else if(!strcmp(argv[8],"Hypercube") ) {
+    // // }
+    // // else if(!strcmp(argv[8],"Hypercube") ) {
 
-    // }  
+    // // }  
     //Write time metrics into output file
-    ofstream outFile(output_file); 
     outFile<<"Algorithm: "<<argv[8]<<endl;
 
-    for(int i = 0; i < k_clusters; i++) {
-        outFile<<"CLUSTER-"<<i+1<<" size: "<<clusters[i]->size()<<" , centroid : ";
-        clusters[i]->centroid()->display_p(outFile);
-        outFile<<endl;
-        if(complete)
-            clusters[i]->display(outFile);
-    }
+    // for(int i = 0; i < k_clusters; i++) {
+    //     outFile<<"CLUSTER-"<<i+1<<" size: "<<clusters[i]->size()<<" , centroid : ";
+    //     clusters[i]->centroid()->display_p(outFile);
+    //     outFile<<endl;
+    //     if(complete)
+    //         clusters[i]->display(outFile);
+    // }
 
     outFile<<endl<<"clustering time: "<<t_cluster.count()<<" sec."<<endl<<"Silhouette [";
     exit(1);
-    double total_s = 0.0;
+    // double total_s = 0.0;
 
-    for(int i = 0; i < k_clusters; i++) {
-        double s_i = clusters[i]->silhouette(clusters);
-        outFile<<s_i<<" , ";
-        total_s += s_i ; 
-    }
+    // for(int i = 0; i < k_clusters; i++) {
+    //     double s_i = clusters[i]->silhouette(clusters);
+    //     outFile<<s_i<<" , ";
+    //     total_s += s_i ; 
+    // }
 
-    total_s/=k_clusters;
-    outFile<<total_s<<" ]"<<endl;
+    // total_s/=k_clusters;
+    // outFile<<total_s<<" ]"<<endl;
 
     outFile.close();      
 

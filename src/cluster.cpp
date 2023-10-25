@@ -8,13 +8,13 @@ Cluster::Cluster(Img* centroid,int cluster_num) {
     this->datapoints.push_front(centroid);
 }
 
-Img* chooseNextCenter(const vector<Img*>& centroids, Input* imgs) {
+Img* chooseNextCenter(vector<Img*>& centroids, Input* imgs) {
 
     double max_prob = numeric_limits<double>::min();  
     Img* max_prob_i = nullptr;  
     Img* candidate;
 
-    // Iterate through the non-centroid images in the dataset
+    //Iterate through the non-centroid images in the dataset
     //We won't actually express it as a probability since it is uselessly computationally complex(the result will be the same since the divider is the same)
     for (int i = 0; i < imgs->get_imgs(); i++) {
         candidate = imgs->get_image(i);
@@ -39,24 +39,27 @@ Img* chooseNextCenter(const vector<Img*>& centroids, Input* imgs) {
 }
 
 //Initializes and returns the set of the k centroid images
-vector<Img*> kmeans_init(Input* imgs,int clusters) {
+vector<Img*> kmeans_init(Input* imgs,int clusters,ofstream& out) {
 
     vector<Img*> centroids;
+
     //Choose a centroid uniformly at random from the image dataset and save it into the set
     default_random_engine generator;
     generator.seed(chrono::system_clock::now().time_since_epoch().count());
     uniform_int_distribution<int> distribution(0,imgs->get_imgs() - 1);    
     int chosen = distribution(generator);
-    //Image became centroid -> update flag to 0
-    imgs->get_image(chosen)->update_flag(0);
-    centroids.push_back(imgs->get_image(chosen));
 
-    for(int i = 0; i < clusters - 1; i++){
-        Img* nextCenter = chooseNextCenter(centroids, imgs);    
-        //Image became centroid -> update flag to 0
-        nextCenter->update_flag(0);     
+    //Image became centroid -> update flag to 0
+    centroids.push_back(imgs->get_image(chosen));
+    centroids[0]->update_flag(0);
+
+    for(int i = 1; i < clusters ; i++){
+        Img* nextCenter = chooseNextCenter(centroids, imgs); 
+        //Image became centroid -> update flag to its corresponding cluster
         centroids.push_back(nextCenter);
+        centroids[i]->update_flag(i);     
     } 
+
     return centroids;
 }
 
@@ -89,8 +92,10 @@ void Cluster::remove_point(Img* point,int &changed) {
     for(int i = 0 ; i < new_point.size(); i++) {
 
         unsigned int new_sum = old_center[i] * len - new_point[i];
+        // cout<<"Sum "<<new_sum<<endl;
         unsigned char p_i = (unsigned char) (new_sum / (len - 1));
-        // cout<<"Old value "<<(int)old_center[i]<<endl<<" new value "<<(int)p_i<<endl;
+
+        //If a coordinate of the centroid has changed update changed value
         if(p_i != old_center[i] )
             changed++;        
         center->update_p(i,p_i);
@@ -108,9 +113,13 @@ void Cluster::insert_point(Img* point, int &changed){
     //Calculating the new mean by the previous one
     for(int i = 0 ; i < new_point.size(); i++) {
 
-        unsigned int new_sum = old_center[i] * len + new_point[i];
-        unsigned char p_i = (unsigned char) (new_sum / (len + 1));
+        unsigned int new_sum = (old_center[i] * len + new_point[i] ) / (len + 1);
+        if(new_sum > 255)
+            new_sum = 255;
+        // cout<<"Sum "<<new_sum<<endl;
+        unsigned char p_i = (unsigned char) (new_sum);
         // cout<<"Old value "<<(int)old_center[i]<<endl<<" new value "<<(int)p_i<<endl;
+        //If a coordinate of the centroid has changed update changed value
         if(p_i != old_center[i] )
             changed++;      
 
@@ -119,6 +128,7 @@ void Cluster::insert_point(Img* point, int &changed){
     datapoints.push_front(point);
 }
 
+//Writes in output file the number of each image included in the cluster
 void Cluster::display(ofstream& outFile) {
     outFile<<endl<<"Images : ";
     list<Img*>::iterator it;
