@@ -62,7 +62,7 @@ int main (int argc, char* argv[]) {
     //Read image input dataset
     Input* imgs = new Input(input_file);
     //Create Search Structure
-    Cube cube(k,M,probes,imgs);
+    Cube* cube = new Cube(k,M,probes,imgs);
 
     int runs = 0 ;
     string answer;
@@ -84,7 +84,7 @@ int main (int argc, char* argv[]) {
         //Read a small sample of images in the query dataset and perform the algorithms on them
         for(int i = 0; i < 2; i++) {
             Img* query_point = new Img(imgs->get_pxs(),i+1,query);
-            cube.queryNeighbours(query_point,N,output_file,R);
+            cube->queryNeighbours(query_point,N,output_file,R);
             delete query_point;
         }    
 
@@ -96,5 +96,6 @@ int main (int argc, char* argv[]) {
     }while(answer == "y");
   
     delete imgs;
+    delete cube;
     return 0;
 }

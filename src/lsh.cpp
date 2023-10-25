@@ -63,8 +63,6 @@ void LSH::queryNeighbours(Img* query,int n,string output,int R){
     set<pair<double, int>> r;
     set<pair<double, int>> N_approx = Approx(query, n, r, R); 
 
-    cout<<N_approx.size()<<endl;
-
     const auto end_LSH{chrono::steady_clock::now()};
     chrono::duration<double> t_lsh{end_LSH - start_LSH};
     
@@ -106,7 +104,6 @@ void LSH::queryNeighbours(Img* query,int n,string output,int R){
     outFile.close();
 }
 
-
 LSH::~LSH() {
 
     // Deallocate dynamically stored memory
@@ -115,5 +112,4 @@ LSH::~LSH() {
     
     for (int i = 0; i < this->L; i++) 
         delete this->hashTables[i];
-    
 }

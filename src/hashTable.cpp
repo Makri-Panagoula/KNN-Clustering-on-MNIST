@@ -34,11 +34,7 @@ pair<unsigned int , unsigned int> hashTable::g(Img* img) {
 
     //To avoid overflow we use the slides' operations on modulo ( (a [] b) mod m = ( a mod m  [] b mod m ) mod m ) )
     for(int i = 0; i < this->k; i++) {
-        //cout << "i: " << i << endl;
-        //this->funcs[i]->print();
-        //cout << "------------------------"<<endl;
         unsigned int h_value = this->funcs[i]->h(p) % this->M;
-        this->ids.insert(h_value);
         //r_i is already taken up to M
         dot_prod += (h_value * r[i]) % this->M;
     }
@@ -75,14 +71,3 @@ vector<Img*> hashTable::same_bucket(pair<unsigned int, unsigned int> query) {
     }
     return neighbours;
 }
-
-hashTable::~hashTable() {
-    cout<<"Ids:"<<this->ids.size();
-    int full = 0;
-    cout<<"Available : "<<this->TableSize<<endl;
-    for(int i = 0; i < this->TableSize; i++) {
-        if(this->buckets[i].size() != 0)
-            full++;
-    }
-    cout<<"Buckets in use:"<<full<<endl;
-};

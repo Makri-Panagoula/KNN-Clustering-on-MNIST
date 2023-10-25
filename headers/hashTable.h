@@ -21,7 +21,6 @@ class hashTable {
         vector<unsigned int> r; 
         //A vector consisted of other vectors, one for each bucket,where we save a pair of the id and the Img*
         vector<vector<pair<Img*, unsigned int>>> buckets;   
-        set<unsigned int> ids;     
     public :
         hashTable(int k ,int H_size, vector <hFunc*>& funcs, int TableSize,int M);
         //g-function for hashing,returns a pair where fist is id and second bucket
@@ -30,5 +29,5 @@ class hashTable {
         void store(Img* img);
         //Returns a vector of images in the same bucket deemed as neighbours
         vector<Img*> same_bucket(pair<unsigned int, unsigned int>);
-        ~hashTable();
+        ~hashTable(){};
 };
