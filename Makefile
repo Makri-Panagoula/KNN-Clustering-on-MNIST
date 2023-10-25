@@ -54,4 +54,4 @@ valgrind_cluster :  $(CLUSTER)
 	valgrind ./$(CLUSTER) $(ARGSCL)
 
 clean:
-	rm -f $(OBJ_CL) $(OBJ_LSH) $(OBJ_CUBE) $(CUBE) $(LSH) $(CLUSTER) output*
+	rm -f $(OBJ_CL) $(OBJ_LSH) $(OBJ_CUBE) $(LSH) $(CUBE) $(CLUSTER) output*

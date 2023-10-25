@@ -34,11 +34,15 @@ pair<unsigned int , unsigned int> hashTable::g(Img* img) {
 
     //To avoid overflow we use the slides' operations on modulo ( (a [] b) mod m = ( a mod m  [] b mod m ) mod m ) )
     for(int i = 0; i < this->k; i++) {
+        //cout << "i: " << i << endl;
+        //this->funcs[i]->print();
+        //cout << "------------------------"<<endl;
         unsigned int h_value = this->funcs[i]->h(p) % this->M;
         this->ids.insert(h_value);
         //r_i is already taken up to M
         dot_prod += (h_value * r[i]) % this->M;
     }
+    //exit(1);
 
     pair<unsigned int, unsigned int> to_return;
     to_return.first = dot_prod % this->M;                       //Id

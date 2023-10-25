@@ -12,6 +12,12 @@ hFunc::hFunc(int w, int d) : v(d){
     this->w = w;
 }
 
+void hFunc::print() {
+    for (int i = 0; i < v.size(); i++){
+        cout << "value " << this->v[i] << endl; 
+    }
+}
+
 unsigned int hFunc:: h(vector<unsigned char> p) {
    
     double inner_prod = inner_product(p.begin(),p.end(),this->v.begin(),0.0);
@@ -22,6 +28,7 @@ unsigned int hFunc:: h(vector<unsigned char> p) {
             this->v[i] = this->v[i] * this->v[i]; 
         //Estimate new dot product
         inner_prod = inner_product(p.begin(),p.end(),this->v.begin(),0);
+        
     }
 
     static default_random_engine t_generator;
