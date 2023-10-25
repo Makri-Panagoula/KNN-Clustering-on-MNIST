@@ -113,7 +113,7 @@ void Cluster::insert_point(Img* point, int &changed){
     //Calculating the new mean by the previous one
     for(int i = 0 ; i < new_point.size(); i++) {
 
-        unsigned int new_sum = (old_center[i] * len + new_point[i] ) / (len + 1);
+       double new_sum = (old_center[i] * len + new_point[i] ) / (len + 1);
         if(new_sum > 255)
             new_sum = 255;
         // cout<<"Sum "<<new_sum<<endl;
@@ -187,4 +187,22 @@ double Cluster::silhouette(vector<Cluster*>& clusters){
     }
     s /= datapoints.size();
     return s;
+}
+
+//Returns the minimum distance between the centroids divided by 2 that will serve as the initial value for R
+double initial_R(vector<Img*>& centroids) {
+
+    // Calculate the minimum euclidean distance from centroids
+    double minDist = numeric_limits<double>::max();     
+
+    for (size_t i = 0; i < centroids.size(); i++) {
+        for (size_t j = i + 1; j < centroids.size(); j++) {
+            double dist = centroids[i]->euclideanDistance(centroids[j]);
+            if (dist < minDist) {
+                minDist = dist;
+            }
+        }
+    }
+
+    return minDist / 2.0;    
 }

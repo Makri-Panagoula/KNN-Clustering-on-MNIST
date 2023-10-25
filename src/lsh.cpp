@@ -31,8 +31,8 @@ LSH::LSH(int L,int k,Input* input) : hashTables(L){
 }
 
 
-//Returns a set holding a pair (distnce,img_number) with the n-approximate neighbours and initializes set r with approximate neighbours in radius r
-set <pair<double, int>>  LSH::Approx(Img* query,int n, set<pair<double, int>>& r, int range) {
+//Returns a set holding a pair (distnce,img_number) all the neighbours of query point and initializes set r with approximate neighbours in radius r
+set <pair<double, int>> LSH::Approx(Img* query, set<pair<double, int>>& r, int range) {
 
     //Out of all the potential neighbours, we compute euclidean distances, save them in an ascending ordered set and keep the best N ones
     set<pair<double, int>> N_approx;
@@ -56,12 +56,12 @@ set <pair<double, int>>  LSH::Approx(Img* query,int n, set<pair<double, int>>& r
 }
 
 //Finds the n approximate and exact nearest neighbours as well as neighbours in radius R from query point and updates output file with data and metrics
-void LSH::queryNeighbours(Img* query,int n,string output,int R){
+void LSH::queryNeighbours(Img* query, int n, string output, int R){
     //Get n-approximate,r-approximate neighbours along with time metrics
     const auto start_LSH{chrono::steady_clock::now()};
 
     set<pair<double, int>> r;
-    set<pair<double, int>> N_approx = Approx(query, n, r, R); 
+    set<pair<double, int>> N_approx = Approx(query, r, R);
 
     const auto end_LSH{chrono::steady_clock::now()};
     chrono::duration<double> t_lsh{end_LSH - start_LSH};

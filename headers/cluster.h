@@ -9,6 +9,8 @@
 #include <algorithm>
 #include "../headers/img.h"
 #include "../headers/input.h"
+#include "../headers/lsh.h"
+#include "../headers/cube.h"
 
 class Cluster{
     private:
@@ -46,3 +48,5 @@ vector<Img*> kmeans_init(Input* imgs, int clusters,ofstream& out);
 
 //Returns index of closest cluster of vector centroids
 int find_cluster(Img* point, vector<Cluster*> &centroids);
+
+double initial_R(vector<Img*>& centroids);

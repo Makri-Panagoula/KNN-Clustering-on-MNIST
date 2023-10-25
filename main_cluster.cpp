@@ -69,10 +69,30 @@ int main (int argc, char* argv[]) {
     int closest;
     //Keep track of starting time
     const auto start_cluster{chrono::steady_clock::now()};
+    LSH *lsh = NULL;
+    //Create Search Structure where we are only gonna be saving the centroids
+    //(since we want to find the nearest neighbour out of them and non-centroid point in its iteration)    
+    if(!strcmp(argv[8],"LSH") ) {
+        lsh = new LSH(parameters["number_of_vector_hash_tables:"],
+                      parameters["number_of_vector_hash_functions:"],
+                      imgs);
+    }       
+    Cube* cube = NULL;
+    if(!strcmp(argv[8],"Hypercube") ) {
+        cube = new Cube(parameters["number_of_hypercube_dimensions:"],
+                        parameters["max_number_M_hypercube:"],
+                        parameters["number_of_probes:"],
+                        imgs);
+    }  
+    
+    double R = initial_R(centroids);
+    int cur_assigned = 0;
+    int prev_assigned;
 
     do {
         //Number of clusters whose centroids have changed
         changed = 0;
+        
         //For every datapoint , assign it to closest centroid and if datapoint updated , update centroid
         for(int i = 0 ; i < imgs->get_imgs(); i++) {
 
@@ -82,14 +102,34 @@ int main (int argc, char* argv[]) {
             if(!strcmp(argv[8],"Classic") ) {
                 closest = find_cluster(point, clusters);
             }
+            else if(!strcmp(argv[8],"LSH") ) {
+                do {
+                    prev_assigned = cur_assigned;
+                    cur_assigned = 0;
+                    //For every centroid perform a range search on centroid with radius R
+                    for(int i = 0; i < k_clusters; i++) {
+                        Img* centroid = clusters[i]->centroid();
+                        //Set holds a pair with distance from query point and image number
+                        set<pair<double, int>> cluster_points;
+                        lsh->Approx(centroid,cluster_points,R);
+                        cur_assigned += cluster_points.size();
+
+                    }
+                    R*=2;
+                }while(cur_assigned > prev_assigned);
+
+            }
+            else if(!strcmp(argv[8],"Hypercube") ) {
+
+            }              
             //If datapoint has changed cluster
             if(point->update_flag(closest)) {
                 //Update centroids in previous cluster(if it wasn't -1) and closest
                 // if(prev_cluster != -1)
                 //     clusters[prev_cluster]->remove_point(point, changed); 
-                clusters[closest]->centroid()->display_p(outFile);
+                // clusters[closest]->centroid()->display_p(outFile);
                 clusters[closest]->insert_point(point, changed);
-                clusters[closest]->centroid()->display_p(outFile);
+                // clusters[closest]->centroid()->display_p(outFile);
 
             }
         }       
@@ -98,25 +138,17 @@ int main (int argc, char* argv[]) {
     //Keep track of ending time
     const auto end_cluster{chrono::steady_clock::now()};
     chrono::duration<double> t_cluster{end_cluster - start_cluster};    
-    // //Create Search Structure where we are only gonna be saving the centroids
-    // //(since we want to find the nearest neighbour out of them and non-centroid point in its iteration)
 
-    // // else if(!strcmp(argv[8],"LSH") ) {
-
-    // // }
-    // // else if(!strcmp(argv[8],"Hypercube") ) {
-
-    // // }  
     //Write time metrics into output file
     outFile<<"Algorithm: "<<argv[8]<<endl;
 
-    // for(int i = 0; i < k_clusters; i++) {
-    //     outFile<<"CLUSTER-"<<i+1<<" size: "<<clusters[i]->size()<<" , centroid : ";
-    //     clusters[i]->centroid()->display_p(outFile);
-    //     outFile<<endl;
-    //     if(complete)
-    //         clusters[i]->display(outFile);
-    // }
+    for(int i = 0; i < k_clusters; i++) {
+        outFile<<"CLUSTER-"<<i+1<<" size: "<<clusters[i]->size()<<" , centroid : ";
+        clusters[i]->centroid()->display_p(outFile);
+        outFile<<endl;
+        if(complete)
+            clusters[i]->display(outFile);
+    }
 
     outFile<<endl<<"clustering time: "<<t_cluster.count()<<" sec."<<endl<<"Silhouette [";
     exit(1);
