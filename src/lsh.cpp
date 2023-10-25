@@ -17,7 +17,7 @@ LSH::LSH(int L,int k,Input* input) : hashTables(L){
         hFunc* h_i = new hFunc(w,input->get_pxs());
         this->hFuncs.push_back(h_i);
     }
- 
+
     for(int i = 0; i < L; i++)
         this->hashTables[i] = new hashTable(k,this->H_size,this->hFuncs,TableSize,M);
     

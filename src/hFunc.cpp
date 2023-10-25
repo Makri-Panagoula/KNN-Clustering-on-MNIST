@@ -13,6 +13,12 @@ hFunc::hFunc(int w, int d) : v(d){
     this->w = w;
 }
 
+void hFunc::print() {
+    for (int i = 0; i < v.size(); i++){
+        cout << "value " << this->v[i] << endl; 
+    }
+}
+
 unsigned int hFunc:: h(vector<unsigned char> p) {
     // for(int i = 0; i < this->v.size(); i++)
     //     cout<<"v : "<<this->v[i]<<endl;    
@@ -21,14 +27,15 @@ unsigned int hFunc:: h(vector<unsigned char> p) {
     if (inner_prod < 0) {
         //A vector's magnitude is the square root of its inner product with itself
         unsigned int sum_squares = inner_product( p.begin(), p.end(), p.begin(), 0 );
-        double norm_p = sqrt(sum_squares);        
+        double norm_p = sqrt(sum_squares);   
         transform(p.begin(), p.end(), p.begin(), [norm_p](unsigned char &c){ return c/norm_p; });
         //Repeat for v
         sum_squares = inner_product( v.begin(), v.end(), v.begin(), 0 );
-        double norm_v = sqrt(norm_v);          
-        transform(v.begin(), v.end(), v.begin(), [norm_v](double &c){ return c/norm_v; });
+        long int norm_v = sqrt(sum_squares); 
+        transform(v.begin(), v.end(), v.begin(), [norm_v](double &c){ return c*(-1); });
         //Estimate new dot product
         inner_prod = inner_product(p.begin(),p.end(),this->v.begin(),0);
+        
     }
 
     static default_random_engine t_generator;

@@ -119,7 +119,6 @@ void Cube::queryNeighbours(Img* query,int n,string output,int R) {
     time(&end_exact);
     double t_true = end_exact - start_exact;
 
-
     ofstream outFile(output, ios::app);
     if (!outFile.is_open()) {
         cout << "Failed to open the output file." << endl;

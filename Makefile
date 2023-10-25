@@ -51,4 +51,4 @@ valgrind_lsh :	$(LSH)
 	valgrind --track-origins=yes --leak-check=full ./$(LSH) $(ARGSL)
 
 clean:
-	rm -f $(OBJ_CL) $(OBJ_LSH) $(OBJ_CUBE) $(CUBE) $(LSH) $(CLUSTER) output*
+	rm -f $(OBJ_CL) $(OBJ_LSH) $(OBJ_CUBE) $(LSH) $(CUBE) $(CLUSTER) output*
