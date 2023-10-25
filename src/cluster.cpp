@@ -85,7 +85,9 @@ void Cluster::remove_point(Img* point,int &changed) {
     int len = datapoints.size(); 
     //Calculating the new mean by the previous one
     for(int i = 0 ; i < new_point.size(); i++) {
-        unsigned char p_i = (old_center[i] * len - new_point[i]) / (len - 1);
+
+        unsigned int new_sum = old_center[i] * len - new_point[i];
+        unsigned char p_i = (unsigned char) (new_sum / (len - 1));
         // cout<<"Old value "<<(int)old_center[i]<<endl<<" new value "<<(int)p_i<<endl;
         if(p_i != old_center[i] )
             changed++;        
@@ -104,8 +106,9 @@ void Cluster::insert_point(Img* point, int &changed){
     //Calculating the new mean by the previous one
     for(int i = 0 ; i < new_point.size(); i++) {
 
-        unsigned char p_i = (old_center[i] * len + new_point[i]) / (len + 1);
-        cout<<"Old value "<<(int)old_center[i]<<endl<<" new value "<<(int)p_i<<endl;
+        unsigned int new_sum = old_center[i] * len + new_point[i];
+        unsigned char p_i = (unsigned char) (new_sum / (len + 1));
+        // cout<<"Old value "<<(int)old_center[i]<<endl<<" new value "<<(int)p_i<<endl;
         if(p_i != old_center[i] )
             changed++;      
 

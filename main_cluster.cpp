@@ -111,14 +111,14 @@ int main (int argc, char* argv[]) {
 
     for(int i = 0; i < k_clusters; i++) {
         outFile<<"CLUSTER-"<<i+1<<" size: "<<clusters[i]->size()<<" , centroid : ";
-        // clusters[i]->centroid()->display_p(outFile);
+        clusters[i]->centroid()->display_p(outFile);
         outFile<<endl;
         if(complete)
             clusters[i]->display(outFile);
     }
 
     outFile<<endl<<"clustering time: "<<tCluster<<" sec."<<endl<<"Silhouette [";
-
+    exit(1);
     double total_s = 0.0;
 
     for(int i = 0; i < k_clusters; i++) {

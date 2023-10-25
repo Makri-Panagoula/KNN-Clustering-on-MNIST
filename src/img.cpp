@@ -22,17 +22,15 @@ double Img::euclideanDistance(Img* img_b) {
 
     vector<unsigned char> a = this->get_p();
     vector<unsigned char> b = img_b->get_p();
-
-    if (a.size() != b.size()) {
-        //checking if vectors have same number of elements
+    
+    //checking if vectors have same number of elements
+    if (a.size() != b.size()) 
         return -1.0;
-    }
 
     double distance = 0.0;
-    for (size_t i = 0; i < a.size(); i++) {
-        // cout<<"a "<<(int)a[i]<<"b "<<(int)b[i]<<endl;
+    for (size_t i = 0; i < a.size(); i++) 
         distance += pow(a[i] - b[i], 2);
-    }
+        
     distance = sqrt(distance);
     return distance;
 }

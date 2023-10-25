@@ -58,27 +58,23 @@ set <pair<double, int>>  LSH::Approx(Img* query,int n, set<pair<double, int>>& r
 //Finds the n approximate and exact nearest neighbours as well as neighbours in radius R from query point and updates output file with data and metrics
 void LSH::queryNeighbours(Img* query,int n,string output,int R){
     //Get n-approximate,r-approximate neighbours along with time metrics
-    time_t start_LSH;
-    time(&start_LSH);
+    const auto start_LSH{chrono::steady_clock::now()};
 
     set<pair<double, int>> r;
     set<pair<double, int>> N_approx = Approx(query, n, r, R); 
 
     cout<<N_approx.size()<<endl;
 
-    time_t end_LSH;
-    time(&end_LSH);
-    double t_lsh = end_LSH - start_LSH;
-
+    const auto end_LSH{chrono::steady_clock::now()};
+    chrono::duration<double> t_lsh{end_LSH - start_LSH};
+    
     //Get n-exact neighbours along with time metrics
-    time_t start_exact;
-    time(&start_exact);
+    const auto start_exact{chrono::steady_clock::now()};
 
     set<pair<double, int>> N_exact = imgs->N_Exact(query);
 
-    time_t end_exact;
-    time(&end_exact);
-    double t_true = end_exact - start_exact;
+    const auto end_exact{chrono::steady_clock::now()};
+    chrono::duration<double> t_true{end_exact - start_exact};
 
     ofstream outFile(output, ios::app);
     if (!outFile.is_open()) {
@@ -99,7 +95,7 @@ void LSH::queryNeighbours(Img* query,int n,string output,int R){
         approx++;
         exact++;
     }
-    outFile<<"tLSH: <double> "<<t_lsh<<" sec."<<endl<<"tTrue: <double> "<<t_true<<" sec."<<endl<<endl;
+    outFile<<"tLSH: <double> "<< t_lsh.count()<<" sec."<<endl<<"tTrue: <double> "<<t_true.count()<<" sec."<<endl<<endl;
 
     // Write the contents of the set 'r' to the output file
     outFile << "Set r:" << endl;

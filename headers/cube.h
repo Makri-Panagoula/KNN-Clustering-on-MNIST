@@ -3,6 +3,7 @@
 #include <vector> 
 #include <map> 
 #include <bitset>  
+#include <chrono>
 #include <string>
 #include "../headers/hFunc.h"
 #include "../headers/input.h"

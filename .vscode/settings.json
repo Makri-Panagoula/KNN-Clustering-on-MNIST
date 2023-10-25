@@ -47,6 +47,8 @@
         "typeinfo": "cpp",
         "set": "cpp",
         "bitset": "cpp",
-        "list": "cpp"
+        "list": "cpp",
+        "valarray": "cpp",
+        "chrono": "cpp"
     }
 }

@@ -9,7 +9,7 @@ hashTable::hashTable(int k , int H_size, vector <hFunc*>& H, int TableSize,int M
     this->M = M;    
     //Initialize uniform distributor
     static default_random_engine generator;
-    uniform_real_distribution<double> distribution(0.0,H_size);
+    uniform_int_distribution<int> distribution(0,H_size-1);
     //Initialize random seed
     srand (time(NULL));    
     //Choose uniformly the k functions from H that will be used for g and randomly the r-operands

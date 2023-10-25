@@ -97,28 +97,23 @@ set <pair<double, int>> Cube::Approx(Img* query,int n, set<pair<double, int>>& r
 void Cube::queryNeighbours(Img* query,int n,string output,int R) {
 
     //Get n-approximate,r-approximate neighbours along with time metrics
-    time_t startCube;
-    time(&startCube);
+    const auto start_cube{chrono::steady_clock::now()};
 
     set<pair<double, int>> r;
     set<pair<double, int>> N_approx = Approx(query, n, r, R); 
 
     cout<<N_approx.size()<<endl;
 
-    time_t endCube;
-    time(&endCube);
-    double t_cube = endCube - startCube;
+    const auto end_cube{chrono::steady_clock::now()};
+    chrono::duration<double> t_cube{end_cube - start_cube};
 
     //Get n-exact neighbours along with time metrics
-    time_t start_exact;
-    time(&start_exact);
+    const auto start_true{chrono::steady_clock::now()};
 
     set<pair<double, int>> N_exact = imgs->N_Exact(query);
 
-    time_t end_exact;
-    time(&end_exact);
-    double t_true = end_exact - start_exact;
-
+    const auto end_true{chrono::steady_clock::now()};
+    chrono::duration<double> t_true{end_true - start_true};
 
     ofstream outFile(output, ios::app);
     if (!outFile.is_open()) {
@@ -139,7 +134,7 @@ void Cube::queryNeighbours(Img* query,int n,string output,int R) {
         approx++;
         exact++;
     }
-    outFile<<"tHyperCube: <double> "<<t_cube<<" sec."<<endl<<"tTrue: <double> "<<t_true<<" sec."<<endl<<endl;
+    outFile<<"tHyperCube: <double> "<<t_cube.count()<<" sec."<<endl<<"tTrue: <double> "<<t_true.count()<<" sec."<<endl<<endl;
 
     // Write the contents of the set 'r' to the output file
     outFile << "Set r:" << endl;
