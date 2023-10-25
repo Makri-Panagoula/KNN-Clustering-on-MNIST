@@ -21,11 +21,11 @@ class Cube {
         //Parameter for h functions
         int w; 
         //d maps of h values -> {0,1} , one for every f_i in order to ensure constistency
-        vector<map<unsigned long, int>> f_values;
+        vector<map<unsigned int, int>> f_values;
         //H set functions
         vector <hFunc*> hFuncs;
-        //A vector consisting of 2^d vectors,one for each bucket holding the images hashed to it
-        vector<vector<Img*>> buckets;     
+        //An array consisting of 2^d vectors,one for each bucket holding the images hashed to it
+        vector<Img*> *buckets;     
         //Returns a set holding a pair (distnce,img_number) with the n-approximate neighbours and initializes set r with approximate neighbours in radius r
         set <pair<double, int>>  Approx(Img* query,int n, set<pair<double, int>>& r, int range);         
     public:
