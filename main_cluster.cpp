@@ -65,10 +65,9 @@ int main (int argc, char* argv[]) {
 
     int changed;
     int closest;
-    //Keep track of ending time
-    time_t startCluster;
-    time(&startCluster);    
-    cout<<"before loop"<<endl;
+    //Keep track of starting time
+    const auto start_cluster{chrono::steady_clock::now()};
+    
     do {
         //Number of clusters whose centroids have changed
         changed = 0;
@@ -90,12 +89,10 @@ int main (int argc, char* argv[]) {
             }
         }
     } while (changed < 2); 
-    cout<<"after loop"<<endl;
 
     //Keep track of ending time
-    time_t endCluster;
-    time(&endCluster);
-    double tCluster = endCluster - startCluster ;       
+    const auto end_cluster{chrono::steady_clock::now()};
+    chrono::duration<double> t_cluster{end_cluster - start_cluster};    
     //Create Search Structure where we are only gonna be saving the centroids
     //(since we want to find the nearest neighbour out of them and non-centroid point in its iteration)
 
@@ -117,7 +114,7 @@ int main (int argc, char* argv[]) {
             clusters[i]->display(outFile);
     }
 
-    outFile<<endl<<"clustering time: "<<tCluster<<" sec."<<endl<<"Silhouette [";
+    outFile<<endl<<"clustering time: "<<t_cluster.count()<<" sec."<<endl<<"Silhouette [";
     exit(1);
     double total_s = 0.0;
 

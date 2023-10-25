@@ -42,9 +42,11 @@ Img* chooseNextCenter(const vector<Img*>& centroids, Input* imgs) {
 vector<Img*> kmeans_init(Input* imgs,int clusters) {
 
     vector<Img*> centroids;
-
-    //Choose a centroid randomly from the image dataset and save it into the set
-    int chosen = rand() % imgs->get_imgs();
+    //Choose a centroid uniformly at random from the image dataset and save it into the set
+    default_random_engine generator;
+    generator.seed(chrono::system_clock::now().time_since_epoch().count());
+    uniform_int_distribution<int> distribution(0,imgs->get_imgs() - 1);    
+    int chosen = distribution(generator);
     //Image became centroid -> update flag to 0
     imgs->get_image(chosen)->update_flag(0);
     centroids.push_back(imgs->get_image(chosen));
@@ -117,26 +119,6 @@ void Cluster::insert_point(Img* point, int &changed){
     datapoints.push_front(point);
 }
 
-// void Cluster::updateCentroid(int &changed) {
-//     int len = this->datapoints.size();
-//     list<Img*>::iterator it;
-//     int pxs = this->center->get_p().size();
-//     vector<unsigned char> old_center = this->center->get_p();
-//     // Update the centroid to be the median of all the cluster's points
-//     for (int i = 0; i < pxs; i++) {
-//         int sum = 0;
-//         for (it = datapoints.begin(); it != datapoints.end(); ++it){
-//             vector<unsigned char> p = (*it)->get_p();
-//             unsigned char p_i = p[i];
-//             sum += p[i]; 
-//         }
-//         sum /= len;
-//         if(old_center[i] != sum)
-            
-//         this->center->update_p(i,sum);
-//     }
-// }
-
 void Cluster::display(ofstream& outFile) {
     outFile<<endl<<"Images : ";
     list<Img*>::iterator it;
@@ -170,7 +152,6 @@ double Cluster::silhouette(vector<Cluster*>& clusters){
         double min_dist = numeric_limits<double>::max(); 
         //Cluster with closest distance to datapoint
         int b_cluster; 
-        // cout<<"before a_i"<<endl;
         //calculate a(i)
         double a = this->avg_dist(*point1);
         //Find next best neighbour, second closest centroid, traverse the other clusters, compute distance (if the cluster isn't our current) and keep the min
@@ -184,7 +165,6 @@ double Cluster::silhouette(vector<Cluster*>& clusters){
                 }
             }
         }
-        // cout<<"before b_i "<<b_cluster<<endl;
         //calculate b(i)
         double b = clusters[b_cluster]->avg_dist(*point1);
 
