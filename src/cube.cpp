@@ -45,7 +45,7 @@ void Hamming(string binary,int i,int ham_dist,set<string>& buckets) {
 }
 
 //Returns a set holding a pair (distnce,img_number) with the n-approximate neighbours and initializes set r with approximate neighbours in radius r
-set <pair<double, int>> Cube::Approx(Img* query,int n, set<pair<double, int>>& r, int range) {
+set <pair<double, int>> Cube::Approx(Img* query, set<pair<double, int>>& r, int range) {
 
     //Out of all the potential neighbours, we compute euclidean distances, save them in an ascending ordered set and keep the best N ones
     set<pair<double, int>> N_approx;
@@ -101,7 +101,7 @@ void Cube::queryNeighbours(Img* query,int n,string output,int R) {
     const auto start_cube{chrono::steady_clock::now()};
 
     set<pair<double, int>> r;
-    set<pair<double, int>> N_approx = Approx(query, n, r, R); 
+    set<pair<double, int>> N_approx = Approx(query, r, R); 
 
     cout<<N_approx.size()<<endl;
 
