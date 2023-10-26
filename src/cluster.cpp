@@ -169,7 +169,7 @@ double Cluster::silhouette(vector<Cluster*>& clusters){
                 double dist = (*point1)->euclideanDistance(other_centroid);
                 if( dist < min_dist) {
                     min_dist = dist;
-                    b_cluster = otherCluster->num() - 1;
+                    b_cluster = otherCluster->num();
                 }
             }
         }
