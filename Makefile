@@ -24,7 +24,7 @@ CUBE = main_cube
 OBJC = $(SRC)/img.o $(SRC)/hFunc.o $(SRC)/input.o $(SRC)/cube.o 
 OBJ_CUBE = main_cube.o $(OBJC)
 
-ARGSC =  –d datasets/input.dat –q datasets/query.dat –k 7 -M 20000 -probes 200 -ο output_cube -Ν 10 -R 10000
+ARGSC =  –d datasets/input.dat –q datasets/query.dat –k 14 -M 20000 -probes 200 -ο output_cube -Ν 10 -R 10000
 
 $(CUBE): $(OBJ_CUBE)
 	$(CC) $(CFLAGS) $(OBJ_CUBE) -o $(CUBE) -lm -g3

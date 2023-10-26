@@ -5,23 +5,24 @@ Cube::Cube(int d,int M,int probes,Input* input) : hFuncs(d){
     //Setting algorithm's parameters
     this->d = d;
     this->M = M;
-    this->probes = 5;
+    this->probes = probes;
     this->w = 5;
     this->imgs = input;
 
     //Creating d h_functions (one for every dimension) and d maps (one for every f_i)
     for(int i = 0; i < d; i++) {
         this->hFuncs[i] = new hFunc(w,imgs->get_pxs());  
-        map<unsigned long, int> f_value;
+        map<unsigned int, int> f_value;
         this->f_values.push_back(f_value);
     }
 
     //The vertices are essentially our buckets
-    double vertices = pow(2.0,d);
+    int vertices = pow(2.0,d);
+    this->buckets = new vector<Img*>[vertices];
     //Create a vector for every bucket
     for(int i = 0; i < vertices; i++) {
         vector<Img*> bucket;
-        this->buckets.push_back(bucket);
+        this->buckets[i] = bucket;
     }      
 
     //For every image in the training dataset save it into the appropriate structures
@@ -44,7 +45,7 @@ void Hamming(string binary,int i,int ham_dist,set<string>& buckets) {
 }
 
 //Returns a set holding a pair (distnce,img_number) with the n-approximate neighbours and initializes set r with approximate neighbours in radius r
-set <pair<double, int>> Cube::Approx(Img* query,int n, set<pair<double, int>>& r, int range) {
+set <pair<double, int>> Cube::Approx(Img* query, set<pair<double, int>>& r, int range) {
 
     //Out of all the potential neighbours, we compute euclidean distances, save them in an ascending ordered set and keep the best N ones
     set<pair<double, int>> N_approx;
@@ -66,7 +67,7 @@ set <pair<double, int>> Cube::Approx(Img* query,int n, set<pair<double, int>>& r
         Hamming(binary,31,dist,vertices);
         for(vertex = vertices.begin(); vertex!= vertices.end(); vertex++) {
 
-            unsigned long neighbour = stoul(*vertex, nullptr, 10);
+            unsigned long neighbour = stoul(*vertex, nullptr, 2);
             vector<Img*> in_bucket = this->buckets[neighbour];
 
             //Traverse datapoints of its bucket and add them to N_approx and r set if suitable
@@ -100,7 +101,7 @@ void Cube::queryNeighbours(Img* query,int n,string output,int R) {
     const auto start_cube{chrono::steady_clock::now()};
 
     set<pair<double, int>> r;
-    set<pair<double, int>> N_approx = Approx(query, n, r, R); 
+    set<pair<double, int>> N_approx = Approx(query, r, R); 
 
     cout<<N_approx.size()<<endl;
 
@@ -136,7 +137,7 @@ void Cube::queryNeighbours(Img* query,int n,string output,int R) {
     }
     outFile<<"tHyperCube: <double> "<<t_cube.count()<<" sec."<<endl<<"tTrue: <double> "<<t_true.count()<<" sec."<<endl<<endl;
 
-    // Write the contents of the set 'r' to the output file
+    //Write the contents of the set 'r' to the output file
     outFile << "Set r:" << endl;
     for (const auto& entry : r) {
         outFile << "Distance: " << entry.first << " Image Number: " << entry.second << endl;
@@ -150,15 +151,16 @@ int Cube::f(Img* img) {
 
     int bucket = 0;
     int binary;
-    map<unsigned long,int>::iterator existing;
+    map<unsigned int,int>::iterator existing;
     //We need a probability distribution that considers all outcomes equally likely (as in flipping a coin) therefore uniform is the only option
-    static default_random_engine b_generator;
+    default_random_engine b_generator;
+    b_generator.seed(chrono::system_clock::now().time_since_epoch().count());
     uniform_int_distribution<int> distribution(0,1);    
     //Apply (f o h)_i function to p d times
     for(int i = 0; i < this->d; i++) {
 
-    unsigned int h_value = hFuncs[i]->h(img->get_p());
-        //Check if h value has already been matched with an f value,where in that case for consistency we have to keep that f value
+        unsigned int h_value = hFuncs[i]->h(img->get_p());
+        //Check if h value has already been matched with an f value, where in that case for consistency we have to keep that f value
         if((existing = f_values[i].find(h_value)) != f_values[i].end())
             binary = existing->second;
         else {
@@ -184,4 +186,6 @@ Cube::~Cube() {
     // Deallocate dynamically stored memory
     for (int i = 0; i < this->d; i++) 
         delete this->hFuncs[i];
+    
+    delete[] this->buckets;
 }

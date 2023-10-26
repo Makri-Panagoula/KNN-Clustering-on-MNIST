@@ -41,12 +41,12 @@ class LSH {
         vector<hFunc*> hFuncs;
         //Input images dataset
         Input* imgs;
-        //Returns a set holding a pair (distnce,img_number) with the n-approximate neighbours and initializes set r with approximate neighbours in radius r
-        set <pair<double, int>>  Approx(Img* query,int n, set<pair<double, int>>& r, int range);
 
     public:
         LSH(int L, int k, Input* input);
         //Finds the n approximate and exact nearest neighbours as well as neighbours in radius R from query point and updates output file with data and metrics
-        void queryNeighbours(Img* query,int n,string output,int R);
+        void queryNeighbours(Img* query, int n, string output, int R);
+        //Returns a set holding a pair (distnce,img_number) all the neighbours of query point and initializes set r with approximate neighbours in radius r
+        set <pair<double, int>> Approx(Img* query, set<pair<double, int>>& r, int radius);        
         ~LSH();
     };

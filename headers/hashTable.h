@@ -2,6 +2,7 @@
 #include <stdlib.h>  
 #include <time.h>
 #include <set>
+#include <chrono>
 #include "../headers/hFunc.h"
 #include "../headers/img.h"
 #include <set>

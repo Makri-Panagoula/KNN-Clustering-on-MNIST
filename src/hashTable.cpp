@@ -8,13 +8,14 @@ hashTable::hashTable(int k , int H_size, vector <hFunc*>& H, int TableSize,int M
     this->TableSize = TableSize;
     this->M = M;    
     //Initialize uniform distributor
-    static default_random_engine generator;
-    uniform_int_distribution<int> distribution(0,H_size-1);
+    default_random_engine b_generator;
+    b_generator.seed(chrono::system_clock::now().time_since_epoch().count());
+    uniform_int_distribution<int> distribution(0,H_size-1); 
     //Initialize random seed
     srand (time(NULL));    
     //Choose uniformly the k functions from H that will be used for g and randomly the r-operands
     for(int i = 0; i < k ; i++) {
-        int chosen = distribution(generator);
+        int chosen = distribution(b_generator);
         this->funcs[i] = H[chosen];
         this->r[i] = rand() % M;
     }

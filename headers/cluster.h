@@ -2,16 +2,19 @@
 #include <set>
 #include <vector>
 #include <limits>
+#include <chrono>
 #include <list>
 #include <random>
 #include <iostream>
 #include <algorithm>
 #include "../headers/img.h"
 #include "../headers/input.h"
+#include "../headers/lsh.h"
+#include "../headers/cube.h"
 
 class Cluster{
     private:
-        //the number of the cluster varying from 1 to k-clusters
+        //the number of the cluster varying from 0 to k-1 clusters
         int cluster;
         //structure that has the datapoints of the cluster
         list<Img*> datapoints;
@@ -24,22 +27,26 @@ class Cluster{
         void remove_point(Img* point, int &changed);
         //Inserts datapoint into cluster and updates accordingly the centroid
         void insert_point(Img* point, int &changed);
+        //Number of datapoints in cluster (not including centroid)
         int size(){ return datapoints.size();}
+        //Writes in output file the number of each image included in the cluster
         void display(ofstream& outFile);
         Img* centroid(){return this->center;}
+        //Returns the number of cluster(from 0 to k-1)
         int num(){return this->cluster;}
         //Computes average distance of datapoint to all the datapoints in the cluster
         double avg_dist(Img* datapoint);
         double silhouette(vector<Cluster*> &clusters);
-        void updateCentroid(int &changed);
         ~Cluster(){};
 };
 
 
 Img* chooseNextCenter(const set<Img*>& centroids, Input* imgs);
 
-//Initializes and returns the set of the k centroid images
-vector<Img*> kmeans_init(Input* imgs, int clusters);
+//Initializes and returns a vector of the k centroid images
+vector<Img*> kmeans_init(Input* imgs, int clusters,ofstream& out);
 
 //Returns index of closest cluster of vector centroids
 int find_cluster(Img* point, vector<Cluster*> &centroids);
+
+double initial_R(vector<Img*>& centroids);
