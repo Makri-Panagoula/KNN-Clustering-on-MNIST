@@ -152,7 +152,6 @@ double Cluster::avg_dist(Img* datapoint) {
     return a;
 }
 
-<<<<<<< HEAD
 double Cluster::silhouette(vector<Cluster*>& centroids) {
     int s = 0;
     for (auto point1 = datapoints.begin(); point1 != datapoints.end(); ++point1) {
@@ -182,49 +181,51 @@ double Cluster::silhouette(vector<Cluster*>& centroids) {
                 }
             }
         }
-=======
-double Cluster::silhouette(vector<Cluster*>& clusters){
-    double s = 0;
-    for (auto point1 = datapoints.begin(); point1 != datapoints.end(); point1++){
-
-        //minimum distance between point1 and the other centroids    
-        double min_dist = numeric_limits<double>::max(); 
-        //Cluster with closest distance to datapoint
-        int b_cluster; 
-        //calculate a(i)
-        double a = this->avg_dist(*point1);
-        //Find next best neighbour, second closest centroid, traverse the other clusters, compute distance (if the cluster isn't our current) and keep the min
-        for (auto otherCluster : clusters){
-            if (otherCluster->num() != this->cluster) {
-                Img* other_centroid = otherCluster->centroid();
-                double dist = (*point1)->euclideanDistance(other_centroid);
-                if( dist < min_dist) {
-                    min_dist = dist;
-                    b_cluster = otherCluster->num();
-                }
-            }
-        }
-        //calculate b(i)
-        double b = clusters[b_cluster]->avg_dist(*point1);
->>>>>>> 646a97eec511981d47292f24d8491089e49e35ad
-
-        
-        if (a < b) {
-            s += 1 - (a / b);
-        } else if (a > b) {
-            s += (b / a) - 1;
-        } else {
-            s += 0;
-        }
     }
-
-
     s /= datapoints.size();
-
     return s;
 }
 
-<<<<<<< HEAD
+// double Cluster::silhouette(vector<Cluster*>& clusters){
+//     double s = 0;
+//     for (auto point1 = datapoints.begin(); point1 != datapoints.end(); point1++){
+
+//         //minimum distance between point1 and the other centroids    
+//         double min_dist = numeric_limits<double>::max(); 
+//         //Cluster with closest distance to datapoint
+//         int b_cluster; 
+//         //calculate a(i)
+//         double a = this->avg_dist(*point1);
+//         //Find next best neighbour, second closest centroid, traverse the other clusters, compute distance (if the cluster isn't our current) and keep the min
+//         for (auto otherCluster : clusters){
+//             if (otherCluster->num() != this->cluster) {
+//                 Img* other_centroid = otherCluster->centroid();
+//                 double dist = (*point1)->euclideanDistance(other_centroid);
+//                 if( dist < min_dist) {
+//                     min_dist = dist;
+//                     b_cluster = otherCluster->num();
+//                 }
+//             }
+//         }
+//         //calculate b(i)
+//         double b = clusters[b_cluster]->avg_dist(*point1);
+
+        
+//         if (a < b) {
+//             s += 1 - (a / b);
+//         } else if (a > b) {
+//             s += (b / a) - 1;
+//         } else {
+//             s += 0;
+//         }
+//     }
+
+
+//     s /= datapoints.size();
+
+//     return s;
+// }
+
 // double Cluster::silhouette(vector<Cluster*>& clusters){
 //     double s = 0;
 //     for (auto point1 = datapoints.begin(); point1 != datapoints.end(); point1++){
@@ -261,7 +262,8 @@ double Cluster::silhouette(vector<Cluster*>& clusters){
 //     s /= datapoints.size();
 //     return s;
 // }
-=======
+
+
 //Returns the minimum distance between the centroids divided by 2 that will serve as the initial value for R
 double initial_R(vector<Img*>& centroids) {
 
@@ -279,4 +281,3 @@ double initial_R(vector<Img*>& centroids) {
 
     return minDist / 2.0;    
 }
->>>>>>> 646a97eec511981d47292f24d8491089e49e35ad
