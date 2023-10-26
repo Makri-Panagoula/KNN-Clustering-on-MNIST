@@ -162,39 +162,85 @@ double Cluster::avg_dist(Img* datapoint) {
     return a;
 }
 
-double Cluster::silhouette(vector<Cluster*>& clusters){
-    double s = 0;
-    for (auto point1 = datapoints.begin(); point1 != datapoints.end(); point1++){
+double Cluster::silhouette(vector<Cluster*>& centroids) {
+    int s = 0;
+    for (auto point1 = datapoints.begin(); point1 != datapoints.end(); ++point1) {
+        //average distance between point1 and the rest of the points from the same cluster
+        double a = 0.0;  
+        //min average dist between point1 and point of different clusters
+        double b = numeric_limits<double>::max();  
 
-        //minimum distance between point1 and the other centroids    
-        double min_dist = numeric_limits<double>::max(); 
-        //Cluster with closest distance to datapoint
-        int b_cluster; 
-        // cout<<"before a_i"<<endl;
-        //calculate a(i)
-        double a = this->avg_dist(*point1);
-        //Find next best neighbour, second closest centroid, traverse the other clusters, compute distance (if the cluster isn't our current) and keep the min
-        for (auto otherCluster : clusters){
-            if (otherCluster->num() != this->cluster) {
-                Img* other_centroid = otherCluster->centroid();
-                double dist = (*point1)->euclideanDistance(other_centroid);
-                if( dist < min_dist) {
-                    min_dist = dist;
-                    b_cluster = otherCluster->num() - 1;
+        // a(i)
+        for (auto point2 = datapoints.begin(); point2 != datapoints.end(); ++point2) {
+            if (point1 != point2) {
+                a += (*point1)->euclideanDistance(*point2);
+            }
+        }
+        a /= (datapoints.size() - 1);
+
+        // b(i)
+        for (auto otherCluster : centroids) {
+            if (otherCluster != this) {
+                double bCluster = 0.0;  // anerage dist from point1 to the other cluster
+                for (auto point2 = otherCluster->datapoints.begin(); point2 != otherCluster->datapoints.end(); ++point2) {
+                    bCluster += (*point1)->euclideanDistance(*point2);
+                }
+                bCluster /= otherCluster->datapoints.size();
+                if (bCluster < b) {
+                    b = bCluster;
                 }
             }
         }
-        // cout<<"before b_i "<<b_cluster<<endl;
-        //calculate b(i)
-        double b = clusters[b_cluster]->avg_dist(*point1);
 
+        
         if (a < b) {
-            s += 1 - (a/b);
+            s += 1 - (a / b);
         } else if (a > b) {
-            s += (b/a) - 1;
+            s += (b / a) - 1;
+        } else {
+            s += 0;
         }
-
     }
+
+
     s /= datapoints.size();
+
     return s;
 }
+
+// double Cluster::silhouette(vector<Cluster*>& clusters){
+//     double s = 0;
+//     for (auto point1 = datapoints.begin(); point1 != datapoints.end(); point1++){
+
+//         //minimum distance between point1 and the other centroids    
+//         double min_dist = numeric_limits<double>::max(); 
+//         //Cluster with closest distance to datapoint
+//         int b_cluster; 
+//         // cout<<"before a_i"<<endl;
+//         //calculate a(i)
+//         double a = this->avg_dist(*point1);
+//         //Find next best neighbour, second closest centroid, traverse the other clusters, compute distance (if the cluster isn't our current) and keep the min
+//         for (auto otherCluster : clusters){
+//             if (otherCluster->num() != this->cluster) {
+//                 Img* other_centroid = otherCluster->centroid();
+//                 double dist = (*point1)->euclideanDistance(other_centroid);
+//                 if( dist < min_dist) {
+//                     min_dist = dist;
+//                     b_cluster = otherCluster->num() - 1;
+//                 }
+//             }
+//         }
+//         // cout<<"before b_i "<<b_cluster<<endl;
+//         //calculate b(i)
+//         double b = clusters[b_cluster]->avg_dist(*point1);
+
+//         if (a < b) {
+//             s += 1 - (a/b);
+//         } else if (a > b) {
+//             s += (b/a) - 1;
+//         }
+
+//     }
+//     s /= datapoints.size();
+//     return s;
+// }
