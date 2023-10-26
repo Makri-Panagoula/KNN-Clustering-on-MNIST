@@ -87,13 +87,13 @@ void Cluster::remove_point(Img* point,int &changed) {
 
     vector<unsigned char> old_center = center->get_p();
     vector<unsigned char> new_point = point->get_p();
-    int len = datapoints.size(); 
+    //Adding one for the centroid
+    int len = datapoints.size() + 1; 
     //Calculating the new mean by the previous one
     for(int i = 0 ; i < new_point.size(); i++) {
 
-        unsigned int new_sum = old_center[i] * len - new_point[i];
-        // cout<<"Sum "<<new_sum<<endl;
-        unsigned char p_i = (unsigned char) (new_sum / (len - 1));
+        long double new_mean = (old_center[i] * len - new_point[i]) /  (len - 1);
+        unsigned char p_i = (unsigned char) ceil(new_mean);
 
         //If a coordinate of the centroid has changed update changed value
         if(p_i != old_center[i] )
@@ -109,18 +109,16 @@ void Cluster::insert_point(Img* point, int &changed){
     //Estimate new centroid for this cluster
     vector<unsigned char> old_center = center->get_p();
     vector<unsigned char> new_point = point->get_p();
-    int len = datapoints.size(); 
+    //Adding one for the centroid
+    int len = datapoints.size() + 1; 
     //Calculating the new mean by the previous one
     for(int i = 0 ; i < new_point.size(); i++) {
 
-       double new_sum = (old_center[i] * len + new_point[i] ) / (len + 1);
-        if(new_sum > 255)
-            new_sum = 255;
-        // cout<<"Sum "<<new_sum<<endl;
-        unsigned char p_i = (unsigned char) (new_sum);
-        // cout<<"Old value "<<(int)old_center[i]<<endl<<" new value "<<(int)p_i<<endl;
+       long double new_mean = ceil((old_center[i] * len + new_point[i] ) / (len + 1));
+       unsigned char p_i = (unsigned char) new_mean;
+
         //If a coordinate of the centroid has changed update changed value
-        if(p_i != old_center[i] )
+        if(p_i != old_center[i])
             changed++;      
 
         center->update_p(i,p_i);

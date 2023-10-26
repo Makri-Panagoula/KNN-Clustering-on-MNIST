@@ -96,7 +96,7 @@ int main (int argc, char* argv[]) {
         //Find closest cluster according to method asked
         if(!strcmp(argv[8],"Classic") ) {
             //For every datapoint , assign it to closest centroid and if datapoint updated , update centroid
-            for(int i = 0 ; i < imgs->get_imgs(); i++) {
+            for(int i = 0 ; i < 60000; i++) {
 
                 Img* point = imgs->get_image(i);
                 int prev_cluster = point->get_flag();                
@@ -104,18 +104,13 @@ int main (int argc, char* argv[]) {
                 //If datapoint has changed cluster
                 if(point->update_flag(closest)) {
                     //Update centroids in previous cluster(if it wasn't -1) and closest
-                    // if(prev_cluster != -1)
-                    //     clusters[prev_cluster]->remove_point(point, changed); 
-                    // clusters[closest]->centroid()->display_p(outFile);
+                    if(prev_cluster != -1)
+                        clusters[prev_cluster]->remove_point(point, changed); 
                     clusters[closest]->insert_point(point, changed);
-                    // clusters[closest]->centroid()->display_p(outFile);
-
                 }  
             }
         }
         else if(!strcmp(argv[8],"LSH") ) {
-            //A map that corresponds every image to its closest distance
-            map<Img*,double> bestDist;
 
             //Repeat until you can't find new neighbours that haven't already been asssigned to centroids
             do {
@@ -123,6 +118,10 @@ int main (int argc, char* argv[]) {
                 cur_assigned = 0;
                 //For every centroid perform a range search on centroid with radius R
                 for(int i = 0; i < k_clusters; i++) {
+
+                    //A map that corresponds every image that will be assigned in this iteration to its closest distance
+                    map<Img*,double> bestDist;
+                    map<Img*,double>::iterator marked;
 
                     Img* centroid = clusters[i]->centroid();
 
@@ -143,16 +142,20 @@ int main (int argc, char* argv[]) {
                             bestDist[img] = dist;
                             img->update_flag(cur_cluster);
                         }
-                        //Else if image belonged to another cluster update in case distance from current centroid is smaller
-                        else if(prev_cluster != cur_cluster) {
-                            double prev_dist = bestDist[img];
-                            if(dist < prev_dist) {
-                                bestDist[img] = dist;
-                                img->update_flag(cur_cluster);
+                        //Else check if image had been marked in current iteration, otherwise, if datapoint had been assigned in a previous iteration for a different radius, we mustn't reexamine it
+                        else {
+                            marked = bestDist.find(img);
+                            if(marked != bestDist.end()) {
+                                double prev_dist = bestDist[img];
+                                if(dist < prev_dist) {
+                                    bestDist[img] = dist;
+                                    img->update_flag(cur_cluster);
+                                }
                             }
-                        }
+                        }    
                     }
                 }
+
                 R*=2.0;
             }while(cur_assigned > prev_assigned);
 
@@ -162,14 +165,8 @@ int main (int argc, char* argv[]) {
                 Img* img = imgs->get_image(i);
                 int cluster = img->get_flag();
 
-                if(cluster != -1) {
+                if(cluster != -1) 
                     clusters[cluster]->insert_point(img,changed);
-                }
-                else {
-                    //If image hadn't been assigned to a cluster find the closest one with brute force
-                    cluster = find_cluster(img,clusters);
-                    clusters[cluster]->insert_point(img,changed);
-                }
             }
         }
         else if(!strcmp(argv[8],"Hypercube") ) {
@@ -231,7 +228,7 @@ int main (int argc, char* argv[]) {
                 }
             }
         }
-                      
+
     }while (changed < 2); 
 
     //Keep track of ending time
@@ -250,17 +247,16 @@ int main (int argc, char* argv[]) {
     }
 
     outFile<<endl<<"clustering time: "<<t_cluster.count()<<" sec."<<endl<<"Silhouette [";
-    exit(1);
-    // double total_s = 0.0;
+    double total_s = 0.0;
 
-    // for(int i = 0; i < k_clusters; i++) {
-    //     double s_i = clusters[i]->silhouette(clusters);
-    //     outFile<<s_i<<" , ";
-    //     total_s += s_i ; 
-    // }
+    for(int i = 0; i < k_clusters; i++) {
+        double s_i = clusters[i]->silhouette(clusters);
+        outFile<<s_i<<" , ";
+        total_s += s_i ; 
+    }
 
-    // total_s/=k_clusters;
-    // outFile<<total_s<<" ]"<<endl;
+    total_s/=k_clusters;
+    outFile<<total_s<<" ]"<<endl;
 
     if(!strcmp(argv[8],"LSH") ) {
         delete lsh;
