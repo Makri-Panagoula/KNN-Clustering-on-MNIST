@@ -67,6 +67,8 @@ int main (int argc, char* argv[]) {
     int changed;
     int closest;
     int iterations = 0;
+    //Upper bound for R so as to avoid overfloe
+    double max_R = numeric_limits<double>::max();
 
     LSH *lsh = NULL;
     //Create Search Structure where we are only gonna be saving the centroids
@@ -165,7 +167,10 @@ int main (int argc, char* argv[]) {
                 //Empty out map for next iteration(since no datapoints should be marked)
                 bestDist.clear();
                 R*=2.0;
-            }while(cur_assigned > prev_assigned);
+            
+            //Repeat the loop until either no new points are assigned for bigger R or R has reached its max value
+            }while(cur_assigned > prev_assigned && R <= max_R);
+
             //For all the unassigned datapoints find closest cluster and assign them
             for(int i = 0; i < imgs->get_imgs(); i++) {
 
@@ -227,7 +232,10 @@ int main (int argc, char* argv[]) {
                 //Empty out map for next iteration(since no datapoints should be marked)
                 bestDist.clear();
                 R*=2.0;
-            }while(cur_assigned > prev_assigned);
+            
+            //Repeat the loop until either no new points are assigned for bigger R or R has reached its max value    
+            }while(cur_assigned > prev_assigned && R <= max_R);
+
             //For all the unassigned datapoints find closest cluster and assign them
             for(int i = 0; i < imgs->get_imgs(); i++) {
 
@@ -238,9 +246,10 @@ int main (int argc, char* argv[]) {
                 }
             }
         }
+        
     //We tolerate a small percentage of datapoints to change but we also set an upper bound for Macqueen loops to get results fast enough 
     //since if the random choice of initial centroids is bad it will lead to poor convergence speed
-    }while (changed > 0.1 * imgs->get_imgs() && iterations < 200); 
+    }while (changed > 0.1 * imgs->get_imgs() && iterations < 500); 
 
     //Keep track of ending time
     const auto end_cluster{chrono::steady_clock::now()};

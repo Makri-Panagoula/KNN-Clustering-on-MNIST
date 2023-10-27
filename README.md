@@ -2,6 +2,7 @@
 Παναγούλα Μακρή 1115202000119
 
 ------ A PART-------
+
 ~~LSH~~
 --Code Organization & Approach--:
 The LSH implementation reads the input dataset, that has all the information about the images. The LSH constructor initializes the Locality Sensitive Hashing algorithm by creating L number of hashtables using k number of hashfunctions and then stores each image of the training dataset based on the lsh technique. After that we take a small sample of the images in the query dataset to perform the algorithms on them and call the queryNeighbours function (lsh.cpp), so as to find and compare the nearest neighbors of a given query image. In order to do that, we create two different vectors are created, one for the approximate neighbours and one for the N-Exact neighbours in a specific radious.The set H including the available hash functions out of which each g-function is constructed has bigger cardinality than k to increase randomness, arbitrarily chosen, here 30*k. The k r-operands are chosen randomly and uniquely for every g-function for the same reason.We use the amplified lsh algorithm with the querying id trick (using mod M before mod TableSize) for improved performance.We choose the first 10 images of the query set to test the algorithms.  
@@ -38,4 +39,4 @@ Regardless of which data structure we use to save our datapoints(LSH/Hypercube) 
 
 In the end, we calclulate the Silhouette Score, which is a measure of how similar an object is to its cluster compared to other clusters. It provides a way to assess the quality of clustering.
 We calculate the average silhouette score for each cluster, as well as for the entire dataset.
-The result is a low total silhouette score, which suggests that using these methods the objects are not well matched to the clusters, therefore the metrics are either not good enough for our dataset or there is big existence of outliers.
+We notice that the cluster silhouettes have a small fluctuation which is exactly what we were expecting since the number of clusters we chose (10) is the ideal for the dataset (digits).The result is a low total silhouette score, which suggests that using these methods the objects are not well matched to the clusters, therefore the metrics are either not good enough for our dataset or there is big existence of outliers.

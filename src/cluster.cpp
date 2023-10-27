@@ -50,7 +50,7 @@ vector<Img*> kmeans_init(Input* imgs,int clusters,ofstream& out) {
     uniform_int_distribution<int> distribution(0,imgs->get_imgs() - 1);    
     int chosen = distribution(generator);
 
-    //Image became centroid -> update flag to 0
+    //Image became centroid -> update flag to 0 since it is the centroid of the first cluster
     centroids.push_back(imgs->get_image(chosen));
     centroids[0]->update_flag(0);
 

@@ -26,7 +26,7 @@ Input::Input(string inputFile) {
     input.read((char*)&magic_num,4);
     magic_num = LittleEndian(magic_num);
     input.read((char*)&imgs,4);
-    imgs = 10000;
+    imgs = 1000;
     this->img_count = imgs;    
     input.read((char*)&rows,4);
     rows = LittleEndian(rows);    
