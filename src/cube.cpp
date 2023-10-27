@@ -136,10 +136,10 @@ void Cube::queryNeighbours(Img* query,int n,string output,int R) {
     outFile<<"tHyperCube: <double> "<<t_cube.count()<<" sec."<<endl<<"tTrue: <double> "<<t_true.count()<<" sec."<<endl<<endl;
 
     // Write the contents of the set 'r' to the output file
-    // outFile << "Set r:" << endl;
-    // for (const auto& entry : r) {
-    //     outFile << "Distance: " << entry.first << " Image Number: " << entry.second << endl;
-    // }
+    outFile << "Set r:" << endl;
+    for (const auto& entry : r) {
+        outFile << "Distance: " << entry.first << " Image Number: " << entry.second << endl;
+    }
 
     outFile.close();    
 }
