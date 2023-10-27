@@ -84,7 +84,7 @@ int find_cluster(Img* point, vector<Cluster*>& clusters) {
 }
 
 //Removes datapoint from cluster and updates accordingly the centroid
-void Cluster::remove_point(Img* point,int &changed) {
+void Cluster::remove_point(Img* point) {
 
     vector<unsigned char> old_center = center->get_p();
     vector<unsigned char> new_point = point->get_p();
@@ -93,38 +93,31 @@ void Cluster::remove_point(Img* point,int &changed) {
     //Calculating the new mean by the previous one
     for(int i = 0 ; i < new_point.size(); i++) {
 
-        long double new_mean = (old_center[i] * len - new_point[i]) /  (len - 1);
-        unsigned char p_i = (unsigned char) ceil(new_mean);
-
-        //If a coordinate of the centroid has changed update changed value
-        if(p_i != old_center[i] )
-            changed++;        
+        long double new_mean = old_center[i] + ceil( ( old_center[i] - new_point[i] ) /  (len - 1));
+        unsigned char p_i = (unsigned char) new_mean;    
         center->update_p(i,p_i);
     }
     datapoints.remove(point);
 }
 
 //Inserts datapoint into cluster and updates accordingly the centroid
-void Cluster::insert_point(Img* point, int &changed){
+void Cluster::insert_point(Img* point){
 
     //Estimate new centroid for this cluster
     vector<unsigned char> old_center = center->get_p();
     vector<unsigned char> new_point = point->get_p();
+    //Inserting new datapoint
+    datapoints.push_front(point);    
     //Adding one for the centroid
     int len = datapoints.size() + 1; 
+
     //Calculating the new mean by the previous one
     for(int i = 0 ; i < new_point.size(); i++) {
 
-       long double new_mean = ceil((old_center[i] * len + new_point[i] ) / (len + 1));
-       unsigned char p_i = (unsigned char) new_mean;
-
-        //If a coordinate of the centroid has changed update changed value
-        if(p_i != old_center[i])
-            changed++;      
-
-        center->update_p(i,p_i);
+       long double new_mean = old_center[i] + ceil((new_point[i] - old_center[i]) / len);
+       unsigned char p_i = (unsigned char) new_mean;    
+       center->update_p(i,p_i);
     }
-    datapoints.push_front(point);
 }
 
 //Writes in output file the number of each image included in the cluster

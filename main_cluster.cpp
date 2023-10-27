@@ -57,7 +57,6 @@ int main (int argc, char* argv[]) {
     int k_clusters = parameters["number_of_clusters:"];
     //Initialization of centroids
     vector<Img*> centroids = kmeans_init(imgs, k_clusters,outFile);
-
     vector<Cluster*> clusters;
     //Initialize clusters with centroid
     for(int i = 0; i < k_clusters; i++) {
@@ -67,8 +66,8 @@ int main (int argc, char* argv[]) {
 
     int changed;
     int closest;
-    //Keep track of starting time
-    const auto start_cluster{chrono::steady_clock::now()};
+    int iterations = 0;
+
     LSH *lsh = NULL;
     //Create Search Structure where we are only gonna be saving the centroids
     //(since we want to find the nearest neighbour out of them and non-centroid point in its iteration)    
@@ -76,7 +75,8 @@ int main (int argc, char* argv[]) {
         lsh = new LSH(parameters["number_of_vector_hash_tables:"],
                       parameters["number_of_vector_hash_functions:"],
                       imgs);
-    }       
+    }   
+
     Cube* cube = NULL;
     if(!strcmp(argv[8],"Hypercube") ) {
         cube = new Cube(parameters["number_of_hypercube_dimensions:"],
@@ -89,14 +89,17 @@ int main (int argc, char* argv[]) {
     int cur_assigned = 0;
     int prev_assigned;
 
+    //Keep track of starting time
+    const auto start_cluster{chrono::steady_clock::now()};
+
     do {
-        //Number of clusters whose centroids have changed
+        //Number of datapoints whose clusters have changed
         changed = 0;
-        
+
         //Find closest cluster according to method asked
         if(!strcmp(argv[8],"Classic") ) {
             //For every datapoint, assign it to closest centroid and if datapoint updated, update centroid
-            for(int i = 0 ; i < 1000; i++) {
+            for(int i = 0 ; i < imgs->get_imgs(); i++) {
 
                 Img* point = imgs->get_image(i);
                 int prev_cluster = point->get_flag();                
@@ -105,8 +108,9 @@ int main (int argc, char* argv[]) {
                 if(point->update_flag(closest)) {
                     //Update centroids in previous cluster(if it wasn't -1) and closest
                     if(prev_cluster != -1)
-                        clusters[prev_cluster]->remove_point(point, changed); 
-                    clusters[closest]->insert_point(point, changed);
+                        clusters[prev_cluster]->remove_point(point); 
+                    clusters[closest]->insert_point(point);
+                    changed++;
                 }  
             }
         }
@@ -156,7 +160,7 @@ int main (int argc, char* argv[]) {
                 for (auto marked = bestDist.begin(); marked != bestDist.end(); marked++) { 
                     Img* img = marked->first;
                     int cluster = img->get_flag();
-                    clusters[cluster]->insert_point(img,changed);
+                    clusters[cluster]->insert_point(img);
                 }
                 //Empty out map for next iteration(since no datapoints should be marked)
                 bestDist.clear();
@@ -168,7 +172,7 @@ int main (int argc, char* argv[]) {
                 Img* img = imgs->get_image(i);
                 if(img->get_flag() == -1) {
                     int cluster = find_cluster(img,clusters);
-                    clusters[cluster]->insert_point(img,changed);
+                    clusters[cluster]->insert_point(img);
                 }
             }
         }
@@ -218,7 +222,7 @@ int main (int argc, char* argv[]) {
                 for (auto marked = bestDist.begin(); marked != bestDist.end(); marked++) { 
                     Img* img = marked->first;
                     int cluster = img->get_flag();
-                    clusters[cluster]->insert_point(img,changed);
+                    clusters[cluster]->insert_point(img);
                 }
                 //Empty out map for next iteration(since no datapoints should be marked)
                 bestDist.clear();
@@ -230,11 +234,13 @@ int main (int argc, char* argv[]) {
                 Img* img = imgs->get_image(i);
                 if(img->get_flag() == -1) {
                     int cluster = find_cluster(img,clusters);
-                    clusters[cluster]->insert_point(img,changed);
+                    clusters[cluster]->insert_point(img);
                 }
             }
         }
-    }while (changed < 2); 
+    //We tolerate a small percentage of datapoints to change but we also set an upper bound for Macqueen loops to get results fast enough 
+    //since if the random choice of initial centroids is bad it will lead to poor convergence speed
+    }while (changed > 0.1 * imgs->get_imgs() && ++iterations < 10); 
 
     //Keep track of ending time
     const auto end_cluster{chrono::steady_clock::now()};

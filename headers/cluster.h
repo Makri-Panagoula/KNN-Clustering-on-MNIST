@@ -24,9 +24,9 @@ class Cluster{
         Cluster(Img* centroid,int cluster_num);
         Img* get_centroid(){ return this->center;}
         //Removes datapoint from cluster and updates accordingly the centroid
-        void remove_point(Img* point, int &changed);
+        void remove_point(Img* point);
         //Inserts datapoint into cluster and updates accordingly the centroid
-        void insert_point(Img* point, int &changed);
+        void insert_point(Img* point);
         //Number of datapoints in cluster (not including centroid)
         int size(){ return datapoints.size();}
         //Writes in output file the number of each image included in the cluster
