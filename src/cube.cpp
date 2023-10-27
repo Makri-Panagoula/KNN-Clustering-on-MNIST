@@ -103,8 +103,6 @@ void Cube::queryNeighbours(Img* query,int n,string output,int R) {
     set<pair<double, int>> r;
     set<pair<double, int>> N_approx = Approx(query, r, R); 
 
-    cout<<N_approx.size()<<endl;
-
     const auto end_cube{chrono::steady_clock::now()};
     chrono::duration<double> t_cube{end_cube - start_cube};
 
@@ -137,11 +135,11 @@ void Cube::queryNeighbours(Img* query,int n,string output,int R) {
     }
     outFile<<"tHyperCube: <double> "<<t_cube.count()<<" sec."<<endl<<"tTrue: <double> "<<t_true.count()<<" sec."<<endl<<endl;
 
-    //Write the contents of the set 'r' to the output file
-    outFile << "Set r:" << endl;
-    for (const auto& entry : r) {
-        outFile << "Distance: " << entry.first << " Image Number: " << entry.second << endl;
-    }
+    // Write the contents of the set 'r' to the output file
+    // outFile << "Set r:" << endl;
+    // for (const auto& entry : r) {
+    //     outFile << "Distance: " << entry.first << " Image Number: " << entry.second << endl;
+    // }
 
     outFile.close();    
 }
