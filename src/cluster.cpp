@@ -138,22 +138,18 @@ void Cluster::display(ofstream& outFile) {
 
 //Computes average distance of datapoint to all the datapoints in the cluster
 double Cluster::avg_dist(Img* datapoint) {
-    //Number of different datapoints out of which we will compute the average distance
-    int different = datapoints.size();
-    //average distance between point1 and the rest of the points of the cluster
+
+    //average distance between point1 and the points of the cluster
     double a = 0.0;     
     for (auto point2 = datapoints.begin(); point2 != datapoints.end(); point2++){
-        if (datapoint != *point2){
-            a += datapoint->euclideanDistance(*point2);
-            different--;
-        }
+        a += datapoint->euclideanDistance(*point2);
     }
-    a /= different;
+    a /= datapoints.size();
     return a;
 }
 
 double Cluster::silhouette(vector<Cluster*>& clusters){
-    double s = 0;
+    double s = 0.0;
     for (auto point1 = datapoints.begin(); point1 != datapoints.end(); point1++){
 
         //minimum distance between point1 and the other centroids    
@@ -173,15 +169,16 @@ double Cluster::silhouette(vector<Cluster*>& clusters){
                 }
             }
         }
+
         //calculate b(i)
         double b = clusters[b_cluster]->avg_dist(*point1);
 
         if (a < b) {
-            s += 1 - (a/b);
+            s += 1.0 - (a/b);
         } else if (a > b) {
-            s += (b/a) - 1;
+            s += (b/a) - 1.0;
         }
-
+        cout<<"a "<<a<<" b "<<b<<endl;
     }
     s /= datapoints.size();
     return s;
