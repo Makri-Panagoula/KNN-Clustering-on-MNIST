@@ -95,7 +95,7 @@ int main (int argc, char* argv[]) {
         
         //Find closest cluster according to method asked
         if(!strcmp(argv[8],"Classic") ) {
-            //For every datapoint , assign it to closest centroid and if datapoint updated , update centroid
+            //For every datapoint, assign it to closest centroid and if datapoint updated, update centroid
             for(int i = 0 ; i < 1000; i++) {
 
                 Img* point = imgs->get_image(i);

@@ -15,7 +15,7 @@ Img* chooseNextCenter(vector<Img*>& centroids, Input* imgs) {
     Img* candidate;
 
     //Iterate through the non-centroid images in the dataset
-    //We won't actually express it as a probability since it is uselessly computationally complex(the result will be the same since the divider is the same)
+    //We won't actually express it as a probability since it is uselessly computationally complex(the result will be the same since the divider is the same for all)
     for (int i = 0; i < imgs->get_imgs(); i++) {
         candidate = imgs->get_image(i);
         double d_i = numeric_limits<double>::max();
