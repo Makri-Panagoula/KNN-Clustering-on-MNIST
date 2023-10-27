@@ -30,18 +30,19 @@ Cube::Cube(int d,int M,int probes,Input* input) : hFuncs(d){
         store(input->get_image(i));    
 }
 
-void Hamming(string binary,int i,int ham_dist,set<string>& buckets) {
+void Hamming(string binary,int i,int ham_dist,set<string>& buckets,int stop) {
     if (ham_dist == 0) {
         buckets.insert(binary);
         return;
     }
-    if (i < 0) return;
+    //When we reach the stop-th most significant bit we stop since our bucket number can't hold any bigger value
+    if (i < stop) return;
     // flip current bit doing xor with 1
     binary[i] ^= 1;
-    Hamming(binary, i-1, ham_dist-1, buckets);
+    Hamming(binary, i-1, ham_dist-1, buckets,stop);
     // or don't flip it (flip it again to undo)
     binary[i] ^= 1;
-    Hamming(binary, i-1, ham_dist, buckets);
+    Hamming(binary, i-1, ham_dist, buckets,stop);
 }
 
 //Returns a set holding a pair (distnce,img_number) with the n-approximate neighbours and initializes set r with approximate neighbours in radius r
@@ -52,7 +53,10 @@ set <pair<double, int>> Cube::Approx(Img* query, set<pair<double, int>>& r, int 
     //Find query's bucket applying f
     int bucket = f(query);
     //Convert to binary string in order to perform hamming distance
+    //We pass a 32- bits string even though we should be passing d-bits because function needs constant and 32 bits are in an int
     string binary = bitset<32>(bucket).to_string();   
+    //We stop searching for hamming distance when we reach the stop-th most significant bit
+    int stop = 32 - this->d + 1;
     //Neighbour vertices from bucket
     set<string> vertices;
     set<string>::iterator vertex;
@@ -60,14 +64,15 @@ set <pair<double, int>> Cube::Approx(Img* query, set<pair<double, int>>& r, int 
     int datapoints = 0;
     //Total buckets checked    
     int checked_buckets = 0;
+    int total_buckets = pow(2.0,this->d);
     //Check buckets with increasing Hamming distance from 0 (for hashed bucket) to d 
     for(int dist = 0; dist <= d; dist++) { 
 
         //Check neighbour buckets with increasing hamming distance until you have reached M datapoints or probes neighbour buckets
-        Hamming(binary,31,dist,vertices);
+        Hamming(binary,d-1,dist,vertices,stop);
         for(vertex = vertices.begin(); vertex!= vertices.end(); vertex++) {
 
-            unsigned long neighbour = stoul(*vertex, nullptr, 2);
+            int neighbour = stoul(*vertex, nullptr, 2);
             vector<Img*> in_bucket = this->buckets[neighbour];
 
             //Traverse datapoints of its bucket and add them to N_approx and r set if suitable
