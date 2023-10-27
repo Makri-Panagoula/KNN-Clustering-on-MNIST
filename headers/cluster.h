@@ -40,7 +40,7 @@ class Cluster{
         ~Cluster(){};
 };
 
-
+//Chooses the next centroid out of the non-centroid input images based on d_i^2
 Img* chooseNextCenter(const set<Img*>& centroids, Input* imgs);
 
 //Initializes and returns a vector of the k centroid images
@@ -49,4 +49,5 @@ vector<Img*> kmeans_init(Input* imgs, int clusters,ofstream& out);
 //Returns index of closest cluster of vector clusters
 int find_cluster(Img* point, vector<Cluster*> &clusters);
 
+//Returns the minimum distance between the centroids divided by 2 that will serve as the initial value for R
 double initial_R(vector<Img*>& centroids);

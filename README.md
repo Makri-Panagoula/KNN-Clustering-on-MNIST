@@ -26,7 +26,7 @@ Regardless of the assignment algorithm, the initialization of the centroids is b
 You can run this part using the command make run_cluster. 
 In order to test the different methods of clustering implementation, you can change the last argument in this line:
 ARGSCL = –i datasets/input.dat –c cluster.conf -o output_cluster -m Classic
-The implemented methods are "Classic", "LSH", "Hypercube"
+The implemented methods are "Classic", "LSH", "Hypercube".With the parameter -complete after the output file , the contents of the clusters are demonstrated in the output file as well
 
 ~~Lloyd~~
 --Code Organization & Approach--:

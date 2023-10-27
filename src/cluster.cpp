@@ -8,6 +8,7 @@ Cluster::Cluster(Img* centroid,int cluster_num) {
     this->datapoints.push_front(centroid);
 }
 
+//Chooses the next centroid out of the non-centroid input images based on d_i^2
 Img* chooseNextCenter(vector<Img*>& centroids, Input* imgs) {
 
     double max_prob = numeric_limits<double>::min();  
@@ -128,12 +129,13 @@ void Cluster::insert_point(Img* point, int &changed){
 
 //Writes in output file the number of each image included in the cluster
 void Cluster::display(ofstream& outFile) {
-    outFile<<endl<<"Images : ";
+    outFile<<endl<<"Images : {";
     list<Img*>::iterator it;
     for(it = datapoints.begin(); it != datapoints.end(); ++it) {
         Img* datapoint = *it;
-        outFile<<datapoint->imgNum()<<" , "<<endl;
+        outFile<<datapoint->imgNum()<<" , ";
     }
+    outFile<<"}"<<endl<<endl;
 }
 
 //Computes average distance of datapoint to all the datapoints in the cluster
