@@ -111,8 +111,6 @@ int main (int argc, char* argv[]) {
             }
         }
         else if(!strcmp(argv[8],"LSH") ) {
-            cout<<"total : "<<imgs->get_imgs()<<endl;
-
             //Repeat until you can't find new neighbours that haven't already been asssigned to centroids
             do {
                 prev_assigned = cur_assigned;
@@ -132,9 +130,8 @@ int main (int argc, char* argv[]) {
 
                     //Iterate neighbouring datapoints
                     for(const auto& pair : cluster_points) {
-
-                        Img* img = imgs->get_image(pair.first);
-                        double dist = pair.second;
+                        Img* img = imgs->get_image(pair.second);
+                        double dist = pair.first;
                         int prev_cluster = img->get_flag();
                         int cur_cluster = clusters[i]->num();
                         //If image hasn't been assigned, insert it into map and update its flag with cluster's number
@@ -161,47 +158,42 @@ int main (int argc, char* argv[]) {
                     int cluster = img->get_flag();
                     clusters[cluster]->insert_point(img,changed);
                 }
-                cout<<bestDist.size()<<endl;
                 //Empty out map for next iteration(since no datapoints should be marked)
                 bestDist.clear();
                 R*=2.0;
             }while(cur_assigned > prev_assigned);
-            int count = 0;
             //For all the unassigned datapoints find closest cluster and assign them
             for(int i = 0; i < imgs->get_imgs(); i++) {
 
                 Img* img = imgs->get_image(i);
                 if(img->get_flag() == -1) {
-                    count++;
                     int cluster = find_cluster(img,clusters);
                     clusters[cluster]->insert_point(img,changed);
                 }
             }
-            cout<<"unassigned : "<<count<<endl;
         }
         else if(!strcmp(argv[8],"Hypercube")) {
-            //A map that corresponds every image to its closest distance
-            map<Img*,double> bestDist;
-
             //Repeat until you can't find new neighbours that haven't already been asssigned to centroids
             do {
                 prev_assigned = cur_assigned;
                 cur_assigned = 0;
+                //A map that corresponds every image that will be assigned in this iteration to its closest distance
+                map<Img*,double> bestDist;
+                map<Img*,double>::iterator marked;
+
                 //For every centroid perform a range search on centroid with radius R
                 for(int i = 0; i < k_clusters; i++) {
-
                     Img* centroid = clusters[i]->centroid();
 
-                    //Set holds a pair with distance from query point and image number
+                    //Set cluster points holds a pair with distance from query point and image number from range search
                     set<pair<double, int>> cluster_points;
                     cube->Approx(centroid,cluster_points,R);
                     cur_assigned += cluster_points.size();
 
                     //Iterate neighbouring datapoints
                     for(const auto& pair : cluster_points) {
-
-                        Img* img = imgs->get_image(pair.first);
-                        double dist =  pair.second;
+                        Img* img = imgs->get_image(pair.second);
+                        double dist = pair.first;
                         int prev_cluster = img->get_flag();
                         int cur_cluster = clusters[i]->num();
                         //If image hasn't been assigned, insert it into map and update its flag with cluster's number
@@ -209,36 +201,39 @@ int main (int argc, char* argv[]) {
                             bestDist[img] = dist;
                             img->update_flag(cur_cluster);
                         }
-                        //Else if image belonged to another cluster update in case distance from current centroid is smaller
-                        else if(prev_cluster != cur_cluster) {
-                            double prev_dist = bestDist[img];
-                            if(dist < prev_dist) {
-                                bestDist[img] = dist;
-                                img->update_flag(cur_cluster);
+                        //Else check if image had been marked in current iteration, otherwise, if datapoint had been assigned in a previous iteration for a different radius, we mustn't reexamine it
+                        else {
+                            marked = bestDist.find(img);
+                            if(marked != bestDist.end()) {
+                                double prev_dist = bestDist[img];
+                                if(dist < prev_dist) {
+                                    bestDist[img] = dist;
+                                    img->update_flag(cur_cluster);
+                                }
                             }
-                        }
+                        }    
                     }
                 }
+                //bestDist map holds the datapoints that were marked and will be assigned in this iteration , so we insert them in the appropriate cluster 
+                for (auto marked = bestDist.begin(); marked != bestDist.end(); marked++) { 
+                    Img* img = marked->first;
+                    int cluster = img->get_flag();
+                    clusters[cluster]->insert_point(img,changed);
+                }
+                //Empty out map for next iteration(since no datapoints should be marked)
+                bestDist.clear();
                 R*=2.0;
             }while(cur_assigned > prev_assigned);
-
-            //Now that we have finally decided upon assignments perform them
+            //For all the unassigned datapoints find closest cluster and assign them
             for(int i = 0; i < imgs->get_imgs(); i++) {
 
                 Img* img = imgs->get_image(i);
-                int cluster = img->get_flag();
-
-                if(cluster != -1) {
-                    clusters[cluster]->insert_point(img,changed);
-                }
-                else {
-                    //If image hadn't been assigned to a cluster find the closest one with brute force
-                    cluster = find_cluster(img,clusters);
+                if(img->get_flag() == -1) {
+                    int cluster = find_cluster(img,clusters);
                     clusters[cluster]->insert_point(img,changed);
                 }
             }
         }
-
     }while (changed < 2); 
 
     //Keep track of ending time
@@ -255,7 +250,7 @@ int main (int argc, char* argv[]) {
         if(complete)
             clusters[i]->display(outFile);
     }
-    exit(1);
+    // exit(1);
     outFile<<endl<<"clustering time: "<<t_cluster.count()<<" sec."<<endl<<"Silhouette [";
     double total_s = 0.0;
 
@@ -267,6 +262,7 @@ int main (int argc, char* argv[]) {
 
     total_s/=k_clusters;
     outFile<<total_s<<" ]"<<endl;
+    outFile.close();      
 
     if(!strcmp(argv[8],"LSH") ) {
         delete lsh;
@@ -274,7 +270,6 @@ int main (int argc, char* argv[]) {
     if(!strcmp(argv[8],"Hypercube") ) {
         delete cube;
     }  
-    outFile.close();      
 
     delete imgs;
     return 0;

@@ -36,7 +36,7 @@ CLUSTER = main_cluster
 OBJC = $(SRC)/img.o $(SRC)/hFunc.o $(SRC)/input.o $(SRC)/cube.o 
 OBJ_CL = main_cluster.o $(OBJ_L) $(SRC)/cube.o $(SRC)/cluster.o
 
-ARGSCL = –i datasets/input.dat –c cluster.conf -o output_cluster -complete -m Classic
+ARGSCL = –i datasets/input.dat –c cluster.conf -o output_cluster -m Hypercube
 
 $(CLUSTER): $(OBJ_CL)
 	$(CC) $(CFLAGS) $(OBJ_CL) -o $(CLUSTER) -lm -g3
