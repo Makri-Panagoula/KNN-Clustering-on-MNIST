@@ -20,14 +20,14 @@ Input::Input(string inputFile) {
 
     //Processsing the first four words of the input file that contain general info about the dataset
     int magic_num = 0;
-    int imgs = 0;
+    int imgs = 1000;
     int rows = 0;    
     int cols = 0;        
     input.read((char*)&magic_num,4);
     magic_num = LittleEndian(magic_num);
-    input.read((char*)&imgs,4);
-    imgs = LittleEndian(imgs);    
-    this->img_count = imgs;
+    // input.read((char*)&imgs,4);
+    // imgs = LittleEndian(imgs);
+    this->img_count = imgs;;    
     input.read((char*)&rows,4);
     rows = LittleEndian(rows);    
     input.read((char*)&cols,4);
