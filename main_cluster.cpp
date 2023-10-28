@@ -67,8 +67,6 @@ int main (int argc, char* argv[]) {
     int changed;
     int closest;
     int iterations = 0;
-    //Upper bound for R so as to avoid overfloe
-    double max_R = numeric_limits<double>::max();
 
     LSH *lsh = NULL;
     //Create Search Structure where we are only gonna be saving the centroids
@@ -86,14 +84,15 @@ int main (int argc, char* argv[]) {
                         parameters["number_of_probes:"],
                         imgs);
     }  
-    
+    //Initialize R
     double R = initial_R(centroids);
+    //Upper bound for R so as to avoid overfloe
+    double max_R = numeric_limits<double>::max();    
     int cur_assigned = 0;
     int prev_assigned;
 
     //Keep track of starting time
     const auto start_cluster{chrono::steady_clock::now()};
-
     do {
         //Number of datapoints whose clusters have changed
         changed = 0;
@@ -117,13 +116,21 @@ int main (int argc, char* argv[]) {
             }
         }
         else if(!strcmp(argv[8],"LSH") ) {
+            //Initialize unassigned set with all the input images for every iteration of Macqueen,set is gonna hold all the unassigned datapoints for each
+            //iteration of MCqueen
+            set<Img*> unassigned;
+            for(int i = 0; i < imgs->get_imgs(); i++) 
+                unassigned.insert(imgs->get_image(i));
+            
             //Repeat until you can't find new neighbours that haven't already been asssigned to centroids
             do {
                 prev_assigned = cur_assigned;
                 cur_assigned = 0;
                 //A map that corresponds every image that will be assigned in this iteration to its closest distance
                 map<Img*,double> bestDist;
-                map<Img*,double>::iterator marked;
+                //A map that corresponds every image that will be assigned in this iteration to its current closest cluster
+                map<Img*,int> cluster;
+                map<Img*,int>::iterator marked;
 
                 //For every centroid perform a range search on centroid with radius R
                 for(int i = 0; i < k_clusters; i++) {
@@ -138,57 +145,76 @@ int main (int argc, char* argv[]) {
                     for(const auto& pair : cluster_points) {
                         Img* img = imgs->get_image(pair.second);
                         double dist = pair.first;
-                        int prev_cluster = img->get_flag();
                         int cur_cluster = clusters[i]->num();
-                        //If image hasn't been assigned, insert it into map and update its flag with cluster's number
-                        if( prev_cluster == -1) {
-                            bestDist[img] = dist;
-                            img->update_flag(cur_cluster);
-                        }
-                        //Else check if image had been marked in current iteration, otherwise, if datapoint had been assigned in a previous iteration for a different radius, we mustn't reexamine it
-                        else {
-                            marked = bestDist.find(img);
-                            if(marked != bestDist.end()) {
+
+                        auto pos = unassigned.find(img);
+                        //If image has been assigned for a different radius, we won't reevaluate its cluster
+                        if(pos == unassigned.end()) {
+                            marked = cluster.find(img);
+                            //If this is the first cluster where the datapoint is assigned ,insert it into the map
+                            if(marked != cluster.end()) {
+                                bestDist[img] = dist;
+                                cluster[img] = cur_cluster;
+                            }
+                            //Otherwise check distance with previous clusters
+                            else{
                                 double prev_dist = bestDist[img];
                                 if(dist < prev_dist) {
                                     bestDist[img] = dist;
-                                    img->update_flag(cur_cluster);
+                                    cluster[img] = cur_cluster;
                                 }
                             }
-                        }    
+                        }  
                     }
                 }
-                //bestDist map holds the datapoints that were marked and will be assigned in this iteration , so we insert them in the appropriate cluster 
-                for (auto marked = bestDist.begin(); marked != bestDist.end(); marked++) { 
+                //Assign the datapoints we located in this and only this iterations to their clusters
+                for (auto marked = cluster.begin(); marked != cluster.end(); marked++) { 
                     Img* img = marked->first;
-                    int cluster = img->get_flag();
-                    clusters[cluster]->insert_point(img);
+                    int cluster = marked->second;
+                    //Cluster that datapoint had been assigned in previous iterations of Mcqueen
+                    int prev_cluster = img->get_flag();
+                    //If datapoint has changed cluster
+                    if(img->update_flag(cluster)) {
+                        //Update centroids in previous cluster(if it wasn't -1) and closest
+                        if(prev_cluster != -1)
+                            clusters[prev_cluster]->remove_point(img); 
+                        clusters[cluster]->insert_point(img);
+                        changed++;
+                    }              
+                    //Image has been assigned => remove from set
+                    unassigned.erase(img);    
                 }
-                //Empty out map for next iteration(since no datapoints should be marked)
+                //Empty out maps for next iteration(since no datapoints should be marked)
                 bestDist.clear();
+                cluster.clear();
+
                 R*=2.0;
             
             //Repeat the loop until either no new points are assigned for bigger R or R has reached its max value
             }while(cur_assigned > prev_assigned && R <= max_R);
 
             //For all the unassigned datapoints find closest cluster and assign them
-            for(int i = 0; i < imgs->get_imgs(); i++) {
-
-                Img* img = imgs->get_image(i);
-                if(img->get_flag() == -1) {
-                    int cluster = find_cluster(img,clusters);
-                    clusters[cluster]->insert_point(img);
-                }
+            for (auto to_assign : unassigned) {
+                int cluster = find_cluster(to_assign,clusters);
+                clusters[cluster]->insert_point(to_assign);
             }
         }
         else if(!strcmp(argv[8],"Hypercube")) {
+            //Initialize unassigned set with all the input images for every iteration of Macqueen,set is gonna hold all the unassigned datapoints for each
+            //iteration of MCqueen
+            set<Img*> unassigned;
+            for(int i = 0; i < imgs->get_imgs(); i++) 
+                unassigned.insert(imgs->get_image(i));
+            
             //Repeat until you can't find new neighbours that haven't already been asssigned to centroids
             do {
                 prev_assigned = cur_assigned;
                 cur_assigned = 0;
                 //A map that corresponds every image that will be assigned in this iteration to its closest distance
                 map<Img*,double> bestDist;
-                map<Img*,double>::iterator marked;
+                //A map that corresponds every image that will be assigned in this iteration to its current closest cluster
+                map<Img*,int> cluster;
+                map<Img*,int>::iterator marked;
 
                 //For every centroid perform a range search on centroid with radius R
                 for(int i = 0; i < k_clusters; i++) {
@@ -203,47 +229,58 @@ int main (int argc, char* argv[]) {
                     for(const auto& pair : cluster_points) {
                         Img* img = imgs->get_image(pair.second);
                         double dist = pair.first;
-                        int prev_cluster = img->get_flag();
                         int cur_cluster = clusters[i]->num();
-                        //If image hasn't been assigned, insert it into map and update its flag with cluster's number
-                        if( prev_cluster == -1) {
-                            bestDist[img] = dist;
-                            img->update_flag(cur_cluster);
-                        }
-                        //Else check if image had been marked in current iteration, otherwise, if datapoint had been assigned in a previous iteration for a different radius, we mustn't reexamine it
-                        else {
-                            marked = bestDist.find(img);
-                            if(marked != bestDist.end()) {
+
+                        auto pos = unassigned.find(img);
+                        //If image has been assigned for a different radius, we won't reevaluate its cluster
+                        if(pos == unassigned.end()) {
+                            marked = cluster.find(img);
+                            //If this is the first cluster where the datapoint is assigned ,insert it into the map
+                            if(marked != cluster.end()) {
+                                bestDist[img] = dist;
+                                cluster[img] = cur_cluster;
+                            }
+                            //Otherwise check distance with previous clusters
+                            else{
                                 double prev_dist = bestDist[img];
                                 if(dist < prev_dist) {
                                     bestDist[img] = dist;
-                                    img->update_flag(cur_cluster);
+                                    cluster[img] = cur_cluster;
                                 }
                             }
-                        }    
+                        }  
                     }
                 }
-                //bestDist map holds the datapoints that were marked and will be assigned in this iteration , so we insert them in the appropriate cluster 
-                for (auto marked = bestDist.begin(); marked != bestDist.end(); marked++) { 
+                //Assign the datapoints we located in this and only this iterations to their clusters
+                for (auto marked = cluster.begin(); marked != cluster.end(); marked++) { 
                     Img* img = marked->first;
-                    int cluster = img->get_flag();
-                    clusters[cluster]->insert_point(img);
+                    int cluster = marked->second;
+                    //Cluster that datapoint had been assigned in previous iterations of Mcqueen
+                    int prev_cluster = img->get_flag();
+                    //If datapoint has changed cluster
+                    if(img->update_flag(cluster)) {
+                        //Update centroids in previous cluster(if it wasn't -1) and closest
+                        if(prev_cluster != -1)
+                            clusters[prev_cluster]->remove_point(img); 
+                        clusters[cluster]->insert_point(img);
+                        changed++;
+                    }              
+                    //Image has been assigned => remove from set
+                    unassigned.erase(img);    
                 }
-                //Empty out map for next iteration(since no datapoints should be marked)
+                //Empty out maps for next iteration(since no datapoints should be marked)
                 bestDist.clear();
+                cluster.clear();
+
                 R*=2.0;
             
-            //Repeat the loop until either no new points are assigned for bigger R or R has reached its max value    
+            //Repeat the loop until either no new points are assigned for bigger R or R has reached its max value
             }while(cur_assigned > prev_assigned && R <= max_R);
 
             //For all the unassigned datapoints find closest cluster and assign them
-            for(int i = 0; i < imgs->get_imgs(); i++) {
-
-                Img* img = imgs->get_image(i);
-                if(img->get_flag() == -1) {
-                    int cluster = find_cluster(img,clusters);
-                    clusters[cluster]->insert_point(img);
-                }
+            for (auto to_assign : unassigned) {
+                int cluster = find_cluster(to_assign,clusters);
+                clusters[cluster]->insert_point(to_assign);
             }
         }
         
@@ -265,7 +302,7 @@ int main (int argc, char* argv[]) {
         if(complete)
             clusters[i]->display(outFile);
     }
-    // exit(1);
+
     outFile<<endl<<"clustering time: "<<t_cluster.count()<<" sec."<<endl<<"Silhouette [";
     double total_s = 0.0;
 
