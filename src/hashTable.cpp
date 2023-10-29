@@ -39,7 +39,6 @@ pair<unsigned int , unsigned int> hashTable::g(Img* img) {
         //r_i is already taken up to M
         dot_prod += (h_value * r[i]) % this->M;
     }
-    //exit(1);
 
     pair<unsigned int, unsigned int> to_return;
     to_return.first = dot_prod % this->M;                       //Id

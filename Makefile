@@ -12,7 +12,7 @@ LSH = main_lsh
 OBJ_L = $(SRC)/lsh.o $(SRC)/img.o $(SRC)/hFunc.o $(SRC)/hashTable.o $(SRC)/input.o
 OBJ_LSH = main_lsh.o $(OBJ_L)
 
-ARGSL = –d datasets/input.dat –q datasets/query.dat –k 3 -L 5 -ο output_lsh -Ν 11 -R 2500
+ARGSL = –d datasets/input.dat –q datasets/query.dat –k 3 -L 5 -ο output_lsh -Ν 10 -R 2500
 
 $(LSH): $(OBJ_LSH)
 	$(CC) $(CFLAGS) $(OBJ_LSH) -o $(LSH) -lm -g3
@@ -51,7 +51,7 @@ valgrind_cube:	$(CUBE)
 	valgrind --track-origins=yes --leak-check=full ./$(CUBE) $(ARGSC)
 
 valgrind_cluster:  $(CLUSTER)
-	valgrind ./$(CLUSTER) $(ARGSCL)
+	valgrind --track-origins=yes --leak-check=full ./$(CLUSTER) $(ARGSCL)
 
 clean:
 	rm -f $(OBJ_CL) $(OBJ_LSH) $(OBJ_CUBE) $(LSH) $(CUBE) $(CLUSTER) output*
