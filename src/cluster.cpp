@@ -20,9 +20,9 @@ Img* chooseNextCenter(vector<Img*>& centroids, Input* imgs) {
     for (int i = 0; i < imgs->get_imgs(); i++) {
         candidate = imgs->get_image(i);
         double d_i = numeric_limits<double>::max();
-        //Check that image isn't centroid
-        if(candidate->get_flag() != 0) {
-            // Calculate the minimum euclidean distance to the current centroids
+        //Check that image is unassigned aka not a centroid(since at this point of execution the only assigned points are centroids)
+        if(candidate->get_flag() == -1) {
+            //Calculate the minimum euclidean distance to the current centroids,which will be the d_i
             for (Img* centroid : centroids) {
                 double dist = candidate->euclideanDistance(centroid);
                 if (dist < d_i) {
@@ -40,7 +40,7 @@ Img* chooseNextCenter(vector<Img*>& centroids, Input* imgs) {
 }
 
 //Initializes and returns the set of the k centroid images
-vector<Img*> kmeans_init(Input* imgs,int clusters,ofstream& out) {
+vector<Img*> kmeans_init(Input* imgs, int clusters, ofstream& out) {
 
     vector<Img*> centroids;
 
@@ -57,8 +57,8 @@ vector<Img*> kmeans_init(Input* imgs,int clusters,ofstream& out) {
     for(int i = 1; i < clusters ; i++){
         Img* nextCenter = chooseNextCenter(centroids, imgs); 
         //Image became centroid -> update flag to its corresponding cluster
+        nextCenter->update_flag(i);     
         centroids.push_back(nextCenter);
-        centroids[i]->update_flag(i);     
     } 
 
     return centroids;

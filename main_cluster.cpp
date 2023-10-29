@@ -141,14 +141,14 @@ int main (int argc, char* argv[]) {
                     lsh->Approx(centroid,cluster_points,R);
                     cur_assigned += cluster_points.size();
 
-                    //Iterate neighbouring datapoints
+                    //Iterate neighbouring datapoints from set<pair<distance, image number>> 
                     for(const auto& pair : cluster_points) {
                         Img* img = imgs->get_image(pair.second);
                         double dist = pair.first;
                         int cur_cluster = clusters[i]->num();
 
                         auto pos = unassigned.find(img);
-                        //If image has been assigned for a different radius, we won't reevaluate its cluster
+                        //If image has been assigned for a different radius, we won't reevaluate its cluster,otherwise:
                         if(pos == unassigned.end()) {
                             marked = cluster.find(img);
                             //If this is the first cluster where the datapoint is assigned ,insert it into the map
@@ -184,7 +184,7 @@ int main (int argc, char* argv[]) {
                     //Image has been assigned => remove from set
                     unassigned.erase(img);    
                 }
-                //Empty out maps for next iteration(since no datapoints should be marked)
+                //Empty out maps for next radius(since no datapoints should be already marked)
                 bestDist.clear();
                 cluster.clear();
 
@@ -322,7 +322,10 @@ int main (int argc, char* argv[]) {
     if(!strcmp(argv[8],"Hypercube") ) {
         delete cube;
     }  
-
+    //Initialize clusters with centroid
+    for(int i = 0; i < k_clusters; i++) {
+        delete clusters[i];
+    }
     delete imgs;
     return 0;
 }

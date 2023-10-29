@@ -17,19 +17,19 @@ ARGSL = –d datasets/input.dat –q datasets/query.dat –k 3 -L 5 -ο output_l
 $(LSH): $(OBJ_LSH)
 	$(CC) $(CFLAGS) $(OBJ_LSH) -o $(LSH) -lm -g3
 
-run_lsh : $(LSH)
+run_lsh: $(LSH)
 	./$(LSH) $(ARGSL)
 
 CUBE = main_cube 
 OBJC = $(SRC)/img.o $(SRC)/hFunc.o $(SRC)/input.o $(SRC)/cube.o 
 OBJ_CUBE = main_cube.o $(OBJC)
 
-ARGSC =  –d datasets/input.dat –q datasets/query.dat –k 14 -M 2000 -probes 20 -ο output_cube -Ν 10 -R 10000
+ARGSC = –d datasets/input.dat –q datasets/query.dat –k 7 -M 200 -probes 20 -ο output_cube -Ν 10 -R 10000
 
 $(CUBE): $(OBJ_CUBE)
 	$(CC) $(CFLAGS) $(OBJ_CUBE) -o $(CUBE) -lm -g3
 
-run_cube : $(CUBE)
+run_cube: $(CUBE)
 	./$(CUBE) $(ARGSC)
 
 CLUSTER = main_cluster
@@ -41,16 +41,16 @@ ARGSCL = –i datasets/input.dat –c cluster.conf -o output_cluster -m Classic
 $(CLUSTER): $(OBJ_CL)
 	$(CC) $(CFLAGS) $(OBJ_CL) -o $(CLUSTER) -lm -g3
 
-run_cluster : $(CLUSTER) $(LSH) $(CUBE)
+run_cluster: $(CLUSTER) $(LSH) $(CUBE)
 	./$(CLUSTER) $(ARGSCL)
 
-valgrind_lsh :	$(LSH)
+valgrind_lsh:	$(LSH)
 	valgrind --track-origins=yes --leak-check=full ./$(LSH) $(ARGSL)
 
 valgrind_cube:	$(CUBE)
 	valgrind --track-origins=yes --leak-check=full ./$(CUBE) $(ARGSC)
 
-valgrind_cluster :  $(CLUSTER)
+valgrind_cluster:  $(CLUSTER)
 	valgrind ./$(CLUSTER) $(ARGSCL)
 
 clean:
