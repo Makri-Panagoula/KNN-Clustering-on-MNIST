@@ -284,9 +284,9 @@ int main (int argc, char* argv[]) {
             }
         }
         
-    //We tolerate a small percentage of datapoints to change but we also set an upper bound for Macqueen loops to get results fast enough 
+    //Once no datapoints have changed cluster, the centorids will be fixed but we also set an upper bound for Macqueen loops to get results fast enough 
     //since if the random choice of initial centroids is bad it will lead to poor convergence speed
-    }while (changed > 0.1 * imgs->get_imgs() && iterations < 500); 
+    }while (changed > 0 && iterations < 500); 
 
     //Keep track of ending time
     const auto end_cluster{chrono::steady_clock::now()};
