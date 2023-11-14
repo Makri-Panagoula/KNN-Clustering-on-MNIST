@@ -30,6 +30,37 @@ LSH::LSH(int L,int k,Input* input) : hashTables(L){
     }
 }
 
+//Returns a vector holding the k (or as many as available) nearest images 
+vector<Img*> LSH::NearestNeighbours(int k , Img* query) {
+
+    //Out of all the potential neighbours, we compute euclidean distances, save them in an ascending ordered set and keep the best N ones
+    set<pair<double, int>> N_approx;
+    //For every hashtable find query's bucket(without saving)
+    for(int i = 0; i < L; i++) {
+        pair<unsigned int,unsigned int> hashed = hashTables[i]->g(query);
+        //Get a vector of images in the same bucket as the query that have the same id as well
+        vector<Img*> in_bucket = hashTables[i]->same_bucket(hashed);
+        //Compute distance for every neighbour image in the same bucket and save along with img number in the set
+        for(int j = 0; j < in_bucket.size(); j++) {
+            Img* cur_img = in_bucket[j];
+            double distance = query->euclideanDistance(cur_img);
+            //save num of image i with the distance
+            N_approx.insert(make_pair(distance, cur_img->imgNum()));
+        }
+    }
+    //takes the first n neighbors or less if there aren't enough
+    int maxNeighbors = min((int)N_approx.size(), k); 
+    vector<Img*> k_Nearest(maxNeighbors);
+    auto approx = N_approx.begin();
+
+    //Iterate through sets and write in output file
+    for (int i = 0; i < maxNeighbors; i++) { 
+        int img_num = approx->second;
+        k_Nearest[i] = imgs->get_image(img_num);
+        approx++;
+    }
+    return k_Nearest;
+}
 
 //Returns a set holding a pair (distnce,img_number) all the neighbours of query point and initializes set r with approximate neighbours in radius r
 set <pair<double, int>> LSH::Approx(Img* query, set<pair<double, int>>& r, int range) {
@@ -41,7 +72,7 @@ set <pair<double, int>> LSH::Approx(Img* query, set<pair<double, int>>& r, int r
         pair<unsigned int,unsigned int> hashed = hashTables[i]->g(query);
         //Get a vector of images in the same bucket as the query that have the same id as well
         vector<Img*> in_bucket = hashTables[i]->same_bucket(hashed);
-        //Compute distance for every neighbour image in the same bucket and save alon with img number in the set
+        //Compute distance for every neighbour image in the same bucket and save along with img number in the set
         for(int j = 0; j < in_bucket.size(); j++) {
             Img* cur_img = in_bucket[j];
             double distance = query->euclideanDistance(cur_img);

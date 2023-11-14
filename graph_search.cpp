@@ -4,9 +4,8 @@
 #include <stdlib.h> 
 #include <unistd.h>
 #include <sstream>
-#include "headers/lsh.h"
-#include "headers/cube.h"
 #include <map>
+#include "headers/GNN.h"
 
 using namespace std;
 
@@ -70,7 +69,7 @@ int main (int argc, char* argv[]) {
     Input* imgs = new Input(input_file);
 
     //Create Search Structure
-
+    GNN* gnn = new GNN(k,E,R,T,imgs);
     int runs = 0 ;
     string answer;
     do {
@@ -100,6 +99,7 @@ int main (int argc, char* argv[]) {
         
     }while(answer == "y");
 
+    delete gnn;
     delete imgs;
     return 0;
 }

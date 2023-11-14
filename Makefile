@@ -64,7 +64,7 @@ valgrind_cluster:  $(CLUSTER)
 #----------------------Graph Search make, run & valgrind----------------------
 
 GRAPH_SEARCH = graph_search
-OBJS_G = graph_search.o $(OBJ_L) $(SRC)/cube.o
+OBJS_G = gnn.o graph_search.o $(OBJ_L) $(SRC)/cube.o
 ARGS_G = –d datasets/input.dat –q datasets/query.dat –k 7 -E 200 -R -N 5 -l 15 -m 1 -o output_graph
 
 $(GRAPH_SEARCH): $(OBJS_G)

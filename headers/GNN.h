@@ -7,7 +7,10 @@
 #include <stdlib.h> 
 #include <unistd.h>
 #include <fstream>
+#include <vector>
 #include "../headers/input.h"
+#include "../headers/lsh.h"
+#include "../headers/cube.h"
 
 class GNN {
 
@@ -22,6 +25,8 @@ class GNN {
         int T;
 
     public:
-        GNN(int k , int E, int R , int T);
+        GNN(int k , int E, int R , int T,Input* imgs);
+        //Perform Graph Nearest Neighbour Search and write in the output file the neighbours and metrics
+        void NearestNeighbour(Img* query,int N,string output_file);
         ~GNN();
 };
