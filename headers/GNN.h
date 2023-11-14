@@ -25,7 +25,7 @@ class GNN {
         int T;
 
     public:
-        GNN(int k , int E, int R , int T,Input* imgs);
+        GNN(int k , int E, int R ,Input* imgs);
         //Perform Graph Nearest Neighbour Search and write in the output file the neighbours and metrics
         void NearestNeighbour(Img* query,int N,string output_file);
         ~GNN();

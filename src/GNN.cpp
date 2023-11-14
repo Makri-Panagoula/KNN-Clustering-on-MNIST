@@ -1,11 +1,11 @@
 #include "../headers/GNN.h"
 
 
-GNN::GNN(int k , int E, int R , int T,Input* imgs) {
+GNN::GNN(int k , int E, int R ,Input* imgs) {
 
     this->E = E;
     this->R = R;
-    this->T = T;
+    this->T = 50;
     //For every image we will create a vector with its k nearest neighbours(if less as many as available)
     this->Graph = new vector<Img*>[imgs->get_imgs()];
     //Create LSH Structure(we consider 3 hash functions and 5 Hashtables sacrificing accuracy but gaining speed)

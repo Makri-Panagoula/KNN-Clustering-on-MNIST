@@ -69,7 +69,7 @@ int main (int argc, char* argv[]) {
     Input* imgs = new Input(input_file);
 
     //Create Search Structure
-    GNN* gnn = new GNN(k,E,R,T,imgs);
+    GNN* gnn = new GNN(k,E,R,imgs);
     int runs = 0 ;
     string answer;
     do {
@@ -89,9 +89,10 @@ int main (int argc, char* argv[]) {
         //Read a small sample of images in the query dataset and perform the algorithms on them
         for(int i = 0; i < 2; i++) {
             Img* query_point = new Img(imgs->get_pxs(),i+1,query);
-            // lsh->queryNeighbours(query_point,N,output_file,R);
+            gnn->NearestNeighbour(query_point,N,output_file);
             delete query_point;
         }   
+        
         do {
             cout<<"Would you like to continue execution for a different query dataset? Please enter y / N !"<<endl;
             cin >> answer;
