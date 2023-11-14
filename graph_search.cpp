@@ -36,7 +36,7 @@ int main (int argc, char* argv[]) {
         argv++;                     
     }
 
-    //Number of Randomized Reruns
+    //Number of Random Restarts
     int R = 1 ;                       //Default Value
     if ( strcmp(argv[7],"-N") ) {
         R = atoi(argv[7]) ;
