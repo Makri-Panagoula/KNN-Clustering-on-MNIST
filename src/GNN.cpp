@@ -20,7 +20,7 @@ GNN::GNN(int k, int E, int R, Input* imgs) {
 }
 
 //Perform Graph Nearest Neighbour Search and write in the output file the neighbours and metrics
-set <pair<double,int>> GNN::NearestNeighbour(Img* query, int N, string output_file) {
+set <pair<double,int>> GNN::NearestNeighbour(Img* query) {
 
     set<pair<double,int>> candidates;
     

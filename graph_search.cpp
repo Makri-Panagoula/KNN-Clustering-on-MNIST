@@ -4,8 +4,8 @@
 #include <stdlib.h> 
 #include <unistd.h>
 #include <sstream>
-#include <map>
 #include "headers/GNN.h"
+#include "headers/MRNG.h"
 
 using namespace std;
 
@@ -76,27 +76,37 @@ int main (int argc, char* argv[]) {
         exit(1);
     }
 
-    if(m == 1)
+    //Read image input dataset
+    Input* imgs = new Input(input_file);
+
+    GNN* gnn = NULL;
+    MRNG* mrng = NULL;
+
+    if(m == 1) {
         outFile<<"GNNS Results"<<endl;
-    else if(m == 2)
+        //Create Search Structure
+        gnn = new GNN(k,E,R,imgs);
+    }
+    else if(m == 2) {
         outFile<<" MRNG Results"<<endl;
+        //Create Search Structure
+        mrng = new MRNG(k,E,R,l,imgs);        
+    }
     else {
         cout<<"m must be either 1 or 2!Please rerun with correct parameters!";
         exit(1);
     }
 
-    //Read image input dataset
-    Input* imgs = new Input(input_file);
-    //Create Search Structure
-    GNN* gnn = new GNN(k,E,R,imgs);
     //Maximum Approximation Factor out of all the queries
     double maf = numeric_limits<double>::min();
     //Initialize variables for average distances
     double tAverageApproximate = 0.0;
     double tAverageTrue = 0.0;    
     int queries = 10;
+    set <pair<double, int>> candidates; 
     int runs = 0 ;
     string answer;
+
     do {
         if (runs > 0 || query_file.empty())  {  //If user hasn't passed it as command line argument 
             cout<<"Please give the path to query dataset file !"<<endl;
@@ -118,7 +128,12 @@ int main (int argc, char* argv[]) {
             
             //Estimate the N-Approx Nearest Neighbours keeping track of time 
             const auto start_approx{chrono::steady_clock::now()};
-            set <pair<double, int>> candidates = gnn->NearestNeighbour(query_point,N,output_file);
+
+            if(gnn != NULL)
+                candidates = gnn->NearestNeighbour(query_point);
+            else 
+                candidates = mrng->NearestNeighbour(query_point);
+                
             const auto end_approx{chrono::steady_clock::now()};
             chrono::duration<double> t_approx{end_approx - start_approx};  
             tAverageApproximate += t_approx.count();
@@ -150,7 +165,6 @@ int main (int argc, char* argv[]) {
             
             delete query_point;
         }   
-        
         do {
             cout<<"Would you like to continue execution for a different query dataset? Please enter y / N !"<<endl;
             cin >> answer;

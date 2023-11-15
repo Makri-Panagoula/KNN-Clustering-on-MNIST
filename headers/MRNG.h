@@ -15,7 +15,7 @@
 #include "../headers/lsh.h"
 #include "../headers/cube.h"
 
-class GNN {
+class MRNG {
 
     private:
         //An array of vectors where each cell i holds the k-Nearest Neighbours of the i-th image
@@ -26,12 +26,14 @@ class GNN {
         int R; 
         //Greedy Steps
         int T;
+        //Number of candidates 
+        int l;
         //Image Dataset
         Input* imgs;
 
     public:
-        GNN(int k, int E, int R, Input* imgs);
+        MRNG(int k, int E, int R,int l, Input* imgs);
         //Perform Graph Nearest Neighbour Search and return a set<pair<double, int>> holding distance and image number with the results the search found
         set<pair<double,int>> NearestNeighbour(Img* query);
-        ~GNN();
+        ~MRNG();
 };
