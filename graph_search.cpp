@@ -11,8 +11,8 @@ using namespace std;
 
 int main (int argc, char* argv[]) {
 
-    string input_file = argv[2] ;
-    string query_file ;
+    string input_file = argv[2];
+    string query_file;
 
     //Query file is an optional command line argument
     if ( strcmp(argv[4],"–k") ) {
@@ -28,11 +28,16 @@ int main (int argc, char* argv[]) {
         argv++;                     
     }
     
-    //Number of Extensions
+    //Number of Expansions
     int E = 30 ;                       //Default Value
     if ( strcmp(argv[6],"-R") ) {
         E = atoi(argv[6]) ;
         argv++;                     
+    }
+
+    if(E > k) {
+        cout<<"E should be smaller or equal to k!Please rerun with different parameters!";
+        exit(1);
     }
 
     //Number of Random Restarts
@@ -65,31 +70,84 @@ int main (int argc, char* argv[]) {
         output_file = argv[12] ;
     }  
 
+    ofstream outFile(output_file);
+    if (!outFile.is_open()) {
+        cerr << "Unable to open the output file." << endl;
+        exit(1);
+    }
+
+    if(m == 1)
+        outFile<<"GNNS Results"<<endl;
+    else if(m == 2)
+        outFile<<" MRNG Results"<<endl;
+    else {
+        cout<<"m must be either 1 or 2!Please rerun with correct parameters!";
+        exit(1);
+    }
+
     //Read image input dataset
     Input* imgs = new Input(input_file);
-
     //Create Search Structure
     GNN* gnn = new GNN(k,E,R,imgs);
+    //Maximum Approximation Factor out of all the queries
+    double maf = numeric_limits<double>::min();
+    //Initialize variables for average distances
+    double tAverageApproximate = 0.0;
+    double tAverageTrue = 0.0;    
+    int queries = 10;
     int runs = 0 ;
     string answer;
     do {
-        if ( runs > 0 || query_file.empty())  {  //If user hasn't passed it as command line argument 
+        if (runs > 0 || query_file.empty())  {  //If user hasn't passed it as command line argument 
             cout<<"Please give the path to query dataset file !"<<endl;
             cin >> query_file;
         }
-        if ( runs++ > 0 || output_file.empty())  {  //If user hasn't passed it as command line argument 
+        if (runs++ > 0 || output_file.empty())  {  //If user hasn't passed it as command line argument 
             cout<<"Please give the path to output file !"<<endl;
             cin >> output_file;
         }    
         ifstream query(query_file, ios::binary | ios::in);
-        if(! query.is_open()) {
+        if(!query.is_open()) {
             cout << "Failed to read query dataset file!" << endl;
             exit;
         }        
         //Read a small sample of images in the query dataset and perform the algorithms on them
-        for(int i = 0; i < 2; i++) {
+        for(int i = 0; i < queries; i++) {
+
             Img* query_point = new Img(imgs->get_pxs(),i+1,query);
-            gnn->NearestNeighbour(query_point,N,output_file);
+            
+            //Estimate the N-Approx Nearest Neighbours keeping track of time 
+            const auto start_approx{chrono::steady_clock::now()};
+            set <pair<double, int>> candidates = gnn->NearestNeighbour(query_point,N,output_file);
+            const auto end_approx{chrono::steady_clock::now()};
+            chrono::duration<double> t_approx{end_approx - start_approx};  
+            tAverageApproximate += t_approx.count();
+
+            //Estimate the N-Exact Nearest Neighbours keeping track of time 
+            const auto start_exact{chrono::steady_clock::now()};
+            set <pair<double, int>> N_exact = imgs->N_Exact(query_point);
+            const auto end_exact{chrono::steady_clock::now()};
+            chrono::duration<double> t_exact{end_exact - start_exact};  
+            tAverageTrue += t_exact.count();
+
+            //Write N nearest neighbours in output file or as many as exist
+            int maxNeighbors = min((int)N_exact.size(),N);
+            maxNeighbors = min((int)candidates.size(),maxNeighbors);
+            outFile<<"Query: "<<i+1<<endl; 
+            auto approx = candidates.begin();
+            auto exact = N_exact.begin();
+
+            //Iterate through sets and write in output file
+            for (int i = 0; i < maxNeighbors; i++) { 
+                outFile<<"Nearest Neighbour-" << i + 1 << " :" << approx->second <<endl<< "distanceApproximate: <double> " << approx->first <<endl<< "distanceTrue: <double> "<< exact->first<<endl;
+                double approx_factor = approx->first / exact->first;
+                if(approx_factor > maf) {
+                    maf = approx_factor;
+                }
+                approx++;
+                exact++;
+            }
+            
             delete query_point;
         }   
         
@@ -100,6 +158,11 @@ int main (int argc, char* argv[]) {
         
     }while(answer == "y");
 
+    //Calculate average distances
+    tAverageApproximate /= queries;
+    tAverageTrue /= queries;
+    outFile<<"tAverageApproximate: <double> "<<tAverageApproximate<<" sec."<<endl<<"tTrue: <double> "<<tAverageTrue<<" sec."<<endl<<endl<<"MAF: <double> [Maximum Approximation Factor] "<<maf<<endl;
+    outFile.close();            
     delete gnn;
     delete imgs;
     return 0;

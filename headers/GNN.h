@@ -7,6 +7,9 @@
 #include <stdlib.h> 
 #include <unistd.h>
 #include <fstream>
+#include <set>
+#include <chrono>
+#include <random>
 #include <vector>
 #include "../headers/input.h"
 #include "../headers/lsh.h"
@@ -20,13 +23,15 @@ class GNN {
         //Extensions
         int E;               
         //Random Restarts
-        int R ; 
+        int R; 
         //Greedy Steps
         int T;
+        //Image Dataset
+        Input* imgs;
 
     public:
-        GNN(int k , int E, int R ,Input* imgs);
+        GNN(int k, int E, int R, Input* imgs);
         //Perform Graph Nearest Neighbour Search and write in the output file the neighbours and metrics
-        void NearestNeighbour(Img* query,int N,string output_file);
+        set<pair<double,int>> NearestNeighbour(Img* query, int N, string output_file);
         ~GNN();
 };

@@ -18,7 +18,7 @@ The hypercube implementation creates 1 hashtable (with 2^d buckets as many as th
 --Compiling--:
 Run with make run_cube , to change the paramaters update the ARGSC in Makefile.Parameters must be given in the following order:
 –d input_file –q  query_file –k dimensions_hypercube -M max_datapoints_to_be_checked -probes max_vertices_to_be_checked -ο output_file -Ν nearest_neighbours -R radius for range search.
-k,M,N,R can be omitted and then they take their default values : 14 , 10 , 2 , 1 and 10000 respectively.
+k,M,N,R can be omitted and then they take their default values : 14, 10, 2, 1 and 10000 respectively.
 
 ------ B PART-------
 Regardless of the assignment algorithm, the initialization of the centroids is being done with the k-means++ algorithm and the update with MacQueen repeating until the centroids of the clusters remain unchanged during the updates. In the k-means we choose the first centroid randomly from images on the dataset and the following ones out of the images in the dataset based on their probability,d_i^2,(we don't normalize), where d_i is the minimum distance of image i from all the initialized centroids. The clustering algorithm parameters are given in the cluster.conf file. Files regarding the implementation are main_cluster.cpp,cluster.cpp and cluster.h
