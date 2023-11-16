@@ -40,7 +40,7 @@ Img* chooseNextCenter(vector<Img*>& centroids, Input* imgs) {
 }
 
 //Initializes and returns the set of the k centroid images
-vector<Img*> kmeans_init(Input* imgs, int clusters, ofstream& out) {
+vector<Img*> kmeans_init(Input* imgs, int clusters) {
 
     vector<Img*> centroids;
 

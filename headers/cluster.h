@@ -44,7 +44,7 @@ class Cluster{
 Img* chooseNextCenter(const set<Img*>& centroids, Input* imgs);
 
 //Initializes and returns a vector of the k centroid images
-vector<Img*> kmeans_init(Input* imgs, int clusters,ofstream& out);
+vector<Img*> kmeans_init(Input* imgs, int clusters);
 
 //Returns index of closest cluster of vector clusters
 int find_cluster(Img* point, vector<Cluster*> &clusters);

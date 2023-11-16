@@ -1,6 +1,6 @@
 #include "../headers/img.h"
 
-Img::Img(int pxs,int num,ifstream& input) {
+Img::Img(int pxs, int num, ifstream& input) {
 
     this->pxs = pxs;
     this->num = num;
@@ -9,7 +9,14 @@ Img::Img(int pxs,int num,ifstream& input) {
         input.read((char*)&pixel,1);
         this->p.push_back((unsigned char)pixel);
     }
-    this->flag = -1;     //-1 means it's not yet part of any cluster
+    this->flag = -1;     //-1 means it's unassigned
+}
+
+Img::Img(int pxs) {
+    this->pxs = pxs;
+    vector<unsigned char> p(pxs);
+    this->p = p;
+    this->flag = -1;     //-1 means it's unassigned
 }
 
 int Img::update_flag(int new_cluster) {
@@ -42,4 +49,19 @@ void Img::display_p(ofstream& output) {
             output<<(int)this->p[28*i +j]<<" ";
         }
     }
+}
+
+//Returns True if edge is pq the longest in the triangle pqr (considering r image from which called)
+bool Img::longestEdge(Img* p, Img* q){
+    //Distances in triangle pqr
+    double pq = p->euclideanDistance(q);
+    double pr = this->euclideanDistance(p);
+    double rq = this->euclideanDistance(q);
+
+    //find max distance among the three edges of the triangle
+    double max_dist = max(pq, max(pr,rq));
+    if(max_dist == pq)
+        return true;
+        
+    return false;
 }

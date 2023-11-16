@@ -22,7 +22,7 @@ int main (int argc, char* argv[]) {
 
     //K-Nearest neighbours in Graph
     int k = 50 ;                       
-    //If there is a value after "-k",update k with that
+    //If there is a value after "-k", update k with that
     if ( strcmp(argv[5],"-E") ) {
         k = atoi(argv[5]) ;
         argv++;                     
@@ -36,7 +36,7 @@ int main (int argc, char* argv[]) {
     }
 
     if(E > k) {
-        cout<<"E should be smaller or equal to k!Please rerun with different parameters!";
+        cout<<"E should be smaller or equal to k!Please rerun with different parameters!"<<endl;
         exit(1);
     }
 
@@ -59,7 +59,12 @@ int main (int argc, char* argv[]) {
     if ( strcmp(argv[9],"-m")) {
         l = atoi(argv[9]) ;
         argv++;                     
-    }  
+    }
+
+    if(l < N) {
+        cout<<"N should be smaller or equal to l!Please rerun with different parameters!"<<endl;
+        exit(1);
+    }
 
     //Method to use (1 for GNNS, 2 for MRNG)
     int m = atoi(argv[10]) ;                       //Default Value
@@ -72,7 +77,7 @@ int main (int argc, char* argv[]) {
 
     ofstream outFile(output_file);
     if (!outFile.is_open()) {
-        cerr << "Unable to open the output file." << endl;
+        cerr << "Unable to open the output file."<<endl;
         exit(1);
     }
 
@@ -90,7 +95,7 @@ int main (int argc, char* argv[]) {
     else if(m == 2) {
         outFile<<" MRNG Results"<<endl;
         //Create Search Structure
-        mrng = new MRNG(k,E,R,l,imgs);        
+        mrng = new MRNG(l,imgs);        
     }
     else {
         cout<<"m must be either 1 or 2!Please rerun with correct parameters!";

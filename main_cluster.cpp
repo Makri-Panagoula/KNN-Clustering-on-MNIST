@@ -56,7 +56,7 @@ int main (int argc, char* argv[]) {
     Input* imgs = new Input(input_file);
     int k_clusters = parameters["number_of_clusters:"];
     //Initialization of centroids
-    vector<Img*> centroids = kmeans_init(imgs, k_clusters,outFile);
+    vector<Img*> centroids = kmeans_init(imgs, k_clusters);
     vector<Cluster*> clusters;
     //Initialize clusters with centroid
     for(int i = 0; i < k_clusters; i++) {
