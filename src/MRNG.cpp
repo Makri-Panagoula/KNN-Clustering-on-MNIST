@@ -3,31 +3,29 @@
 using namespace std;
 
 //Returns a set with the images with minimum distance from p 
-set<Img*> neighbours(Img* p, Input* imgs, set<Img*>& R_L) {
+set<Img*> neighbours(Img* p, Input* imgs, int l, set<Img*>& R_L ,LSH* lsh) {
     
     //L contains a set of images with minimum distance from p
     set<Img*> L;
+    vector<Img*> vec_img = imgs->get_vec();
     //R contains a set of all images apart from p
-    set<Img*> R;
+    set<Img*> R(vec_img.begin(), vec_img.end());
+    R.erase(p);
+    //We will only consider the l-first nearest neighbours since we don't examine more in the search
+    vector<Img*> l_nearest = lsh->NearestNeighbours(l,p);
+    //If no neighbours were found, return empty set
+    if(l_nearest.size() == 0)
+        return L;
 
-    double min_dist = numeric_limits<double>::max();
-    //For every image in the dataset other than p calculate distance 
-    for(int i = 0; i < imgs->get_imgs(); i++) {
-
-        Img* candidate = imgs->get_image(i);
-        if(candidate != p) {
-            R.insert(candidate);
-            double dist = p->euclideanDistance(candidate);
-            if(dist < min_dist) {
-                min_dist = dist;
-                //Remove previous elements from set since we have found a better distance
-                L.clear();
-            }
-            else if(dist == min_dist){
-                L.insert(candidate);
-            }
-        }
-    }
+    double min_dist = p->euclideanDistance(l_nearest[0]);
+    
+    //We only care about those having minimum distance from p
+    for (Img* neigh: l_nearest) {  
+        double dist = p->euclideanDistance(neigh);
+        if(dist > min_dist) 
+            break;
+        L.insert(neigh);
+    }  
     //Perform set subtraction between R and L
     set_difference(R.begin(),R.end(),L.begin(),L.end(),inserter(R_L,R_L.begin()));
     return L;
@@ -62,14 +60,19 @@ MRNG::MRNG(int l, Input* imgs) {
 
     //For every image we will create a vector with its nearest neighbours(if less as many as available)
     this->Graph = new vector<Img*>[imgs->get_imgs()];
-
+    //Create LSH Structure(we consider 3 hash functions and 5 Hashtables sacrificing accuracy but gaining speed)
+    LSH* lsh = new LSH(3,5,imgs);    
+    // cout<<"before big loop"<<endl;
     for(int i = 0; i < imgs->get_imgs(); i++) {
         Img* p = imgs->get_image(i);
         set<Img*> R_L;
-        set<Img*> L = neighbours(p, imgs, R_L);
+        // cout<<"before neighbours"<<endl;
+        set<Img*> L = neighbours(p, imgs, l, R_L, lsh);
+        // cout<<"after neighbours"<<endl;
         bool to_add = true;
+        // cout<<"before r-t loop"<<endl;
         for (const auto& r : R_L) {
-            bool to_add = true;
+            // bool to_add = true;
             for (const auto& t : L) {
                 if(p->longestEdge(t,r)) {
                     to_add = false;
@@ -80,19 +83,28 @@ MRNG::MRNG(int l, Input* imgs) {
                 L.insert(r);
             }
         }
+        // cout<<"after r-t loop"<<endl;
         //Insert every image l of set L into the respective vector of the graph
         vector<Img*> neighbours_p;
+        // cout<<"before last for"<<endl;
         for (const auto& l : L) {
             neighbours_p.push_back(l);
         }
         this->Graph[i] = neighbours_p;
+        // cout<<"after last for"<<endl;
+
     }
+    // cout<<"after the big for loop"<<endl;
 
     //Find Navigating Node by computing the nearest neighbour of the dataset's centroid by brute force
     Img* centroid = dataset_centroid(imgs);
     set<pair<double, int>> N_exact = imgs->N_Exact(centroid);
     int img_num = N_exact.begin()->second;
     this->nav_node = imgs->get_image(img_num);
+
+    //Let go of lsh structure & centroid ,we won't need them any more
+    delete lsh;    
+    delete centroid;
 }
 
 //Returns the first unchecked node of the set and if such founds updates its flag as marked (otherwise returns NULL)
@@ -135,6 +147,5 @@ set<pair<double,int>> MRNG::NearestNeighbour(Img* query) {
 }
 
 MRNG::~MRNG() {
-    delete nav_node;
     delete[] this->Graph;
 }

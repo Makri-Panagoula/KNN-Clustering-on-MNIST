@@ -83,17 +83,16 @@ int main (int argc, char* argv[]) {
 
     //Read image input dataset
     Input* imgs = new Input(input_file);
-
+    // cout<<"Before constructing"<<endl;
     GNN* gnn = NULL;
     MRNG* mrng = NULL;
-
     if(m == 1) {
         outFile<<"GNNS Results"<<endl;
         //Create Search Structure
         gnn = new GNN(k,E,R,imgs);
     }
     else if(m == 2) {
-        outFile<<" MRNG Results"<<endl;
+        outFile<<"MRNG Results"<<endl;
         //Create Search Structure
         mrng = new MRNG(l,imgs);        
     }
@@ -101,6 +100,7 @@ int main (int argc, char* argv[]) {
         cout<<"m must be either 1 or 2!Please rerun with correct parameters!";
         exit(1);
     }
+    // cout<<"After constructing"<<endl;
 
     //Maximum Approximation Factor out of all the queries
     double maf = numeric_limits<double>::min();
@@ -133,11 +133,12 @@ int main (int argc, char* argv[]) {
             
             //Estimate the N-Approx Nearest Neighbours keeping track of time 
             const auto start_approx{chrono::steady_clock::now()};
-
-            if(gnn != NULL)
+            // cout<<"Before searching"<<endl;
+            if(gnn != NULL) 
                 candidates = gnn->NearestNeighbour(query_point);
             else 
                 candidates = mrng->NearestNeighbour(query_point);
+            // cout<<"searching is just fine"<<endl;
                 
             const auto end_approx{chrono::steady_clock::now()};
             chrono::duration<double> t_approx{end_approx - start_approx};  
@@ -183,6 +184,7 @@ int main (int argc, char* argv[]) {
     outFile<<"tAverageApproximate: <double> "<<tAverageApproximate<<" sec."<<endl<<"tTrue: <double> "<<tAverageTrue<<" sec."<<endl<<endl<<"MAF: <double> [Maximum Approximation Factor] "<<maf<<endl;
     outFile.close();            
     delete gnn;
+    delete mrng;
     delete imgs;
     return 0;
 }

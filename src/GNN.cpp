@@ -17,6 +17,8 @@ GNN::GNN(int k, int E, int R, Input* imgs) {
         Img* query = imgs->get_image(i);
         this->Graph[i] = lsh->NearestNeighbours(k,query);
     }
+    //Let go of lsh structure we won't need it any more
+    delete lsh;
 }
 
 //Perform Graph Nearest Neighbour Search and write in the output file the neighbours and metrics
@@ -53,6 +55,10 @@ set <pair<double,int>> GNN::NearestNeighbour(Img* query) {
                     next_candidate = neigh;
                 }
             }
+            //If current node didn't have any neighbours 
+            if(next_candidate == NULL)
+                return candidates;
+
             candidate = next_candidate;
         }
     }
