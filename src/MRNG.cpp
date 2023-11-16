@@ -62,17 +62,12 @@ MRNG::MRNG(int l, Input* imgs) {
     this->Graph = new vector<Img*>[imgs->get_imgs()];
     //Create LSH Structure(we consider 3 hash functions and 5 Hashtables sacrificing accuracy but gaining speed)
     LSH* lsh = new LSH(3,5,imgs);    
-    // cout<<"before big loop"<<endl;
     for(int i = 0; i < imgs->get_imgs(); i++) {
         Img* p = imgs->get_image(i);
         set<Img*> R_L;
-        // cout<<"before neighbours"<<endl;
         set<Img*> L = neighbours(p, imgs, l, R_L, lsh);
-        // cout<<"after neighbours"<<endl;
         bool to_add = true;
-        // cout<<"before r-t loop"<<endl;
         for (const auto& r : R_L) {
-            // bool to_add = true;
             for (const auto& t : L) {
                 if(p->longestEdge(t,r)) {
                     to_add = false;
@@ -83,18 +78,14 @@ MRNG::MRNG(int l, Input* imgs) {
                 L.insert(r);
             }
         }
-        // cout<<"after r-t loop"<<endl;
         //Insert every image l of set L into the respective vector of the graph
         vector<Img*> neighbours_p;
-        // cout<<"before last for"<<endl;
         for (const auto& l : L) {
             neighbours_p.push_back(l);
         }
         this->Graph[i] = neighbours_p;
-        // cout<<"after last for"<<endl;
 
     }
-    // cout<<"after the big for loop"<<endl;
 
     //Find Navigating Node by computing the nearest neighbour of the dataset's centroid by brute force
     Img* centroid = dataset_centroid(imgs);
