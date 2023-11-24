@@ -66,7 +66,8 @@ int main (int argc, char* argv[]) {
 
     int runs = 0 ;
     string answer;
-
+    int queries = 2;
+    
     do {
         if ( runs > 0 || query_file.empty())  {  //If user hasn't passed it as command line argument 
             cout<<"Please give the path to query dataset file !"<<endl;
@@ -82,7 +83,7 @@ int main (int argc, char* argv[]) {
             exit;
         }        
         //Read a small sample of images in the query dataset and perform the algorithms on them
-        for(int i = 0; i < 2; i++) {
+        for(int i = 0; i < queries; i++) {
             Img* query_point = new Img(imgs->get_pxs(),i+1,query);
             cube->queryNeighbours(query_point,N,output_file,R);
             delete query_point;
@@ -95,6 +96,9 @@ int main (int argc, char* argv[]) {
         
     }while(answer == "y");
   
+    ofstream outFile(output_file , ios::app);
+    outFile<<"tAverageApproximate: <double> "<<cube->total_approx()/queries<<" sec."<<endl<<"tTrue: <double> "<<cube->total_true()/queries<<" sec."<<endl<<endl<<"MAF: <double> [Maximum Approximation Factor] "<<cube->get_maf()<<endl;
+    outFile.close();    
     delete imgs;
     delete cube;
     return 0;

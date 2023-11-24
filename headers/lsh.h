@@ -41,7 +41,11 @@ class LSH {
         vector<hFunc*> hFuncs;
         //Input images dataset
         Input* imgs;
-
+        //Metrics out of all the queries
+        double totalApproximate;
+        double totalTrue;
+        //Maximum Approximation Factor
+        double maf;
     public:
         LSH(int L, int k, Input* input);
         //Finds the n approximate and exact nearest neighbours as well as neighbours in radius R from query point and updates output file with data and metrics
@@ -50,5 +54,8 @@ class LSH {
         set <pair<double, int>> Approx(Img* query, set<pair<double, int>>& r, int radius);      
         //Returns a vector holding the k (or as many as available) nearest images 
         vector<Img*> NearestNeighbours(int k , Img* query);  
+        double get_maf(){return this->maf;};
+        double total_approx(){return this->totalApproximate;};
+        double total_true(){return this->totalTrue;};
         ~LSH();
     };

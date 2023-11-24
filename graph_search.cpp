@@ -11,6 +11,11 @@ using namespace std;
 
 int main (int argc, char* argv[]) {
 
+    if(argc < 11 || argc > 19) {
+        cout<<"Please provide arguments in the wanted format!"<<endl;
+        exit(1);
+    }
+    
     string input_file = argv[2];
     string query_file;
 
@@ -102,7 +107,7 @@ int main (int argc, char* argv[]) {
 
     //Maximum Approximation Factor out of all the queries
     double maf = numeric_limits<double>::min();
-    //Initialize variables for average distances
+    //Initialize variables for average query time
     double tAverageApproximate = 0.0;
     double tAverageTrue = 0.0;    
     int queries = 10;
@@ -152,16 +157,18 @@ int main (int argc, char* argv[]) {
             int maxNeighbors = min((int)N_exact.size(),N);
             maxNeighbors = min((int)candidates.size(),maxNeighbors);
             outFile<<"Query: "<<i+1<<endl; 
+
             auto approx = candidates.begin();
             auto exact = N_exact.begin();
+
+            //Update MAF if needed(we estimate MAF only from the first neighbour)
+            double approx_factor = approx->first / exact->first;
+            if(approx_factor > maf) 
+                maf = approx_factor;
 
             //Iterate through sets and write in output file
             for (int i = 0; i < maxNeighbors; i++) { 
                 outFile<<"Nearest Neighbour-" << i + 1 << " :" << approx->second <<endl<< "distanceApproximate: <double> " << approx->first <<endl<< "distanceTrue: <double> "<< exact->first<<endl;
-                double approx_factor = approx->first / exact->first;
-                if(approx_factor > maf) {
-                    maf = approx_factor;
-                }
                 approx++;
                 exact++;
             }

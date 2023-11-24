@@ -56,7 +56,7 @@ int main (int argc, char* argv[]) {
     Input* imgs = new Input(input_file);
     //Create Search Structure
     LSH* lsh = new LSH(L,k,imgs);
-
+    int queries = 2;
     int runs = 0 ;
     string answer;
     do {
@@ -74,7 +74,7 @@ int main (int argc, char* argv[]) {
             exit;
         }        
         //Read a small sample of images in the query dataset and perform the algorithms on them
-        for(int i = 0; i < 2; i++) {
+        for(int i = 0; i < queries; i++) {
             Img* query_point = new Img(imgs->get_pxs(),i+1,query);
             lsh->queryNeighbours(query_point,N,output_file,R);
             delete query_point;
@@ -85,6 +85,10 @@ int main (int argc, char* argv[]) {
         }while(answer != "y" && answer != "N");
         
     }while(answer == "y");
+
+    ofstream outFile(output_file , ios::app);
+    outFile<<"tAverageApproximate: <double> "<<lsh->total_approx()/queries<<" sec."<<endl<<"tTrue: <double> "<<lsh->total_true()/queries<<" sec."<<endl<<endl<<"MAF: <double> [Maximum Approximation Factor] "<<lsh->get_maf()<<endl;
+    outFile.close();            
 
     delete lsh;
     delete imgs;

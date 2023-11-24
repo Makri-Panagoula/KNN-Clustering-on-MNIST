@@ -28,6 +28,10 @@ Cube::Cube(int d,int M,int probes,Input* input) : hFuncs(d){
     //For every image in the training dataset save it into the appropriate structures
     for(int i = 0; i < input->get_imgs(); i++) 
         store(input->get_image(i));    
+
+    this->totalApproximate = 0.0;
+    this->totalTrue = 0.0;
+    this->maf = numeric_limits<double>::min();        
 }
 
 void Hamming(string binary,int i,int ham_dist,set<string>& buckets,int stop) {
@@ -132,6 +136,11 @@ void Cube::queryNeighbours(Img* query,int n,string output,int R) {
     auto approx = N_approx.begin();
     auto exact = N_exact.begin();
 
+    //Update MAF if needed(we estimate MAF only from the first neighbour)
+    double approx_factor = approx->first / exact->first;
+    if(approx_factor > this->maf) 
+        this->maf = approx_factor;
+
     //Iterate through sets and write in output file
     for (int i = 0; i < maxNeighbors; i++) { 
         outFile<<"Nearest Neighbour-" << i + 1 << " :" << approx->second <<endl<< "distanceHypercube: <double> " << approx->first <<endl<< "distanceTrue: <double> "<< exact->first<<endl;
@@ -147,6 +156,8 @@ void Cube::queryNeighbours(Img* query,int n,string output,int R) {
     }
 
     outFile.close();    
+    this->totalApproximate += t_cube.count();
+    this->totalTrue += t_true.count();    
 }
 
 //Gets the pixels' vector and maps to a d-vector in {0,1}^d which then converts to a decimal being its hashed bucket

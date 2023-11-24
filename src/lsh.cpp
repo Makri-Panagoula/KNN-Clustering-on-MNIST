@@ -11,6 +11,9 @@ LSH::LSH(int L,int k,Input* input) : hashTables(L){
     this->TableSize = input->get_imgs() / 4;
     this->H_size = 30*k;
     this->imgs = input;
+    this->totalApproximate = 0.0;
+    this->totalTrue = 0.0;
+    this->maf = numeric_limits<double>::min();
 
     //Creating the data structures
     for(int i = 0; i < this->H_size; i++)  {
@@ -118,6 +121,11 @@ void LSH::queryNeighbours(Img* query, int n, string output, int R){
     auto approx = N_approx.begin();
     auto exact = N_exact.begin();
 
+    //Update MAF if needed(we estimate MAF only from the first neighbour)
+    double approx_factor = approx->first / exact->first;
+    if(approx_factor > this->maf) 
+        this->maf = approx_factor;
+
     //Iterate through sets and write in output file
     for (int i = 0; i < maxNeighbors; i++) { 
         outFile<<"Nearest Neighbour-" << i + 1 << " :" << approx->second <<endl<< "distanceLSH: <double> " << approx->first <<endl<< "distanceTrue: <double> "<< exact->first<<endl;
@@ -133,6 +141,8 @@ void LSH::queryNeighbours(Img* query, int n, string output, int R){
     }
 
     outFile.close();
+    this->totalApproximate += t_lsh.count();
+    this->totalTrue += t_true.count();
 }
 
 LSH::~LSH() {

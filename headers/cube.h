@@ -25,7 +25,12 @@ class Cube {
         //H set functions
         vector <hFunc*> hFuncs;
         //An array consisting of 2^d vectors,one for each bucket holding the images hashed to it
-        vector<Img*> *buckets;         
+        vector<Img*> *buckets;     
+        //Metrics out of all the queries
+        double totalApproximate;
+        double totalTrue;
+        //Maximum Approximation Factor
+        double maf;            
     public:
         Cube(int d,int M,int probes,Input* imgs);
         //Gets the pixels' vector and hashes to a bucket
@@ -35,6 +40,9 @@ class Cube {
         //Returns a set holding a pair (distnce,img_number) with the n-approximate neighbours and initializes set r with approximate neighbours in radius r
         set <pair<double, int>>  Approx(Img* query, set<pair<double, int>>& r, int range);             
         //Finds the n approximate and exact nearest neighbours as well as neighbours in radius R from query point and updates output file with data and metrics
-        void queryNeighbours(Img* query,int n,string output,int R);    
+        void queryNeighbours(Img* query,int n,string output,int R);  
+        double get_maf(){return this->maf;};
+        double total_approx(){return this->totalApproximate;};
+        double total_true(){return this->totalTrue;};          
         ~Cube();
 };
