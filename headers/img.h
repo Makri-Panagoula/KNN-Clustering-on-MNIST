@@ -24,8 +24,8 @@ class Img {
         double euclideanDistance(Img* b);
         vector<unsigned char> get_p(){return p;}
         int imgNum() {return num;}
-        //Updates cluster where image is assigned and returns true if it has changed
-        int update_flag(int new_cluster);
+        //Updates flag and returns true if it has changed
+        int update_flag(int new_flag);
         //Returns image flag : -1 for unassigned, otherwise holds cluster's number (starting from 0)
         int get_flag(){return this->flag;}
         void update_p(int i, unsigned char new_val) { this->p[i] = new_val;}

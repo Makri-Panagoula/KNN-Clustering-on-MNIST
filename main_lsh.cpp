@@ -83,12 +83,12 @@ int main (int argc, char* argv[]) {
             cout<<"Would you like to continue execution for a different query dataset? Please enter y / N !"<<endl;
             cin >> answer;
         }while(answer != "y" && answer != "N");
-        
-    }while(answer == "y");
 
-    ofstream outFile(output_file , ios::app);
-    outFile<<"tAverageApproximate: <double> "<<lsh->total_approx()/queries<<" sec."<<endl<<"tTrue: <double> "<<lsh->total_true()/queries<<" sec."<<endl<<endl<<"MAF: <double> [Maximum Approximation Factor] "<<lsh->get_maf()<<endl;
-    outFile.close();            
+        ofstream outFile(output_file , ios::app);
+        outFile<<"tAverageApproximate: <double> "<<lsh->total_approx()/queries<<" sec."<<endl<<"tTrue: <double> "<<lsh->total_true()/queries<<" sec."<<endl<<endl<<"MAF: <double> [Maximum Approximation Factor] "<<lsh->get_maf()<<endl;
+        outFile.close();    
+          
+    }while(answer == "y");          
 
     delete lsh;
     delete imgs;

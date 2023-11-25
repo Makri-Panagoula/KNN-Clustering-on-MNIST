@@ -15,7 +15,7 @@ int main (int argc, char* argv[]) {
         cout<<"Please provide arguments in the wanted format!"<<endl;
         exit(1);
     }
-    
+
     string input_file = argv[2];
     string query_file;
 
@@ -80,28 +80,20 @@ int main (int argc, char* argv[]) {
         output_file = argv[12] ;
     }  
 
-    ofstream outFile(output_file);
-    if (!outFile.is_open()) {
-        cerr << "Unable to open the output file."<<endl;
-        exit(1);
-    }
-
     //Read image input dataset
     Input* imgs = new Input(input_file);
     GNN* gnn = NULL;
     MRNG* mrng = NULL;
     if(m == 1) {
-        outFile<<"GNNS Results"<<endl;
         //Create Search Structure
         gnn = new GNN(k,E,R,imgs);
     }
     else if(m == 2) {
-        outFile<<"MRNG Results"<<endl;
         //Create Search Structure
         mrng = new MRNG(l,imgs);        
     }
     else {
-        cout<<"m must be either 1 or 2!Please rerun with correct parameters!";
+        cout<<"m must be either 1 or 2! Please rerun with correct parameters!";
         exit(1);
     }
 
@@ -117,13 +109,24 @@ int main (int argc, char* argv[]) {
 
     do {
         if (runs > 0 || query_file.empty())  {  //If user hasn't passed it as command line argument 
-            cout<<"Please give the path to query dataset file !"<<endl;
+            cout<<"Please give the path to query dataset file!"<<endl;
             cin >> query_file;
         }
         if (runs++ > 0 || output_file.empty())  {  //If user hasn't passed it as command line argument 
-            cout<<"Please give the path to output file !"<<endl;
+            cout<<"Please give the path to output file!"<<endl;
             cin >> output_file;
-        }    
+        } 
+
+        ofstream outFile(output_file);
+        if (!outFile.is_open()) {
+            cerr << "Unable to open the output file."<<endl;
+            exit(1);
+        }  
+        if(m == 1) 
+            outFile<<"GNNS Results"<<endl;
+        else if(m == 2) 
+            outFile<<"MRNG Results"<<endl;      
+                    
         ifstream query(query_file, ios::binary | ios::in);
         if(!query.is_open()) {
             cout << "Failed to read query dataset file!" << endl;
@@ -174,19 +177,20 @@ int main (int argc, char* argv[]) {
             }
             
             delete query_point;
-        }   
+        }  
+        //Calculate average distances
+        tAverageApproximate /= queries;
+        tAverageTrue /= queries;   
+        outFile<<"\ntAverageApproximate: <double> "<<tAverageApproximate<<" sec."<<endl<<"tTrue: <double> "<<tAverageTrue<<" sec."<<endl<<endl<<"MAF: <double> [Maximum Approximation Factor] "<<maf<<endl;
+        outFile.close();
+
         do {
             cout<<"Would you like to continue execution for a different query dataset? Please enter y / N !"<<endl;
             cin >> answer;
         }while(answer != "y" && answer != "N");
         
     }while(answer == "y");
-
-    //Calculate average distances
-    tAverageApproximate /= queries;
-    tAverageTrue /= queries;
-    outFile<<"tAverageApproximate: <double> "<<tAverageApproximate<<" sec."<<endl<<"tTrue: <double> "<<tAverageTrue<<" sec."<<endl<<endl<<"MAF: <double> [Maximum Approximation Factor] "<<maf<<endl;
-    outFile.close();            
+      
     delete gnn;
     delete mrng;
     delete imgs;

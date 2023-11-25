@@ -3,29 +3,28 @@
 using namespace std;
 
 //Returns a set with the images with minimum distance from p 
-set<Img*> neighbours(Img* p, Input* imgs, int l, set<Img*>& R_L ,LSH* lsh) {
+set<Img*> neighbours(Img* p, Input* imgs, set<Img*>& R_L, LSH* lsh) {
     
     //L contains a set of images with minimum distance from p
     set<Img*> L;
     vector<Img*> vec_img = imgs->get_vec();
-    //R contains a set of all images apart from p
-    set<Img*> R(vec_img.begin(), vec_img.end());
-    R.erase(p);
-    //We will only consider the l-first nearest neighbours since we don't examine more in the search
-    vector<Img*> l_nearest = lsh->NearestNeighbours(l,p);
+    //We search for all the approximate nearest neighbours instead of sorting
+    vector<Img*> R = lsh->NearestNeighbours(imgs->get_imgs()-1,p);
+    // cout<<"Nearest neighbours found in total from lsh : "<<R.size()<<endl;
     //If no neighbours were found, return empty set
-    if(l_nearest.size() == 0)
+    if(R.size() == 0)
         return L;
 
-    double min_dist = p->euclideanDistance(l_nearest[0]);
+    double min_dist = p->euclideanDistance(R[0]);
     
     //We only care about those having minimum distance from p
-    for (Img* neigh: l_nearest) {  
+    for (Img* neigh: R) {  
         double dist = p->euclideanDistance(neigh);
         if(dist > min_dist) 
             break;
         L.insert(neigh);
     }  
+    
     //Perform set subtraction between R and L
     set_difference(R.begin(),R.end(),L.begin(),L.end(),inserter(R_L,R_L.begin()));
     return L;
@@ -65,7 +64,7 @@ MRNG::MRNG(int l, Input* imgs) {
     for(int i = 0; i < imgs->get_imgs(); i++) {
         Img* p = imgs->get_image(i);
         set<Img*> R_L;
-        set<Img*> L = neighbours(p, imgs, l, R_L, lsh);
+        set<Img*> L = neighbours(p, imgs, R_L, lsh);
         bool to_add = true;
         for (const auto& r : R_L) {
             for (const auto& t : L) {
@@ -84,6 +83,7 @@ MRNG::MRNG(int l, Input* imgs) {
             neighbours_p.push_back(l);
         }
         this->Graph[i] = neighbours_p;
+        // cout<<"Neighbours inserted : "<<neighbours_p.size()<<endl;
 
     }
 
@@ -103,7 +103,7 @@ Img* first_unchecked(Input* imgs, set<pair<double,int>> candidates) {
 
     for (const auto& candi : candidates){
         Img* candidate = imgs->get_image(candi.second);
-        //Every image instance when created has its flag initialized to -1 , by convention we turn it into 0
+        //Every image instance when created has its flag initialized to -1, by convention we turn it into 0
         if(candidate->update_flag(0)) 
             return candidate;
     }
@@ -134,6 +134,7 @@ set<pair<double,int>> MRNG::NearestNeighbour(Img* query) {
             i++;
         }
     }
+    cout<<"Neighbours found in expanding : "<<candidates.size()<<endl;
     return candidates;
 }
 

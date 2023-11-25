@@ -60,7 +60,7 @@ bool Img::longestEdge(Img* p, Img* q){
 
     //find max distance among the three edges of the triangle
     double max_dist = max(pq, max(pr,rq));
-    if(max_dist == pq)
+    if(max_dist == pq && max_dist != pr && max_dist != rq)
         return true;
         
     return false;
