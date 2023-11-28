@@ -33,7 +33,7 @@ LSH::LSH(int L,int k,Input* input) : hashTables(L){
     }
 }
 
-//Returns a vector holding the k (or as many as available) nearest images 
+//Returns a vector holding the k (or as many as available) nearest images (without including query image)
 vector<Img*> LSH::NearestNeighbours(int k , Img* query) {
 
     //Out of all the potential neighbours, we compute euclidean distances, save them in an ascending ordered set and keep the best N ones
@@ -46,6 +46,8 @@ vector<Img*> LSH::NearestNeighbours(int k , Img* query) {
         //Compute distance for every neighbour image in the same bucket and save along with img number in the set
         for(int j = 0; j < in_bucket.size(); j++) {
             Img* cur_img = in_bucket[j];
+            if(cur_img == query)
+                continue;
             double distance = query->euclideanDistance(cur_img);
             //save num of image i with the distance
             N_approx.insert(make_pair(distance, cur_img->imgNum()));
@@ -56,7 +58,7 @@ vector<Img*> LSH::NearestNeighbours(int k , Img* query) {
     vector<Img*> k_Nearest(maxNeighbors);
     auto approx = N_approx.begin();
 
-    //Iterate through sets and write in output file
+    //Iterate through sets and copy images in vector
     for (int i = 0; i < maxNeighbors; i++) { 
         int img_num = approx->second;
         k_Nearest[i] = imgs->get_image(img_num);
@@ -78,6 +80,8 @@ set <pair<double, int>> LSH::Approx(Img* query, set<pair<double, int>>& r, int r
         //Compute distance for every neighbour image in the same bucket and save along with img number in the set
         for(int j = 0; j < in_bucket.size(); j++) {
             Img* cur_img = in_bucket[j];
+            if(cur_img == query)
+                continue;            
             double distance = query->euclideanDistance(cur_img);
             //save num of image i with the distance
             N_approx.insert(make_pair(distance, cur_img->imgNum()));

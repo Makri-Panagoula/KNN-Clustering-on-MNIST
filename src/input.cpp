@@ -28,7 +28,7 @@ Input::Input(string inputFile) {
     input.read((char*)&imgs,4);
     imgs = LittleEndian(imgs);
     //For clustering speed
-    imgs = 60000;
+    imgs = 10000;
     this->img_count = imgs;    
     input.read((char*)&rows,4);
     rows = LittleEndian(rows);    
@@ -52,6 +52,8 @@ set <pair<double, int>>  Input::N_Exact(Img* query) {
 
     for (int i = 0; i < img_count; i++) {
         Img* img = imgs[i];
+        if(img == query)
+            continue;
         double distance = query->euclideanDistance(img);
         distances.insert(make_pair(distance, img->imgNum()));
     }

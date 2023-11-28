@@ -52,15 +52,15 @@ void Img::display_p(ofstream& output) {
 }
 
 //Returns True if edge is pq the longest in the triangle pqr (considering r image from which called)
-bool Img::longestEdge(Img* p, Img* q){
-    //Distances in triangle pqr
-    double pq = p->euclideanDistance(q);
-    double pr = this->euclideanDistance(p);
-    double rq = this->euclideanDistance(q);
+bool Img::longestEdge(Img* t, Img* r){
+    //Distances in triangle prt
+    double pt = this->euclideanDistance(t);
+    double pr = this->euclideanDistance(r);
+    double rt = t->euclideanDistance(r);
 
     //find max distance among the three edges of the triangle
-    double max_dist = max(pq, max(pr,rq));
-    if(max_dist == pq && max_dist != pr && max_dist != rq)
+    double max_dist = max(pt, max(pr,rt));
+    if(max_dist == pr && max_dist != pt && max_dist != rt)
         return true;
         
     return false;

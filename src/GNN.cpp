@@ -48,7 +48,7 @@ set <pair<double,int>> GNN::NearestNeighbour(Img* query) {
             for(int n = 0 ; n < maxNeighbors; n++) {
                 Img* neigh = neighbours[n];
                 double query_dist = query->euclideanDistance(neigh);
-                candidates.insert(make_pair(query_dist, candidate->imgNum()));
+                candidates.insert(make_pair(query_dist, neigh->imgNum()));
                 //Next candidate will be the neighbour of current node nearest to query
                 if(query_dist < min_dist) {
                     min_dist = query_dist;

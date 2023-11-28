@@ -14,7 +14,7 @@ class Img {
         vector<unsigned char> p;
         //Number of image's pixels
         int pxs;
-        //Flag -1 for unassigned, otherwise holds cluster's number (starting from 0)
+        //Flag -1 when created
         int flag;
     public :
         //Initializes fields and reads image as well
@@ -30,7 +30,7 @@ class Img {
         int get_flag(){return this->flag;}
         void update_p(int i, unsigned char new_val) { this->p[i] = new_val;}
         void display_p(ofstream& output);
-        //Returns True if edge is pq the longest in the triangle pqr (considering r image from which called)
-        bool longestEdge(Img* p, Img* q);
+        //Returns True if edge is pr the longest in the triangle prt (considering p image from which called)
+        bool longestEdge(Img* t, Img* r);
         ~Img(){};
 };

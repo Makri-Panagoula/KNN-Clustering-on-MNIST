@@ -54,7 +54,7 @@ class LSH {
         void queryNeighbours(Img* query, int n, string output, int R);
         //Returns a set holding a pair (distnce,img_number) all the neighbours of query point and initializes set r with approximate neighbours in radius r
         set <pair<double, int>> Approx(Img* query, set<pair<double, int>>& r, int radius);      
-        //Returns a vector holding the k (or as many as available) nearest images 
+        //Returns a vector holding the k (or as many as available) nearest images (without including query image)
         vector<Img*> NearestNeighbours(int k, Img* query);  
         double get_maf(){return this->maf;};
         double total_approx(){return this->totalApproximate;};
