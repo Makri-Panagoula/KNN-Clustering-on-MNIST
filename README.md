@@ -2,7 +2,45 @@
 Παναγούλα Μακρή - 1115202000119
 
 ------ A PART-------
+~~GNN~~
+--Code Organization & Approach--:
 
+--Compiling--:
+
+------ B PART-------
+~~MRNG~~
+--Code Organization & Approach--:
+The search on the MRNG Graph is implemented according to the algorithm suggested on the second paper , search stops once the index of the first unchecked node of the set is equal to l instead of checking just l nodes since we observed better results like that.In the MRNG construction instead of sorting all the distances of the other images from p to create Rp, we take the k-NN by lsh (k being 59999).Rp won't have all the distances from image p (since lsh only looks for neighbours in each own bucket) but the more we images we check in Rp the less likely it is they will be added in Lp since (they have an increasingly bigger distance from p) and rp is probably going to be the longest edge in the prt triangle so we are still getting a pretty close approximation of Lp.We initialize the lsh structure with 80 hash functions to make the datapoints more well distributed in the buckets and 5 hashtables each having 100 buckets ( essentially images / 600) since we opt for speed over accuracy.We opted for the lsh structure instead of hypercube since we noticed it executes faster.  
+
+--Compiling--:
+You can run the program using the command make run_graph. In order to change command line arguments, you can change the line keeping the wanted format as in:
+ARGS_G = –d datasets/input.dat –q datasets/query.dat –k 50 -E 20 -R -N 5 -l 30 -m 2 -o output_graph.If not given the default value for l is 15 , arguments k,E,R,N can be omitted as they are not used in MRNG.Query and output files can be omitted as well as long as they are provided later in program's execution.
+
+------ C PART-------
+For all the experiments we used 1000 datapoints as queries considering this a representative yet fast enough number for testing.Because the algorithms are based on randomness small differences in the results are accepted.
+~~Hypercube~~
+
+   dimension   Max Datapoints   Max Vertices  Average Approximate t   MAF      Average True t
+      14            10            2            0.000425396 sec.     1.46333     0.130168 sec.        (default parameters)   
+      14           200            2            0.00286581 sec.      1.24173     0.128604 sec.
+      14           200           20            0.00279004 sec.      1.22176     0.125331 sec.
+      7            200           20            0.00283985 sec.      1.18165     0.130364 sec.
+    
+    The more datapoints we examine the better results we get since with a good function that would make the datapoints well distributed , we would expect 60000/(2^d) datapoints per bucket and the first ones we examine might not be the best.However, it is likely ,since we create a lot of  buckets, some to have less datapoints than others, when then again the more buckets-vertices we examine the better results we will get.Lastly, projecting the data to a smaller dimension appears to be more accurate, as in higher dimensions data becomes more sparse and spread out.All these optimizations, on the hyperparameters,though come with the cost of time.
+    
+
+~~MRNG~~
+
+   l     Average Approximate t     MAF     Average True t
+  15
+  30 
+  50
+
+
+
+------ A PART-------
+You can run the program using the command make run_graph. In order to change command line arguments, you can change the line keeping the wanted format as in:
+ARGSL = –d input_file –q query_file –k bumber_of_h_funcs_g_consists_of -L number_of_hashtables -ο output_file -Ν 11 -R 2500.If not given the default values for k,L,N,R are 4, 5 , 1 and 10000 respectively. 
 ~~LSH~~
 --Code Organization & Approach--:
 The LSH implementation reads the input dataset, that has all the information about the images. The LSH constructor initializes the Locality Sensitive Hashing algorithm by creating L number of hashtables using k number of hashfunctions and then stores each image of the training dataset based on the lsh technique. After that we take a small sample of the images in the query dataset to perform the algorithms on them and call the queryNeighbours function (lsh.cpp), so as to find and compare the nearest neighbors of a given query image. In order to do that, we create two different vectors are created, one for the approximate neighbours and one for the N-Exact neighbours in a specific radious.The set H including the available hash functions out of which each g-function is constructed has bigger cardinality than k to increase randomness, arbitrarily chosen, here 30*k. The k r-operands are chosen randomly and uniquely for every g-function for the same reason.We use the amplified lsh algorithm with the querying id trick (using mod M before mod TableSize) for improved performance.We choose the first 2 images of the query set to test the algorithms.  

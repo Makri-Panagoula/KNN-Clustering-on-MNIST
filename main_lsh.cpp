@@ -56,7 +56,7 @@ int main (int argc, char* argv[]) {
     Input* imgs = new Input(input_file);
     //Create Search Structure
     LSH* lsh = new LSH(L,k,imgs);
-    int queries = 2;
+    int queries = 1000;
     int runs = 0 ;
     string answer;
     do {

@@ -15,8 +15,6 @@ set <pair<double, int>> neighbours(Img* p, Input* imgs, set <pair<double, int>>&
     if(R.size() == 0)
         return L;
 
-    // cout<<"Nearest neighbours found in total from lsh : "<<R.size()<<endl;
-
     auto exact = R.begin();
     double min_dist = exact->first;
     
@@ -63,7 +61,7 @@ MRNG::MRNG(int l, Input* imgs) {
 
     //For every image we will create a vector with its nearest neighbours(if less as many as available)
     this->Graph = new vector<Img*>[imgs->get_imgs()];
-    //Create LSH Structure(we consider 60 hash functions and 5 Hashtables sacrificing accuracy but gaining speed)
+    //Create LSH Structure(we consider 80 hash functions and 5 Hashtables sacrificing accuracy but gaining speed)
     LSH* lsh = new LSH(80,5,imgs);    
     for(int i = 0; i < imgs->get_imgs(); i++) {
         Img* p = imgs->get_image(i);
@@ -89,8 +87,6 @@ MRNG::MRNG(int l, Input* imgs) {
             neighbours_p.push_back(imgs->get_image(l.second));
         }
         this->Graph[i] = neighbours_p;
-        // cout<<"Neighbours inserted : "<<neighbours_p.size()<<endl;
-
     }
 
     //Find Navigating Node by computing the nearest neighbour of the dataset's centroid by brute force
@@ -133,14 +129,12 @@ set<pair<double,int>> MRNG::NearestNeighbour(Img* query) {
             break;
         
         checked.insert(p);
-        // cout<<"initial p "<<p->imgNum()<<endl;
         //Find the neighbours of the node using the Graph and insert into set
         vector<Img*> neighbours = this->Graph[p->imgNum()];
         for (Img* neigh: neighbours) {
             double dist = neigh->euclideanDistance(query);
             //No need to check for uniqueness, since it is a set (it will have the same imgNum and distance)
             candidates.insert(make_pair(dist, neigh->imgNum()));
-            // cout<<"neighbour p "<<neigh->imgNum()<<endl;
         }
     }
     cout<<"Neighbours found in expanding : "<<candidates.size()<<endl;

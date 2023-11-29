@@ -102,7 +102,7 @@ int main (int argc, char* argv[]) {
     //Initialize variables for average query time
     double tAverageApproximate = 0.0;
     double tAverageTrue = 0.0;    
-    int queries = 10;
+    int queries = 1000;
     set <pair<double, int>> candidates; 
     int runs = 0 ;
     string answer;

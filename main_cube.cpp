@@ -66,7 +66,7 @@ int main (int argc, char* argv[]) {
 
     int runs = 0 ;
     string answer;
-    int queries = 2;
+    int queries = 1000;
     
     do {
         if ( runs > 0 || query_file.empty())  {  //If user hasn't passed it as command line argument 
