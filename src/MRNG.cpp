@@ -137,7 +137,6 @@ set<pair<double,int>> MRNG::NearestNeighbour(Img* query) {
             candidates.insert(make_pair(dist, neigh->imgNum()));
         }
     }
-    cout<<"Neighbours found in expanding : "<<candidates.size()<<endl;
     return candidates;
 }
 

@@ -25,19 +25,19 @@ For all the experiments we used 1000 datapoints as queries considering this a re
 ~~Hypercube~~
 
    dimension   Max Datapoints   Max Vertices  Average Approximate t   MAF      Average True t
-      14            10            2            0.000425396 sec.     1.46333     0.130168 sec.        (default parameters)   
-      14           200            2            0.00286581 sec.      1.24173     0.128604 sec.
-      14           200           20            0.00538861  sec.     1.23713     1.03878 sec.
-      7            200           20            0.00464774 sec.      1.27901     0.789412 sec.
+      14            10            2            0.0018715 sec.        1.42502     1.02852 sec.        (default parameters)   
+      14           200            2            0.00540427  sec.      1.26481     1.03417 sec.
+      14           200           20            0.00538861  sec.      1.23713     1.03878 sec.
+      7            200           20            0.00531243  sec.      1.24481     1.03146 sec.
     
     The more datapoints we examine the better results we get since with a good function that would make the datapoints well distributed , we would expect 60000/(2^d) datapoints per bucket and the first ones we examine might not be the best.However, it is likely ,since we create a lot of  buckets, some to have less datapoints than others, when then again the more buckets-vertices we examine the better results we will get.Lastly, projecting the data to a smaller dimension appears to be more accurate, as in higher dimensions data becomes more sparse and spread out.All these optimizations, on the hyperparameters,though come with the cost of time.
     
 
 ~~MRNG~~
 
-   l     Average Approximate t     MAF     Average True t
-  15
-  30 
+   l     Average Approximate t     MAF          Average True t
+  15       0.00111419 sec.         1.23283        1.04515 sec.         
+  30       0.00131998 sec.         1.23155        1.0462 sec. 
   50
 
 

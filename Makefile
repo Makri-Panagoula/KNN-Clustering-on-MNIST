@@ -32,7 +32,7 @@ CUBE = main_cube
 OBJC = $(SRC)/img.o $(SRC)/hFunc.o $(SRC)/input.o $(SRC)/cube.o 
 OBJ_CUBE = main_cube.o $(OBJC)
 
-ARGSC = –d datasets/input.dat –q datasets/query.dat –k 14 -M 200 -probes 20 -ο output_cube -Ν 1 -R 0
+ARGSC = –d datasets/input.dat –q datasets/query.dat –k 7 -M 200 -probes 20 -ο output_cube -Ν 1 -R 0
 
 $(CUBE): $(OBJ_CUBE)
 	$(CC) $(CFLAGS) $(OBJ_CUBE) -o $(CUBE) -lm -g3
@@ -65,7 +65,7 @@ valgrind_cluster:  $(CLUSTER)
 
 GRAPH_SEARCH = graph_search
 OBJS_G = $(SRC)/GNN.o $(SRC)/MRNG.o graph_search.o $(OBJ_L) $(SRC)/cube.o
-ARGS_G = –d datasets/input.dat –q datasets/query.dat –k 50 -E 20 -R -N 1 -l 30 -m 2 -o output_graph
+ARGS_G = –d datasets/input.dat –q datasets/query.dat –k 50 -E 20 -R -N 1 -l 15 -m 2 -o output_graph
 
 $(GRAPH_SEARCH): $(OBJS_G)
 	$(CC) $(CFLAGS) $(OBJS_G) -o $(GRAPH_SEARCH) -lm -g3
