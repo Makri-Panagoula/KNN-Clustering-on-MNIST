@@ -4,17 +4,17 @@
 ------ A PART-------
 ~~GNN~~
 --Code Organization & Approach--:
-While constructing the graph, in order to find the k edges (or less if not as many exist) we search for the k-NN using lsh.We depict the grpah as an array of 60000 vectors.
+While constructing the graph, in order to find the k edges (or less if not as many exist) we search for the k-NN using lsh. We depict the grpah as an array of 60000 vectors.
 
 --Compiling--:
 
 You can run the program using the command make run_graph with m = 1. In order to change command line arguments, you can change the line keeping the wanted format as in:
-ARGS_G = –d datasets/input.dat –q datasets/query.dat –k 50 -E 20 -R -N 5 -l 30 -m 1 -o output_graph.If not given the default values for k,E,R,N are 50,30,1.Argument l can be omitted as it is not used in GNN.Query and output files can be omitted as well as long as they are provided later in program's execution.
+ARGS_G = –d datasets/input.dat –q datasets/query.dat –k 50 -E 20 -R -N 5 -l 30 -m 1 -o output_graph. If not given the default values for k,E,R,N are 50,30,1. Argument l can be omitted as it is not used in GNN. Query and output files can be omitted as well as long as they are provided later in program's execution.
 
 ------ B PART-------
 ~~MRNG~~
 --Code Organization & Approach--:
-The search on the MRNG Graph is implemented according to the algorithm suggested on the second paper , search stops once the index of the first unchecked node of the set is equal to l instead of checking just l nodes since we observed better results like that.In the MRNG construction instead of sorting all the distances of the other images from p to create Rp, we take the k-NN by lsh (k being 59999).Rp won't have all the distances from image p (since lsh only looks for neighbours in each own bucket) but the more we images we check in Rp the less likely it is they will be added in Lp since (they have an increasingly bigger distance from p) and rp is probably going to be the longest edge in the prt triangle so we are still getting a pretty close approximation of Lp.We initialize the lsh structure with 80 hash functions to make the datapoints more well distributed in the buckets and 5 hashtables each having 100 buckets ( essentially images / 600) since we opt for speed over accuracy.We opted for the lsh structure instead of hypercube since we noticed it executes faster.  
+The search on the MRNG Graph is implemented according to the algorithm suggested on the second paper, search stops once the index of the first unchecked node of the set is equal to l instead of checking just l nodes since we observed better results like that.In the MRNG construction instead of sorting all the distances of the other images from p to create Rp, we take the k-NN by lsh (k being 59999).Rp won't have all the distances from image p (since lsh only looks for neighbours in each own bucket) but the more we images we check in Rp the less likely it is they will be added in Lp since (they have an increasingly bigger distance from p) and rp is probably going to be the longest edge in the prt triangle so we are still getting a pretty close approximation of Lp.We initialize the lsh structure with 80 hash functions to make the datapoints more well distributed in the buckets and 5 hashtables each having 100 buckets ( essentially images / 600) since we opt for speed over accuracy.We opted for the lsh structure instead of hypercube since we noticed it executes faster.  
 
 --Compiling--:
 You can run the program using the command make run_graph with m = 2. In order to change command line arguments, you can change the line keeping the wanted format as in:
@@ -22,36 +22,59 @@ ARGS_G = –d datasets/input.dat –q datasets/query.dat –k 50 -E 20 -R -N 5 -
 
 ------ C PART-------
 For all the experiments we used 1000 datapoints as queries considering this a representative yet fast enough number for testing.Because the algorithms are based on randomness small differences in the results are accepted.
-~~Hypercube~~
 
+~~LSH~~
+   h-functions  Hashtables    Average Approximate t      MAF            Average True t
+         3          5            0.00516687 sec.       1.33841           1.00496 sec.        (default parameters)
+         10         5            0.00907484 sec.       1.29561           1.21628 sec.
+         3          10           0.0115723 sec.        1.25458           1.29883 sec.
+         10         10           0.0128257 sec.        1.23356           1.30881 sec.
+         100        10           0.0230354 sec.        1.25362           1.24013 sec.
+
+      When the number of h-functions is increased, the execution time increased. It is observed that there is a trade-off between accuracy (MAF) and execution time as the accuracy decreases. While increasing the number of h-functions even more, it clearly leads to a significant increase in runtime, but the accuracy (MAF) remained similar to previous experiments. This indicates that excessively high numbers of h-functions is not necessary for this particular problem. 
+      Increasing the number of Hashtables seems to have a slightly negative impact on the execution time and here the accuracy shows some decrease as well.
+      The combination of both a larger number of h-functions and Hashtables leads to a further increase in runtime, but with a slight improvement in accuracy compared to the corresponding configurations used in the sample (default parameters: 3 h-functions, 5 Hashtables).
+
+
+~~Hypercube~~
    dimension   Max Datapoints   Max Vertices  Average Approximate t   MAF      Average True t
-      14            10            2            0.0018715 sec.        1.42502     1.02852 sec.        (default parameters)   
+      14            10            2            0.0018715   sec.      1.42502     1.02852 sec.        (default parameters)   
       14           200            2            0.00540427  sec.      1.26481     1.03417 sec.
       14           200           20            0.00538861  sec.      1.23713     1.03878 sec.
       7            200           20            0.00531243  sec.      1.24481     1.03146 sec.
     
-    The more datapoints we examine the better results we get since with a good function that would make the datapoints well distributed , we would expect 60000/(2^d) datapoints per bucket and the first ones we examine might not be the best.However, it is likely ,since we create a lot of  buckets, some to have less datapoints than others, when then again the more buckets-vertices we examine the better results we will get.Lastly, projecting the data to a smaller dimension appears to be more accurate, as in higher dimensions data becomes more sparse and spread out.All these optimizations, on the hyperparameters,though come with the cost of time.
+    The more datapoints we examine the better results we get since with a good function that would make the datapoints well distributed, we would expect 60000/(2^d) datapoints per bucket and the first ones we examine might not be the best.However, it is likely, since we create a lot of buckets, some to have less datapoints than others, when then again the more buckets-vertices we examine the better results we will get. Lastly, projecting the data to a smaller dimension appears to be more accurate, as in higher dimensions data becomes more sparse and spread out. All these optimizations, on the hyperparameters, though come with the cost of time.
     
+~~GNN~~
+   Extensions     Random Restarts   Average Approximate t       MAF         Average True t
+      50               20              0.0201578 sec.         1.18568        1.28697 sec.      (default parameters)   
+      50               50              0.0465412 sec.         1.17282        1.37024 sec.
+      100              20              0.0157333 sec.         1.19141        0.995496 sec.
+
+   Increasing the number of Random Restarts appears to have a positive, yet limited effect on accuracy. This decrease of MAF indicates that the number of Restarts has contributed to the extended exploration of the solution space. However there is an increase in runtime (Average Approximate t) by about double. When increasing the number of Extensions, the time decreases a lot, with a small trade off the accuracy.
+   Comparing the two scenarios, it appears that the number of Extensions has a greater effect on the accuracy (MAF), while the number of Random Restarts mainly affects the execution time.
+
+
 
 ~~MRNG~~
-
-   l     Average Approximate t     MAF          Average True t
+   l     Average Approximate t       MAF         Average True t
   15       0.00111419 sec.         1.23283        1.04515 sec.         
   30       0.00131998 sec.         1.23155        1.0462 sec. 
   50
 
 
-
 ------ A PART-------
 You can run the program using the command make run_graph. In order to change command line arguments, you can change the line keeping the wanted format as in:
-ARGSL = –d input_file –q query_file –k bumber_of_h_funcs_g_consists_of -L number_of_hashtables -ο output_file -Ν 11 -R 2500.If not given the default values for k,L,N,R are 4, 5 , 1 and 10000 respectively. 
+ARGSL = –d input_file –q query_file –k number_of_h_funcs_g_consists_of -L number_of_hashtables -ο output_file -Ν 11 -R 2500.If not given the default values for k,L,N,R are 4, 5, 1 and 10000 respectively. 
+
+
 ~~LSH~~
 --Code Organization & Approach--:
 The LSH implementation reads the input dataset, that has all the information about the images. The LSH constructor initializes the Locality Sensitive Hashing algorithm by creating L number of hashtables using k number of hashfunctions and then stores each image of the training dataset based on the lsh technique. After that we take a small sample of the images in the query dataset to perform the algorithms on them and call the queryNeighbours function (lsh.cpp), so as to find and compare the nearest neighbors of a given query image. In order to do that, we create two different vectors are created, one for the approximate neighbours and one for the N-Exact neighbours in a specific radious.The set H including the available hash functions out of which each g-function is constructed has bigger cardinality than k to increase randomness, arbitrarily chosen, here 30*k. The k r-operands are chosen randomly and uniquely for every g-function for the same reason.We use the amplified lsh algorithm with the querying id trick (using mod M before mod TableSize) for improved performance.We choose the first 2 images of the query set to test the algorithms.  
 
 --Compiling--:
 You can run the program using the command make run_lsh. In order to change command line arguments, you can change the line keeping the wanted format as in:
-ARGSL = –d input_file –q query_file –k bumber_of_h_funcs_g_consists_of -L number_of_hashtables -ο output_file -Ν 11 -R 2500.If not given the default values for k,L,N,R are 4, 5 , 1 and 10000 respectively.
+ARGSL = –d input_file –q query_file –k number_of_h_funcs_g_consists_of -L number_of_hashtables -ο output_file -Ν 11 -R 2500.If not given the default values for k,L,N,R are 4, 5, 1 and 10000 respectively.
 
 ~~HYPERCUBE~~
 --Code Organization & Approach--:
