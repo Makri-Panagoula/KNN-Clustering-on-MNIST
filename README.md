@@ -45,6 +45,7 @@ For all the experiments we used 1000 datapoints as queries considering this a re
     
     The more datapoints we examine the better results we get since with a good function that would make the datapoints well distributed, we would expect 60000/(2^d) datapoints per bucket and the first ones we examine might not be the best.However, it is likely, since we create a lot of buckets, some to have less datapoints than others, when then again the more buckets-vertices we examine the better results we will get. Lastly, projecting the data to a smaller dimension appears to be less accurate, we assume this is due to the algorithm visiting less vertices (since the buckets will be more dense) and therefore missing the chance to find a better one in a neighbouring bucket. All these optimizations, on the hyperparameters, though come with the cost of time.
     
+    
 ~~GNN~~
    Extensions     Random Restarts   Average Approximate t       MAF         Average True t
       50               20              0.0201578 sec.         1.18568        1.28697 sec.      (default parameters)   
