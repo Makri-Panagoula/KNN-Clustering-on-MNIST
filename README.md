@@ -37,7 +37,7 @@ For all the experiments we used 1000 datapoints as queries considering this a re
 
 
 ~~Hypercube~~
-   dimension   Max Datapoints   Max Vertices  Average Approximate t   MAF      Average True t
+   dimension   Max Datapoints   Max Vertices  Average Approximate t    MAF      Average True t
       14            10            2            0.0018715   sec.      1.42502     1.02852 sec.        (default parameters)   
       14           200            2            0.00540427  sec.      1.26481     1.03417 sec.
       14           200           20            0.00538861  sec.      1.23713     1.03878 sec.
@@ -55,17 +55,12 @@ For all the experiments we used 1000 datapoints as queries considering this a re
    Comparing the two scenarios, it appears that the number of Extensions has a greater effect on the accuracy (MAF), while the number of Random Restarts mainly affects the execution time.
 
 
-
 ~~MRNG~~
    l     Average Approximate t       MAF         Average True t
   15       0.00111419 sec.         1.23283        1.04515 sec.         
   30       0.00131998 sec.         1.23155        1.0462 sec. 
   50
 
-
------- A PART-------
-You can run the program using the command make run_graph. In order to change command line arguments, you can change the line keeping the wanted format as in:
-ARGSL = –d input_file –q query_file –k number_of_h_funcs_g_consists_of -L number_of_hashtables -ο output_file -Ν 11 -R 2500.If not given the default values for k,L,N,R are 4, 5, 1 and 10000 respectively. 
 
 
 ~~LSH~~
@@ -76,6 +71,7 @@ The LSH implementation reads the input dataset, that has all the information abo
 You can run the program using the command make run_lsh. In order to change command line arguments, you can change the line keeping the wanted format as in:
 ARGSL = –d input_file –q query_file –k number_of_h_funcs_g_consists_of -L number_of_hashtables -ο output_file -Ν 11 -R 2500.If not given the default values for k,L,N,R are 4, 5, 1 and 10000 respectively.
 
+
 ~~HYPERCUBE~~
 --Code Organization & Approach--:
 The hypercube implementation creates 1 hashtable (with 2^d buckets as many as the vertices of the hypercube) using the h functions from LSH (hFunc.h and hFunc.cpp) applying a different one for each of the d-dimensions of the hypercube to hash the pixels vector (p) of the datapoint and later applies a uniformly distributed random function f mapping the h(p) to {0,1} creating a binary vector belonging to R^d which we convert to a decimal that represents the bucket our datapoint will be hashed into (store function).The f function decides on the {0,1} value with uniform random distribution and we use a map for each of the d f-functions that holds the h_i(p) as a key and the mapped number as value to maintain consistency.To perform the search, we hash the query datapoint into a bucket and until we reach maximum datapoints or maximum vertices to be checked we traverse the neighbouring buckets-vertices of the hypercube with increasing Hamming distance. The source files related with the implementation can be found in cube.cpp (and its header cube.h) and main_cluster.cpp which mainly performs input parameter processing and calls the functions from cube.cpp.
@@ -84,6 +80,7 @@ The hypercube implementation creates 1 hashtable (with 2^d buckets as many as th
 Run with make run_cube , to change the paramaters update the ARGSC in Makefile.Parameters must be given in the following order:
 –d input_file –q  query_file –k dimensions_hypercube -M max_datapoints_to_be_checked -probes max_vertices_to_be_checked -ο output_file -Ν nearest_neighbours -R radius for range search.
 k,M,N,R can be omitted and then they take their default values : 14, 10, 2, 1 and 10000 respectively.
+
 
 ------ B PART-------
 Regardless of the assignment algorithm, the initialization of the centroids is being done with the k-means++ algorithm and the update with MacQueen repeating until the centroids of the clusters remain unchanged during the updates. In the k-means we choose the first centroid randomly from images on the dataset and the following ones out of the images in the dataset based on their probability,d_i^2,(we don't normalize), where d_i is the minimum distance of image i from all the initialized centroids. The clustering algorithm parameters are given in the cluster.conf file. Files regarding the implementation are main_cluster.cpp,cluster.cpp and cluster.h
