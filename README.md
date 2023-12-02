@@ -4,7 +4,7 @@
 ------ A PART-------
 ~~GNN~~
 --Code Organization & Approach--:
-While constructing the graph, in order to find the k edges (or less if not as many exist) we search for the k-NN using lsh. We depict the grpah as an array of 60000 vectors.
+While constructing the graph, in order to find the k edges (or less if not as many exist) we search for the k-NN using lsh with 3 hash functions and 5 hashtables each having 100 buckets for speed reasons. We depict the graph as an array of 60000 vectors.
 
 --Compiling--:
 
@@ -43,7 +43,7 @@ For all the experiments we used 1000 datapoints as queries considering this a re
       14           200           20            0.00538861  sec.      1.23713     1.03878 sec.
       7            200           20            0.00531243  sec.      1.24481     1.03146 sec.
     
-    The more datapoints we examine the better results we get since with a good function that would make the datapoints well distributed, we would expect 60000/(2^d) datapoints per bucket and the first ones we examine might not be the best.However, it is likely, since we create a lot of buckets, some to have less datapoints than others, when then again the more buckets-vertices we examine the better results we will get. Lastly, projecting the data to a smaller dimension appears to be more accurate, as in higher dimensions data becomes more sparse and spread out. All these optimizations, on the hyperparameters, though come with the cost of time.
+    The more datapoints we examine the better results we get since with a good function that would make the datapoints well distributed, we would expect 60000/(2^d) datapoints per bucket and the first ones we examine might not be the best.However, it is likely, since we create a lot of buckets, some to have less datapoints than others, when then again the more buckets-vertices we examine the better results we will get. Lastly, projecting the data to a smaller dimension appears to be less accurate, we assume this is due to the algorithm visiting less vertices (since the buckets will be more dense) and therefore missing the chance to find a better one in a neighbouring bucket. All these optimizations, on the hyperparameters, though come with the cost of time.
     
 ~~GNN~~
    Extensions     Random Restarts   Average Approximate t       MAF         Average True t
@@ -59,9 +59,11 @@ For all the experiments we used 1000 datapoints as queries considering this a re
    l     Average Approximate t       MAF         Average True t
   15       0.00111419 sec.         1.23283        1.04515 sec.         
   30       0.00131998 sec.         1.23155        1.0462 sec. 
-  50
 
+We notice that MRNG has an astounding trade off between query time and accuracy , since it starts already from a good enough point (essentially the centroid of all the dataset) and it performs only a small number of extensions. However, we don't observe a big differentiation in results when we alter the l parameter. This might be because MAF essentially is the worst accuracy out of all the queries and in case of outliers the algorithm is going to perorm poorly since it starts from the mean and the number of extensions might not be sufficient to calculate a better estimation of its nearest neighbour.
 
+--Conclusions--
+We realize that the algorithms depend on randomness therefore the metrics on the accuracy aren't an absolutely trustworty criterion on the efficiency, when the execution of algorithms generally differs depending on CPU scheduling so we can only compare times keeping in mind the average true time for every execution as well.We notice that the best accuracy happens with the GNN since it already implements internally LSH queries during the construction of the graph.Both LSH and Hypercube have exceptionally good time metrics since their query time complexity is O(d * n^p) and with the appropriate parameters the performance is still sattisfying enough.Lastly, MRNG has the best trade off between query time and accuracy, since it has a very cautious routine when initializing the graph with neighbours and starts from an already good enough query node.
 
 ~~LSH~~
 --Code Organization & Approach--:
