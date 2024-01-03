@@ -1,6 +1,8 @@
 Ευαγγελία Γούλα - 1115202000040
 Παναγούλα Μακρή - 1115202000119
 
+To run the second assignment in the latent space please provide after the -d and -q the respective datasets in the new dataspace and after all the commands -id datafile_in_initial_dataspace -iq queryfile_in_initial_dataspace.For exhaustive search in new space run the second assignment with m- 3.
+
 ------ A PART-------
 ~~GNN~~
 --Code Organization & Approach--:

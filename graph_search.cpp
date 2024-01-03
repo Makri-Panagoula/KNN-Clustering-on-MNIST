@@ -11,7 +11,7 @@ using namespace std;
 
 int main (int argc, char* argv[]) {
 
-    if(argc < 11 || argc > 19) {
+    if(argc < 11) {
         cout<<"Please provide arguments in the wanted format!"<<endl;
         exit(1);
     }
@@ -80,6 +80,36 @@ int main (int argc, char* argv[]) {
         output_file = argv[12] ;
     }  
 
+    //Check for extra datafiles which if exist refer to initial dataspaces               
+    string input_initial ;
+    string query_initial ;   
+    Input*  initial_imgs = NULL ; 
+    ifstream query_init;
+
+    if ( argv[13] != NULL ) {
+        if(argv[14] != NULL ) {
+            input_initial = argv[14];
+            if( argv[15] != NULL ) {
+                if(argv[16] != NULL ) {
+                    query_initial = argv[16];    
+                    initial_imgs = new Input(input_initial) ;   
+                    ifstream query_init(query_initial, ios::binary | ios::in);
+                    if(! query_init.is_open()) {
+                        cout << "Failed to read query dataset file with initial dataspace!" << endl;
+                        exit(1);
+                    }                                
+                }
+                else {
+                    cout<<"No query file for initial dataspace found!Please try again!"<<endl;
+                    exit(1);
+                }
+            }
+        }
+        else {
+            cout<<"No input or query file for initial dataspace found!Please try again!"<<endl;
+            exit(1);
+        }
+    }
     //Read image input dataset
     Input* imgs = new Input(input_file);
     GNN* gnn = NULL;
@@ -92,17 +122,17 @@ int main (int argc, char* argv[]) {
         //Create Search Structure
         mrng = new MRNG(l,imgs);        
     }
-    else {
-        cout<<"m must be either 1 or 2! Please rerun with correct parameters!";
+    else if(m != 3){
+        cout<<"m must be one of the following: 1,2,3! Please rerun with correct parameters!";
         exit(1);
     }
 
-    //Maximum Approximation Factor out of all the queries
-    double maf = numeric_limits<double>::min();
+    //Sum of Approximation Factor out of all the queries
+    double maf = 0;
     //Initialize variables for average query time
     double tAverageApproximate = 0.0;
     double tAverageTrue = 0.0;    
-    int queries = 1000;
+    int queries = 10;
     set <pair<double, int>> candidates; 
     int runs = 0 ;
     string answer;
@@ -125,25 +155,30 @@ int main (int argc, char* argv[]) {
         if(m == 1) 
             outFile<<"GNNS Results"<<endl;
         else if(m == 2) 
-            outFile<<"MRNG Results"<<endl;      
-                    
+            outFile<<"MRNG Results"<<endl;    
+        else   
+            outFile<<"Results for Exhaustive search in New Space"<<endl;
+
         ifstream query(query_file, ios::binary | ios::in);
         if(!query.is_open()) {
             cout << "Failed to read query dataset file!" << endl;
-            exit;
+            exit(1);
         }        
         //Read a small sample of images in the query dataset and perform the algorithms on them
         for(int i = 0; i < queries; i++) {
 
             Img* query_point = new Img(imgs->get_pxs(),i+1,query);
-            
+            //Query in initial dataspace
+            Img* init_query = NULL;
             //Estimate the N-Approx Nearest Neighbours keeping track of time 
             const auto start_approx{chrono::steady_clock::now()};
 
             if(gnn != NULL) 
                 candidates = gnn->NearestNeighbour(query_point);
-            else 
+            else if(mrng != NULL)
                 candidates = mrng->NearestNeighbour(query_point);
+            else
+                candidates = imgs->N_Exact(query_point);
 
             const auto end_approx{chrono::steady_clock::now()};
             chrono::duration<double> t_approx{end_approx - start_approx};  
@@ -151,7 +186,17 @@ int main (int argc, char* argv[]) {
 
             //Estimate the N-Exact Nearest Neighbours keeping track of time 
             const auto start_exact{chrono::steady_clock::now()};
-            set <pair<double, int>> N_exact = imgs->N_Exact(query_point);
+            set <pair<double, int>> N_exact;
+
+            //Exact Neighbours' distance should be drawn by initial dataspace
+            if(initial_imgs != NULL) {
+                init_query = new Img(initial_imgs->get_pxs(),i+1,query_init);
+                N_exact = initial_imgs->N_Exact(init_query);
+            }
+            else {
+                N_exact = imgs->N_Exact(query_point);
+            }
+
             const auto end_exact{chrono::steady_clock::now()};
             chrono::duration<double> t_exact{end_exact - start_exact};  
             tAverageTrue += t_exact.count();
@@ -163,11 +208,18 @@ int main (int argc, char* argv[]) {
 
             auto approx = candidates.begin();
             auto exact = N_exact.begin();
+            double approx_dist = approx->first;
 
-            //Update MAF if needed(we estimate MAF only from the first neighbour)
-            double approx_factor = approx->first / exact->first;
-            if(approx_factor > maf) 
-                maf = approx_factor;
+            if(initial_imgs != NULL) {
+                int img_num = approx->second;
+                Img* init_p = initial_imgs->get_image(img_num);
+                approx_dist = init_p->euclideanDistance(init_query);
+                delete init_query;
+            }
+
+            //Update MAF (we estimate MAF only from the first neighbour)
+            double approx_factor = approx_dist / exact->first;
+            maf += approx_factor;
 
             //Iterate through sets and write in output file
             for (int i = 0; i < maxNeighbors; i++) { 
@@ -181,7 +233,7 @@ int main (int argc, char* argv[]) {
         //Calculate average distances
         tAverageApproximate /= queries;
         tAverageTrue /= queries;   
-        outFile<<"\ntAverageApproximate: <double> "<<tAverageApproximate<<" sec."<<endl<<"tTrue: <double> "<<tAverageTrue<<" sec."<<endl<<endl<<"MAF: <double> [Maximum Approximation Factor] "<<maf<<endl;
+        outFile<<"\ntAverageApproximate: <double> "<<tAverageApproximate<<" sec."<<endl<<"tTrue: <double> "<<tAverageTrue<<" sec."<<endl<<endl<<"MAF: <double> [Mean Approximation Factor] "<<maf/queries<<endl;
         outFile.close();
 
         do {
@@ -194,5 +246,9 @@ int main (int argc, char* argv[]) {
     delete gnn;
     delete mrng;
     delete imgs;
+    if(initial_imgs != NULL) {
+        query_init.close();
+        delete initial_imgs;
+    }
     return 0;
 }

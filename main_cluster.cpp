@@ -18,7 +18,7 @@ int main (int argc, char* argv[]) {
     ifstream conf(argv[4]);
     if (!conf.is_open()) {
         cout<< "Failed to open cluster.conf" <<endl;
-        exit;
+        exit(1);
     }     
 
     //initializing map with default parameters
