@@ -80,7 +80,7 @@ int main (int argc, char* argv[]) {
         ifstream query(query_file, ios::binary | ios::in);
         if(! query.is_open()) {
             cout << "Failed to read query dataset file!" << endl;
-            exit;
+            exit(1);
         }        
         //Read a small sample of images in the query dataset and perform the algorithms on them
         for(int i = 0; i < queries; i++) {
@@ -97,7 +97,7 @@ int main (int argc, char* argv[]) {
     }while(answer == "y");
   
     ofstream outFile(output_file , ios::app);
-    outFile<<"tAverageApproximate: <double> "<<cube->total_approx()/queries<<" sec."<<endl<<"tTrue: <double> "<<cube->total_true()/queries<<" sec."<<endl<<endl<<"MAF: <double> [Maximum Approximation Factor] "<<cube->get_maf()<<endl;
+    outFile<<"tAverageApproximate: <double> "<<cube->total_approx()/queries<<" sec."<<endl<<"tTrue: <double> "<<cube->total_true()/queries<<" sec."<<endl<<endl<<"MAF: <double> [Mean Approximation Factor] "<<cube->get_maf()/queries<<endl;
     outFile.close();    
     delete imgs;
     delete cube;

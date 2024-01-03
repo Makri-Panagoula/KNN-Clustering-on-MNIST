@@ -13,7 +13,7 @@ LSH::LSH(int L,int k,Input* input) : hashTables(L){
     this->imgs = input;
     this->totalApproximate = 0.0;
     this->totalTrue = 0.0;
-    this->maf = numeric_limits<double>::min();
+    this->maf = 0;
 
     //Creating the data structures
     for(int i = 0; i < this->H_size; i++)  {
@@ -115,7 +115,7 @@ void LSH::queryNeighbours(Img* query, int n, string output, int R){
     ofstream outFile(output, ios::app);
     if (!outFile.is_open()) {
         cout << "Failed to open the output file." << endl;
-        exit;
+        exit(1);
     }    
 
     outFile << "Query: "<<query->imgNum()<<endl;
@@ -125,10 +125,9 @@ void LSH::queryNeighbours(Img* query, int n, string output, int R){
     auto approx = N_approx.begin();
     auto exact = N_exact.begin();
 
-    //Update MAF if needed(we estimate MAF only from the first neighbour)
+    //Update MAF(we estimate MAF only from the first neighbour)
     double approx_factor = approx->first / exact->first;
-    if(approx_factor > this->maf) 
-        this->maf = approx_factor;
+    this->maf += approx_factor;
 
     //Iterate through sets and write in output file
     for (int i = 0; i < maxNeighbors; i++) { 

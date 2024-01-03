@@ -45,7 +45,7 @@ class LSH {
         //Metrics out of all the queries
         double totalApproximate;
         double totalTrue;
-        //Maximum Approximation Factor
+        //Sum of approximation factors to use for mean
         double maf;
 
     public:
