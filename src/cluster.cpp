@@ -195,3 +195,8 @@ double initial_R(vector<Img*>& centroids) {
 
     return minDist / 2.0;    
 }
+
+void Cluster::project_data(Input* init_imgs) {
+    for (auto point1 = datapoints.begin(); point1 != datapoints.end(); point1++)
+        *point1 = init_imgs->get_image((*point1)->imgNum());
+}

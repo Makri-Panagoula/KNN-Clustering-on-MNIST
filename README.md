@@ -1,7 +1,8 @@
 Ευαγγελία Γούλα - 1115202000040
 Παναγούλα Μακρή - 1115202000119
 
-To run the second assignment in the latent space please provide after the -d and -q the respective datasets in the new dataspace and after all the commands -id datafile_in_initial_dataspace -iq queryfile_in_initial_dataspace.For exhaustive search in new space run the second assignment with m- 3.
+To run the second assignment in the latent space please provide after the -d and -q the respective datasets in the new dataspace and after all the commands -id datafile_in_initial_dataspace -iq queryfile_in_initial_dataspace.For exhaustive search in new space run the second assignment with m- 3. 
+Similarly, when running the clustering after the compulsory command line arguments add -id datafile_in_initial_dataspace.We perform the clustering in the new dimension and then we find the nearest neighbour of every centroid in the dataset which we eventually project into its initial dataspace.We estimate the silhouette by projecting the rest of the datapoints in the clusters as well.
 
 ------ A PART-------
 ~~GNN~~

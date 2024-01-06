@@ -52,6 +52,21 @@ int main (int argc, char* argv[]) {
     }    
     ofstream outFile(output_file); 
 
+   //Check for extra datafile which if exist refer to initial dataspace            
+    string input_initial ;
+    Input*  initial_imgs = NULL ; 
+
+    if ( argv[9] != NULL ) {
+        if(argv[10] != NULL ) {
+            input_initial = argv[10];
+            initial_imgs = new Input(input_initial);   
+        }
+        else {
+            cout<<"No datafile for initial dataspace found!Please try again!"<<endl;
+            exit(1);
+        }        
+    }
+
     //Read image input dataset
     Input* imgs = new Input(input_file);
     int k_clusters = parameters["number_of_clusters:"];
@@ -84,6 +99,7 @@ int main (int argc, char* argv[]) {
                         parameters["number_of_probes:"],
                         imgs);
     }  
+
     //Initialize R
     double R = initial_R(centroids);
     //Upper bound for R so as to avoid overfloe
@@ -299,8 +315,20 @@ int main (int argc, char* argv[]) {
         outFile<<"CLUSTER-"<<i+1<<" size: "<<clusters[i]->size()<<" , centroid : ";
         clusters[i]->centroid()->display_p(outFile);
         outFile<<endl;
-        if(complete)
+        if(complete) {
+            if(initial_imgs) {
+                for(int i = 0; i < k_clusters; i++) {
+                    //Find nearest neighbour of centroids in the new space with exhaustive search and 
+                    //then spot this neighbour in initial space and replace centroid with it
+                    set<std::pair<double, int>> N_exact = imgs->N_Exact(clusters[i]->centroid());
+                    auto exact = N_exact.begin();
+                    Img* centroid = initial_imgs->get_image(exact->second);
+                    clusters[i]->update_centroid(centroid); 
+                    clusters[i]->project_data(initial_imgs);
+                }
+            }
             clusters[i]->display(outFile);
+        }
     }
 
     outFile<<endl<<"clustering time: "<<t_cluster.count()<<" sec."<<endl<<"Silhouette [";
@@ -322,10 +350,12 @@ int main (int argc, char* argv[]) {
     if(!strcmp(argv[8],"Hypercube") ) {
         delete cube;
     }  
-    //Initialize clusters with centroid
+
     for(int i = 0; i < k_clusters; i++) {
         delete clusters[i];
     }
+
     delete imgs;
+    delete initial_imgs;
     return 0;
 }

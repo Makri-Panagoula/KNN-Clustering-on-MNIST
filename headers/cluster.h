@@ -37,6 +37,10 @@ class Cluster{
         //Computes average distance of datapoint to all the datapoints in the cluster
         double avg_dist(Img* datapoint);
         double silhouette(vector<Cluster*> &clusters);
+        //Updates cluster centroid to new center
+        void update_centroid(Img* new_center) {this->center = new_center;}
+        //Projects datapoints in cluster by corresponding them to those in the given dataset
+        void project_data(Input* init_imgs);
         ~Cluster(){};
 };
 
