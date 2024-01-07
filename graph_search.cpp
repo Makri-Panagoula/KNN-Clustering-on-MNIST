@@ -83,7 +83,8 @@ int main (int argc, char* argv[]) {
     //Check for extra datafiles which if exist refer to initial dataspaces               
     string input_initial ;
     string query_initial ;   
-    Input*  initial_imgs = NULL ; 
+    Input*  initial_imgs = NULL ;
+    Input*  initial_query = NULL ;  
     ifstream query_init;
 
     if ( argv[13] != NULL ) {
@@ -97,7 +98,8 @@ int main (int argc, char* argv[]) {
                     if(! query_init.is_open()) {
                         cout << "Failed to read query dataset file with initial dataspace!" << endl;
                         exit(1);
-                    }                                
+                    }         
+                    initial_query = new Input(query_initial) ;                          
                 }
                 else {
                     cout<<"No query file for initial dataspace found!Please try again!"<<endl;
@@ -112,6 +114,8 @@ int main (int argc, char* argv[]) {
     }
     //Read image input dataset
     Input* imgs = new Input(input_file);
+    Input* query_imgs = new Input(query_file);
+
     GNN* gnn = NULL;
     MRNG* mrng = NULL;
     if(m == 1) {
@@ -167,7 +171,7 @@ int main (int argc, char* argv[]) {
         //Read a small sample of images in the query dataset and perform the algorithms on them
         for(int i = 0; i < queries; i++) {
 
-            Img* query_point = new Img(imgs->get_pxs(),i+1,query);
+            Img* query_point = query_imgs->get_image(i);
             //Query in initial dataspace
             Img* init_query = NULL;
             //Estimate the N-Approx Nearest Neighbours keeping track of time 
@@ -190,7 +194,7 @@ int main (int argc, char* argv[]) {
 
             //Exact Neighbours' distance should be drawn by initial dataspace
             if(initial_imgs != NULL) {
-                init_query = new Img(initial_imgs->get_pxs(),i+1,query_init);
+                init_query = initial_query->get_image(i);
                 N_exact = initial_imgs->N_Exact(init_query);
             }
             else {
@@ -214,7 +218,6 @@ int main (int argc, char* argv[]) {
                 int img_num = approx->second;
                 Img* init_p = initial_imgs->get_image(img_num);
                 approx_dist = init_p->euclideanDistance(init_query);
-                delete init_query;
             }
 
             //Update MAF (we estimate MAF only from the first neighbour)
@@ -227,8 +230,6 @@ int main (int argc, char* argv[]) {
                 approx++;
                 exact++;
             }
-            
-            delete query_point;
         }  
         //Calculate average distances
         tAverageApproximate /= queries;
@@ -246,9 +247,12 @@ int main (int argc, char* argv[]) {
     delete gnn;
     delete mrng;
     delete imgs;
+    delete query_imgs;
+
     if(initial_imgs != NULL) {
         query_init.close();
         delete initial_imgs;
+        delete initial_query;
     }
     return 0;
 }
