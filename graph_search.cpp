@@ -85,7 +85,6 @@ int main (int argc, char* argv[]) {
     string query_initial ;   
     Input*  initial_imgs = NULL ;
     Input*  initial_query = NULL ;  
-    ifstream query_init;
 
     if ( argv[13] != NULL ) {
         if(argv[14] != NULL ) {
@@ -94,11 +93,6 @@ int main (int argc, char* argv[]) {
                 if(argv[16] != NULL ) {
                     query_initial = argv[16];    
                     initial_imgs = new Input(input_initial) ;   
-                    ifstream query_init(query_initial, ios::binary | ios::in);
-                    if(! query_init.is_open()) {
-                        cout << "Failed to read query dataset file with initial dataspace!" << endl;
-                        exit(1);
-                    }         
                     initial_query = new Input(query_initial) ;                          
                 }
                 else {
@@ -256,11 +250,7 @@ int main (int argc, char* argv[]) {
     delete mrng;
     delete imgs;
     delete query_imgs;
-
-    if(initial_imgs != NULL) {
-        query_init.close();
-        delete initial_imgs;
-        delete initial_query;
-    }
+    delete initial_imgs;
+    delete initial_query;
     return 0;
 }
