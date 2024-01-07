@@ -313,20 +313,21 @@ int main (int argc, char* argv[]) {
 
     for(int i = 0; i < k_clusters; i++) {
         outFile<<"CLUSTER-"<<i+1<<" size: "<<clusters[i]->size()<<" , centroid : ";
-        clusters[i]->centroid()->display_p(outFile);
-        outFile<<endl;
-        if(complete) {
-            if(initial_imgs) {
-                for(int i = 0; i < k_clusters; i++) {
-                    //Find nearest neighbour of centroids in the new space with exhaustive search and 
-                    //then spot this neighbour in initial space and replace centroid with it
-                    set<std::pair<double, int>> N_exact = imgs->N_Exact(clusters[i]->centroid());
-                    auto exact = N_exact.begin();
-                    Img* centroid = initial_imgs->get_image(exact->second);
-                    clusters[i]->update_centroid(centroid); 
-                    clusters[i]->project_data(initial_imgs);
-                }
+        //If extra datafile had been given,we need to first project in new space
+        if(initial_imgs) {
+            for(int i = 0; i < k_clusters; i++) {
+                //Find nearest neighbour of centroids in the new space with exhaustive search and 
+                //then spot this neighbour in initial space and replace centroid with it
+                set<std::pair<double, int>> N_exact = imgs->N_Exact(clusters[i]->centroid());
+                auto exact = N_exact.begin();
+                Img* centroid = initial_imgs->get_image(exact->second);
+                clusters[i]->update_centroid(centroid); 
+                clusters[i]->project_data(initial_imgs);
             }
+        }
+        clusters[i]->centroid()->display_p(outFile);
+        outFile<<endl;           
+        if(complete) {         
             clusters[i]->display(outFile);
         }
     }

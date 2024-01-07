@@ -170,7 +170,7 @@ int main (int argc, char* argv[]) {
         }        
         //Read a small sample of images in the query dataset and perform the algorithms on them
         for(int i = 0; i < queries; i++) {
-
+            //Query from first file
             Img* query_point = query_imgs->get_image(i);
             //Query in initial dataspace
             Img* init_query = NULL;
@@ -181,12 +181,16 @@ int main (int argc, char* argv[]) {
                 candidates = gnn->NearestNeighbour(query_point);
             else if(mrng != NULL)
                 candidates = mrng->NearestNeighbour(query_point);
-            else
+            else                                                    //Exhaustive search in latent space (first files)
                 candidates = imgs->N_Exact(query_point);
 
             const auto end_approx{chrono::steady_clock::now()};
             chrono::duration<double> t_approx{end_approx - start_approx};  
             tAverageApproximate += t_approx.count();
+
+            //If no neighbours found with the approximate method,nothing will show in the output 
+            if(candidates.size() == 0)
+                continue;
 
             //Estimate the N-Exact Nearest Neighbours keeping track of time 
             const auto start_exact{chrono::steady_clock::now()};
@@ -210,23 +214,27 @@ int main (int argc, char* argv[]) {
             maxNeighbors = min((int)candidates.size(),maxNeighbors);
             outFile<<"Query: "<<i+1<<endl; 
 
-            auto approx = candidates.begin();
+            auto approx = candidates.begin();    
             auto exact = N_exact.begin();
-            double approx_dist = approx->first;
-
-            if(initial_imgs != NULL) {
-                int img_num = approx->second;
-                Img* init_p = initial_imgs->get_image(img_num);
-                approx_dist = init_p->euclideanDistance(init_query);
-            }
-
-            //Update MAF (we estimate MAF only from the first neighbour)
-            double approx_factor = approx_dist / exact->first;
-            maf += approx_factor;
 
             //Iterate through sets and write in output file
             for (int i = 0; i < maxNeighbors; i++) { 
-                outFile<<"Nearest Neighbour-" << i + 1 << " :" << approx->second <<endl<< "distanceApproximate: <double> " << approx->first <<endl<< "distanceTrue: <double> "<< exact->first<<endl;
+                double approx_dist = approx->first;
+
+                //If needed reevaluate distance given initial data
+                if(initial_imgs != NULL) {
+                    int img_num = approx->second;
+                    Img* init_p = initial_imgs->get_image(img_num);
+                    approx_dist = init_p->euclideanDistance(init_query);
+                }
+
+                //Update MAF (we estimate MAF only from the first neighbour)
+                if( i == 0) {
+                    double approx_factor = approx_dist / exact->first;
+                    maf += approx_factor;
+                }
+
+                outFile<<"Nearest Neighbour-" << i + 1 << " :" << approx->second <<endl<< "distanceApproximate: <double> " << approx_dist <<endl<< "distanceTrue: <double> "<< exact->first<<endl;
                 approx++;
                 exact++;
             }

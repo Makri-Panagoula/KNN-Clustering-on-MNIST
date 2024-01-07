@@ -28,7 +28,7 @@ Input::Input(string inputFile) {
     input.read((char*)&imgs,4);
     imgs = LittleEndian(imgs);
     //For clustering speed
-    imgs = 1000;
+    imgs = 3000;
     this->img_count = imgs;    
     input.read((char*)&rows,4);
     rows = LittleEndian(rows);    
