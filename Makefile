@@ -8,6 +8,10 @@ CC = g++
 # Compile Options
 CFLAGS = -Wall -Werror -I -g -I$(HEADERS)
 
+#----------------------reduce.py-----------------------------
+run_reduce :
+	python3 reduce.py –d datasets/input.dat -q datasets/query.dat -od datasets/output.dat -oq datasets/output_query.dat
+
 #----------------------LSH make, run & valgrind-----------------------------
 
 LSH = main_lsh

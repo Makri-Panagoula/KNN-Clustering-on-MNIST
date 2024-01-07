@@ -7,11 +7,15 @@
 The experimentation process on the autoencoder model is presented on the experiment.ipynb followed by commented diagrams.To avoid overfitting we implement regularization techniques such as batch normalization and dropout in every layer as well as early stopping with patience = 3 (since due to the large number of data we used a rather small number of epochs for training).We opted for using the optuna framework to utilize its pruning algorithms for optimal results, we performed hyperparameter tuning on dropout rate,epochs,batch size,kernel size, number of filters, filters per layer and latent dimension.
 The best model we find there we use in the reduce.py file which can be executed running : make run_reduce.
 
-To run the second assignment in the latent space please provide after the -d and -q the respective datasets in the new dataspace and after all the commands -id datafile_in_initial_dataspace -iq queryfile_in_initial_dataspace.For exhaustive search in new space run the second assignment with m- 3. 
+To run the second assignment in the latent space please provide after the -d and -q the respective datasets in the new dataspace and after all the commands -id datafile_in_initial_dataspace -iq queryfile_in_initial_dataspace.For exhaustive search in new space run the second assignment with m-3. 
 Similarly, when running the clustering after the compulsory command line arguments add -id datafile_in_initial_dataspace.We perform the clustering in the new dimension and then we find the nearest neighbour of every centroid in the dataset which we eventually project into its initial dataspace.We estimate the silhouette by projecting the rest of the datapoints in the clusters as well.
 
 --Results--:
 
+As expected, we notice that the the latent dimension has the biggest influence on the performance, since the bigger it is (30) the bigger the model's capacity to encapsulate information and successfully extract the most important features of the input.A larger number of layers with big filters ([32, 64, 128, 256]) as well is conducive to model's complexity improving the loss score.A rather small batch size is being used meaning the weights are being updated more often and generalize better.Since the dataset is not too complex, it can be learned quickly in small number of epochs (10).Lastly, dropout rate is moderate (0.5) leading to more robust representations and better generalization,(using batch normalization reduces the need for dropout too).
+
+
+------ SECOND ASSIGNMENT-------
 ------ A PART-------
 ~~GNN~~
 --Code Organization & Approach--:
@@ -77,6 +81,8 @@ We notice that MRNG has an astounding trade off between query time and accuracy 
 --Conclusions--
 We realize that the algorithms depend on randomness therefore the metrics on the accuracy aren't an absolutely trustworty criterion on the efficiency, when the execution of algorithms generally differs depending on CPU scheduling so we can only compare times keeping in mind the average true time for every execution as well.We notice that the best accuracy happens with the GNN since it already implements internally LSH queries during the construction of the graph.Both LSH and Hypercube have exceptionally good time metrics since their query time complexity is O(d * n^p) and with the appropriate parameters the performance is still sattisfying enough.Lastly, MRNG has the best trade off between query time and accuracy, since it has a very cautious routine when initializing the graph with neighbours and starts from an already good enough query node.
 
+
+------ FIRST ASSIGNMENT-------
 ~~LSH~~
 --Code Organization & Approach--:
 The LSH implementation reads the input dataset, that has all the information about the images. The LSH constructor initializes the Locality Sensitive Hashing algorithm by creating L number of hashtables using k number of hashfunctions and then stores each image of the training dataset based on the lsh technique. After that we take a small sample of the images in the query dataset to perform the algorithms on them and call the queryNeighbours function (lsh.cpp), so as to find and compare the nearest neighbors of a given query image. In order to do that, we create two different vectors are created, one for the approximate neighbours and one for the N-Exact neighbours in a specific radious.The set H including the available hash functions out of which each g-function is constructed has bigger cardinality than k to increase randomness, arbitrarily chosen, here 30*k. The k r-operands are chosen randomly and uniquely for every g-function for the same reason.We use the amplified lsh algorithm with the querying id trick (using mod M before mod TableSize) for improved performance.We choose the first 2 images of the query set to test the algorithms.  
