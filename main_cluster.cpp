@@ -53,12 +53,11 @@ int main (int argc, char* argv[]) {
     ofstream outFile(output_file); 
 
    //Check for extra datafile which if exist refer to initial dataspace            
-    string input_initial ;
     Input*  initial_imgs = NULL ; 
 
     if ( argv[9] != NULL ) {
         if(argv[10] != NULL ) {
-            input_initial = argv[10];
+            string input_initial = argv[10];
             initial_imgs = new Input(input_initial);   
         }
         else {

@@ -81,17 +81,15 @@ int main (int argc, char* argv[]) {
     }  
 
     //Check for extra datafiles which if exist refer to initial dataspaces               
-    string input_initial ;
-    string query_initial ;   
     Input*  initial_imgs = NULL ;
     Input*  initial_query = NULL ;  
 
     if ( argv[13] != NULL ) {
         if(argv[14] != NULL ) {
-            input_initial = argv[14];
+            string input_initial = argv[14];
             if( argv[15] != NULL ) {
                 if(argv[16] != NULL ) {
-                    query_initial = argv[16];    
+                    string query_initial = argv[16];    
                     initial_imgs = new Input(input_initial) ;   
                     initial_query = new Input(query_initial) ;                          
                 }
@@ -106,6 +104,7 @@ int main (int argc, char* argv[]) {
             exit(1);
         }
     }
+    
     //Read image input dataset
     Input* imgs = new Input(input_file);
     Input* query_imgs = new Input(query_file);
@@ -166,8 +165,6 @@ int main (int argc, char* argv[]) {
         for(int i = 0; i < queries; i++) {
             //Query from first file
             Img* query_point = query_imgs->get_image(i);
-            //Query in initial dataspace
-            Img* init_query = NULL;
             //Estimate the N-Approx Nearest Neighbours keeping track of time 
             const auto start_approx{chrono::steady_clock::now()};
 
@@ -175,7 +172,7 @@ int main (int argc, char* argv[]) {
                 candidates = gnn->NearestNeighbour(query_point);
             else if(mrng != NULL)
                 candidates = mrng->NearestNeighbour(query_point);
-            else                                                    //Exhaustive search in latent space (first files)
+            else                                                    //Exhaustive search with first files
                 candidates = imgs->N_Exact(query_point);
 
             const auto end_approx{chrono::steady_clock::now()};
@@ -189,6 +186,8 @@ int main (int argc, char* argv[]) {
             //Estimate the N-Exact Nearest Neighbours keeping track of time 
             const auto start_exact{chrono::steady_clock::now()};
             set <pair<double, int>> N_exact;
+            //Query in initial dataspace
+            Img* init_query = NULL;
 
             //Exact Neighbours' distance should be drawn by initial dataspace
             if(initial_imgs != NULL) {
@@ -212,7 +211,7 @@ int main (int argc, char* argv[]) {
             auto exact = N_exact.begin();
 
             //Iterate through sets and write in output file
-            for (int i = 0; i < maxNeighbors; i++) { 
+            for (int j = 0; j < maxNeighbors; j++) { 
                 double approx_dist = approx->first;
 
                 //If needed reevaluate distance given initial data
@@ -223,12 +222,12 @@ int main (int argc, char* argv[]) {
                 }
 
                 //Update MAF (we estimate MAF only from the first neighbour)
-                if( i == 0) {
+                if( j == 0) {
                     double approx_factor = approx_dist / exact->first;
                     maf += approx_factor;
                 }
 
-                outFile<<"Nearest Neighbour-" << i + 1 << " :" << approx->second <<endl<< "distanceApproximate: <double> " << approx_dist <<endl<< "distanceTrue: <double> "<< exact->first<<endl;
+                outFile<<"Nearest Neighbour-" << j + 1 << " :" << approx->second <<endl<< "distanceApproximate: <double> " << approx_dist <<endl<< "distanceTrue: <double> "<< exact->first<<endl;
                 approx++;
                 exact++;
             }
