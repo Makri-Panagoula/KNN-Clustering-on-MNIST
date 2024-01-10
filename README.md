@@ -15,7 +15,69 @@ Our model presents  0.005191380623728037 test loss and  0.8145348429679871 test 
 As expected, we notice that the the latent dimension has the biggest influence on the performance, since the bigger it is (30) the bigger the model's capacity to encapsulate information and successfully extract the most important features of the input.A larger number of layers with big filters ([32, 64, 128, 256]) as well is conducive to model's complexity improving the loss score.A rather moderate batch (128) size is being used meaning the weights are being updated more often and generalize better.Since the dataset is not too complex, it can be learned quickly in small number of epochs (20).Lastly, dropout rate is moderate (0.5) leading to more robust representations and better generalization,(using batch normalization reduces the need for dropout too).The model performs well with a rather small batch size and therefore needs a small number of epochs.
 
 
+-------Clustering testings-------:  (everything here is tested for 10.000 images)
+
+We estimated Objective Function's Value for Hypercube since this was the method with the best trade off between query time and accuracy.
+
+method: Classic
+
+in the original space:  clustering time: 3.72138 sec.
+                        Silhouette [1 , 0.195482 , 0.0676906 , 0.278887 , 0.278667 , 0.278257 , 0.349831 ]
+in the new space:       clustering time: 3.74718 sec.
+                        Silhouette [-0.00453017 , 0.00135744 , -0.000209328 , -0.00220132 , 0.00586274 , 0.0107627 , 0.00184035 ]
+
+While the clustering time is comparable in the different spaces, there is a reduction in silhouette scores in the new space, which suggests that the clustering performance has degraded after dimensionality reduction.
+
+method: LSH
+
+in the original space: clustering time: 4.08806 sec.
+                       Silhouette [1 , 0.197806 , -0.0145723 , 0.277724 , 0.266968 , 0.280108 , 0.334672 ]
+in the new space:      clustering time: 3.52786 sec.
+                       Silhouette [-0.00536397 , 0.000227006 , 0.000410369 , -0.0039588 , 0.0111781 , 0.00971051 , 0.00203387 ]
+                     
+LSH shows a reduction in clustering time when applied to the new (reduced) space. Silhouette scores in both the original and new spaces using LSH are generally low, and there might be challenges in achieving well-defined clusters in both spaces.
+
+
+method: Hypercube:  
+
+in the original space: Objective Function's Value : 7.51175e+12
+                       Clustering Time: 1.62866 sec.
+                       Silhouette [-0.016072 , 1 , 0.200669 , 0.17003 , 0.286082 , 0.280723 , 0.320239 ]
+in the new space:      Objective Function's Value : 3.62356e+14
+                       Clustering Time: 1.72669 sec.
+                       Silhouette [-0.00536931 , 0.000225461 , 0.000412049 , -0.0039565 , 0.0111829 , 0.00971299 , 0.0020346 ]
+
+The increase in the objective function's value in the new space suggests that the Hypercube method might not be preserving the relevant information well during dimensionality reduction. The clustering time difference is relatively small, indicating a comparable efficiency in clustering between the original and new spaces. Similar to the LSH results, the silhouette scores in the new space using the Hypercube method are generally lower compared to the original space. Negative silhouette scores suggest potential challenges in clustering quality.
+
+
+-------Graph Search testings-------:
+
+~~GNN~~
+                     |   in the original space   |  in the new space
+tAverageApproximate  |     0.0143473 sec         |    0.014885 sec
+tTrue                |     0.182167 sec          |    0.149065 sec
+MAF                  |       3.39889             |      2.14755
+
+
+
+~~MRNG~~
+                     |   in the original space   |  in the new space
+tAverageApproximate  |      0.00111419 sec       |    0.00267578 sec
+tTrue                |      1.04515 sec          |    0.0148013 sec
+MAF                  |       1.23283             |      1.90689
+
+
+
+~~exhaustive search~~
+                     |   in the original space  |  in the new space
+tAverageApproximate  |      0.191546 sec        |    0.192168 sec
+tTrue                |      0.190367 sec        |    0.149924 sec
+MAF                  |          1               |      2.3958
+
+
+
 ------ SECOND ASSIGNMENT-------
+
 ------ A PART-------
 ~~GNN~~
 --Code Organization & Approach--:
