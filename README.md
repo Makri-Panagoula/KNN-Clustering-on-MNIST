@@ -7,7 +7,7 @@
 The experimentation process on the autoencoder model is presented on the experiment.ipynb followed by commented diagrams.To avoid overfitting we implement regularization techniques such as batch normalization and dropout in every layer as well as early stopping with patience = 3 (since due to the large number of data we used a rather small number of epochs for training).We opted for using the optuna framework to utilize its pruning algorithms for optimal results, we performed hyperparameter tuning on dropout rate,epochs,batch size,kernel size, number of filters, filters per layer and latent dimension.
 The best model we find there we use in the reduce.py file which can be executed running : make run_reduce.
 
-To run the second assignment in the latent space please provide after the -d and -q the respective datasets in the new dataspace and after all the commands -id datafile_in_initial_dataspace -iq queryfile_in_initial_dataspace.For exhaustive search in new space run the second assignment with m-3. 
+To run the second assignment in the latent space please provide after the -d and -q the respective datasets in the new dataspace and after all the commands -id datafile_in_initial_dataspace -iq queryfile_in_initial_dataspace.For exhaustive search in new space run the second assignment with m=3. 
 Similarly, when running the clustering after the compulsory command line arguments add -id datafile_in_initial_dataspace.We perform the clustering in the new dimension and then we find the nearest neighbour of every centroid in the dataset which we eventually project into its initial dataspace.We estimate the silhouette by projecting the rest of the datapoints in the clusters as well.
 
 --Results--:
