@@ -41,6 +41,8 @@ class Cluster{
         void update_centroid(Img* new_center) {this->center = new_center;}
         //Projects datapoints in cluster by corresponding them to those in the given dataset
         void project_data(Input* init_imgs);
+        //Estimates the d(x,C)^2 by summing the euclidean distances of the datapoints in the cluster from its centroid
+        double d_x_C();
         ~Cluster(){};
 };
 

@@ -309,6 +309,7 @@ int main (int argc, char* argv[]) {
 
     //Write time metrics into output file
     outFile<<"Algorithm: "<<argv[8]<<endl;
+    double obj_func = 0.0;
 
     for(int i = 0; i < k_clusters; i++) {
         outFile<<"CLUSTER-"<<i+1<<" size: "<<clusters[i]->size()<<" , centroid : ";
@@ -327,11 +328,13 @@ int main (int argc, char* argv[]) {
         if(complete) {         
             clusters[i]->display(outFile);
         }
+        //Add to objective function the d(x,C)^2 for this cluster
+        obj_func += clusters[i]->d_x_C();
     }
-
-    outFile<<endl<<"clustering time: "<<t_cluster.count()<<" sec."<<endl<<"Silhouette [";
+    outFile<<endl<<"Objective Function's Value : "<<obj_func<<endl;
+    outFile<<endl<<"Clustering Time: "<<t_cluster.count()<<" sec."<<endl<<"Silhouette [";
     double total_s = 0.0;
-
+    //When applying the Silhouette all the data is projected upon initial dimension
     for(int i = 0; i < k_clusters; i++) {
         double s_i = clusters[i]->silhouette(clusters);
         outFile<<s_i<<" , ";

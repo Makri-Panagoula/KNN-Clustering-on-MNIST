@@ -200,3 +200,16 @@ void Cluster::project_data(Input* init_imgs) {
     for (auto point1 = datapoints.begin(); point1 != datapoints.end(); point1++)
         *point1 = init_imgs->get_image((*point1)->imgNum());
 }
+
+//Estimates the d(x,C)^2 by summing the euclidean distances of the datapoints in the cluster from its centroid
+double Cluster::d_x_C() {
+
+    double dist_sum = 0.0;
+
+    //Estimate the sum of the distance of every datapoint from cluster's centroid   
+    for (auto point1 = datapoints.begin(); point1 != datapoints.end(); point1++)
+        dist_sum += (*point1)->euclideanDistance(this->center);
+
+    dist_sum = pow(dist_sum,2);    
+    return dist_sum;
+}
