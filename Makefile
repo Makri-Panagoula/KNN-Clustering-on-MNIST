@@ -53,7 +53,7 @@ valgrind_cube:	$(CUBE)
 CLUSTER = main_cluster
 OBJ_CL = main_cluster.o $(OBJ_L) $(SRC)/cube.o $(SRC)/cluster.o
 
-ARGSCL = –i datasets/output.dat –c cluster.conf -o output_cluster -m Classic -id datasets/input.dat
+ARGSCL = –i datasets/output.dat –c cluster.conf -o output_cluster -m Hypercube -id datasets/input.dat
 
 $(CLUSTER): $(OBJ_CL)
 	$(CC) $(CFLAGS) $(OBJ_CL) -o $(CLUSTER) -lm -g3
