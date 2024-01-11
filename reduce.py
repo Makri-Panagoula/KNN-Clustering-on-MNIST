@@ -6,7 +6,9 @@ from tensorflow.keras.models import load_model
 
 def create_output(input_name, output_name, autoencoder):
 
-    latent_dim_size = autoencoder.latent_dim
+    # Infer latent_dim from the output shape of the encoder
+    encoder_output_shape = autoencoder.encoder.output_shape[1:]
+    latent_dim = np.prod(encoder_output_shape)
 
     # Read the input file that will create the x image dataset
     with open(input_name, 'rb') as f:
@@ -31,7 +33,7 @@ def create_output(input_name, output_name, autoencoder):
     # Writing data as a binary file with big endian architecture
     with open(output_name, 'wb+') as images_file:
         # Writing metadata
-        images_file.write(struct.pack('>IIII', magic_number, num_images, latent_dim_size, 1))
+        images_file.write(struct.pack('>IIII', magic_number, num_images, latent_dim, 1))
         # Writing image data
         for image in output_imgs:
             images_file.write(image.tobytes())
