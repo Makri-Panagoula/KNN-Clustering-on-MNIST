@@ -43,7 +43,7 @@ method: Hypercube:
 in the original space: Objective Function's Value : 7.51175e+12
                        Clustering Time: 1.62866 sec.
                        Silhouette [-0.016072 , 1 , 0.200669 , 0.17003 , 0.286082 , 0.280723 , 0.320239 ]
-                       
+
 in the new space:      Objective Function's Value : 3.62356e+14
                        Clustering Time: 1.72669 sec.
                        Silhouette [-0.00536931 , 0.000225461 , 0.000412049 , -0.0039565 , 0.0111829 , 0.00971299 , 0.0020346 ]
@@ -53,11 +53,13 @@ The increase in the objective function's value in the new space suggests that th
 
 -------Graph Search testings-------:
 
+For k = 50 E = 50 R = 20
+
 ~~GNN~~
                      |   in the original space   |  in the new space
-tAverageApproximate  |     0.0143473 sec         |    0.014885 sec
-tTrue                |     0.182167 sec          |    0.149065 sec
-MAF                  |       3.39889             |      2.14755
+tAverageApproximate  |     0.69062 sec.          |   0.0529428 sec.
+tTrue                |     0.962133 sec.         |    0.965861 sec.
+MAF                  |       1.12506             |      2.46728
 
 
 
@@ -71,8 +73,8 @@ MAF                  |       1.23283             |      1.90689
 
 ~~exhaustive search~~
                      |   in the original space  |  in the new space
-tAverageApproximate  |      0.191546 sec        |    0.192168 sec
-tTrue                |      0.190367 sec        |    0.149924 sec
+tAverageApproximate  |      0.191546 sec        |    0.075405 sec
+tTrue                |      0.190367 sec        |    0.781213 sec
 MAF                  |          1               |      2.3958
 
 
