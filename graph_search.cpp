@@ -108,7 +108,8 @@ int main (int argc, char* argv[]) {
     //Read image input dataset
     Input* imgs = new Input(input_file);
     Input* query_imgs = new Input(query_file);
-
+    cout<<"Input File"<<input_file<<endl;
+    cout<<"Image dim "<<imgs->get_pxs()<<endl;
     GNN* gnn = NULL;
     MRNG* mrng = NULL;
     if(m == 1) {
