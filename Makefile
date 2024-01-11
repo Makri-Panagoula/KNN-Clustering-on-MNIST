@@ -53,13 +53,17 @@ valgrind_cube:	$(CUBE)
 CLUSTER = main_cluster
 OBJ_CL = main_cluster.o $(OBJ_L) $(SRC)/cube.o $(SRC)/cluster.o
 
-ARGSCL = –i datasets/output.dat –c cluster.conf -o output_cluster -m Classic -id datasets/input.dat
+ARGSCL = –i datasets/input.dat –c cluster.conf -o output_cluster -m Classic
+ARGSCL_R = –i datasets/output.dat –c cluster.conf -o output_cluster -m Classic -id datasets/input.dat
 
 $(CLUSTER): $(OBJ_CL)
 	$(CC) $(CFLAGS) $(OBJ_CL) -o $(CLUSTER) -lm -g3
 
 run_cluster: $(CLUSTER) $(LSH) $(CUBE)
 	./$(CLUSTER) $(ARGSCL)
+
+run_cluster_reduced: $(CLUSTER) $(LSH) $(CUBE)
+	./$(CLUSTER) $(ARGSCL_R)
 
 valgrind_cluster:  $(CLUSTER)
 	valgrind --track-origins=yes --leak-check=full ./$(CLUSTER) $(ARGSCL)
@@ -69,10 +73,14 @@ valgrind_cluster:  $(CLUSTER)
 
 GRAPH_SEARCH = graph_search
 OBJS_G = $(SRC)/GNN.o $(SRC)/MRNG.o graph_search.o $(OBJ_L) $(SRC)/cube.o
+ARGS_G_R = –d datasets/output.dat –q datasets/output_query.dat –k 50 -E 50 -R 20 -N 1 -l 10 -m 1 -o output_graph –id datasets/input.dat –iq datasets/query.dat
 ARGS_G = –d datasets/input.dat –q datasets/query.dat –k 50 -E 50 -R 20 -N 1 -l 10 -m 1 -o output_graph
 
 $(GRAPH_SEARCH): $(OBJS_G)
 	$(CC) $(CFLAGS) $(OBJS_G) -o $(GRAPH_SEARCH) -lm -g3
+
+run_graph_reduced: $(GRAPH_SEARCH) $(LSH) $(CUBE)
+	./$(GRAPH_SEARCH) $(ARGS_G_R)
 
 run_graph: $(GRAPH_SEARCH) $(LSH) $(CUBE)
 	./$(GRAPH_SEARCH) $(ARGS_G)
