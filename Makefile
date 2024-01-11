@@ -79,11 +79,11 @@ ARGS_G = –d datasets/input.dat –q datasets/query.dat –k 50 -E 50 -R 20 -N 
 $(GRAPH_SEARCH): $(OBJS_G)
 	$(CC) $(CFLAGS) $(OBJS_G) -o $(GRAPH_SEARCH) -lm -g3
 
-run_graph_reduced: $(GRAPH_SEARCH) $(LSH) $(CUBE)
-	./$(GRAPH_SEARCH) $(ARGS_G_R)
-
 run_graph: $(GRAPH_SEARCH) $(LSH) $(CUBE)
 	./$(GRAPH_SEARCH) $(ARGS_G)
+
+run_graph_reduced: $(GRAPH_SEARCH) $(LSH) $(CUBE)
+	./$(GRAPH_SEARCH) $(ARGS_G_R)
 
 valgrind_graph:  $(GRAPH_SEARCH)
 	valgrind --track-origins=yes --leak-check=full ./$(GRAPH_SEARCH) $(ARGS_G)

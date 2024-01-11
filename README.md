@@ -40,31 +40,44 @@ Using Lloyd's algorithm, the complexity is for Assignment = O(nkd), and for Upda
 
 -------Graph Search testings-------:
 
-For k = 50 E = 50 R = 20
+~~GNN~~   (For k = 50 E = 50 R = 20)
 
-~~GNN~~
                      |   in the original space   |  in the new space
 tAverageApproximate  |     0.69062 sec.          |   0.0529428 sec.
 tTrue                |     0.962133 sec.         |    0.965861 sec.
 MAF                  |       1.12506             |      2.46728
 
-For l = 5
+The GNN method shows a substantial reduction in the computation time for the tAverageApproximate metric in the new space compared to the original space suggesting efficiency gains.
+The computation time for tTrue is comparable between the original and new spaces, with only a slight increase in the new space, which indicates that the method maintains a similar level of efficiency. 
+The MAF in the new space is significantly higher than in the original space, indicating a potential loss of accuracy or increase in error after the dimensionality reduction, therefore the quality of the representation after dimensionality is reduced.
+In summary, while there are efficiency gains in terms of computation time, the increase in MAF suggests a potential compromise in accuracy.
 
-~~MRNG~~
+
+~~MRNG~~   (For l = 5)
+
                      |   in the original space   |  in the new space
-tAverageApproximate  |      0.00111419 sec       |    0.00267578 sec
-tTrue                |      1.04515 sec          |    0.0148013 sec
-MAF                  |       1.23283             |      1.90689
+tAverageApproximate  |      0.000334592 sec      |    0.000040153 sec
+tTrue                |      0.1536 sec           |    0.154029 sec
+MAF                  |       1.68643             |      2.41887
 
+The MRNG method shows a substantial reduction in the computation time for the tAverageApproximate metric in the new space compared to the original space.
+The computation time for tTrue is comparable between the original and new spaces, with only a slight increase in the new space.
+The MAF in the new space is higher than in the original space, indicating a potential compromise in accuracy or an increase in error after the dimensionality reduction.
+In summary, while there are efficiency gains in terms of computation time for tAverageApproximate, there may be a trade-off with accuracy, as indicated by the increase in MAF.
 
 
 ~~exhaustive search~~
+
                      |   in the original space  |  in the new space
 tAverageApproximate  |      0.191546 sec        |    0.075405 sec
 tTrue                |      0.190367 sec        |    0.781213 sec
 MAF                  |          1               |      2.3958
 
 The algorithm requires O(dn^2) for the estimation of distances. The time here is also decreased in the new space since d is smaller then in the original.
+The exhaustive search method shows a reduction in the computation time for the tAverageApproximate metric in the new space compared to the original space. 
+The computation time for tTrue is significantly higher in the new space compared to the original space. This suggests that, despite the efficiency gains in tAverageApproximate, there is a trade-off in terms of tTrue.
+The MAF in the new space is higher than in the original space, indicating a potential compromise in accuracy or increase in error after the dimensionality reduction.
+In summary, while there are efficiency gains in terms of computation time for tAverageApproximate, there is a trade-off with tTrue, and the increase in MAF suggests a potential compromise in accuracy.
 
 
 ------ SECOND ASSIGNMENT-------
