@@ -21,42 +21,21 @@ As expected, we notice that the the latent dimension has the biggest influence o
 
 -------Clustering testings-------:  (everything here is tested for 10.000 images)
 
-We estimated Objective Function's Value for Hypercube since this was the method with the best trade off between query time and accuracy.
-
-method: Classic
-
-in the original space:  Clustering Time: 0.286365 sec.
-                        Silhouette [0.392981 , 0.107675 , -0.0187174 , -0.00945349 , 1 , 1 , 0.412081 ]
-in the new space:       Clustering Time: 0.478189 sec.
-                        Silhouette [-0.0483101 , 0.237587 , -0.027288 , -0.0517258 , 0.00223118 , -0.0142003 , 0.0163823 ]
-
-While the clustering time is comparable in the different spaces, there is a reduction in silhouette scores in the new space, which suggests that the clustering performance has degraded after dimensionality reduction.
+We estimated Objective Function's Value for LSH since this was the method with the best trade off between query time and accuracy.
 
 method: LSH
 
 in the original space: Objective Function's Value : 6.09342e+12
                        Clustering Time: 0.0901179 sec.
-                       Silhouette [0.390278 , 0.136931 , 0.125026 , 0.105443 , -0.0285634 , 1 , 0.288186 ]
+                       Silhouette [0.390278 , 0.136931 , 0.125026 , 0.105443 , -0.0285634 , 0.126666 , 0.288186 ]
 
 in the new space:    Objective Function's Value : 5.85377e+14
                      Clustering Time: 0.0798036 sec.
-                     Silhouette [-0.0336581 , 0.176311 , 0.103529 , -0.0247132 , -0.0614333 , 1 , 0.193339 ]
-
+                     Silhouette [-0.0336581 , 0.176311 , 0.103529 , -0.0247132 , -0.0614333 , 0.322381 , 0.193339 ]
                      
 LSH shows a reduction in clustering time when applied to the new (reduced) space. Silhouette scores in both the original and new spaces using LSH are generally low, and there might be challenges in achieving well-defined clusters in both spaces.
-
-
-method: Hypercube:  
-
-in the original space: Objective Function's Value : 5.79355e+12
-                       Clustering Time: 0.0866398 sec.
-                       Silhouette [0.400638 , 0.0606695 , -0.0329346 , 0.101392 , 0.0664571 , 0.163775 , 0.126666 ]
-
-in the new space:     Objective Function's Value : 6.18008e+14
-                      Clustering Time: 0.0878722 sec.
-                      Silhouette [-0.082759 , -0.169824 , 0.28866 , -0.101793 , 1 , 1 , 0.322381 ]
-
-The increase in the objective function's value in the new space suggests that the Hypercube method might not be preserving the relevant information well during dimensionality reduction. The clustering time difference is relatively small, indicating a comparable efficiency in clustering between the original and new spaces. Similar to the LSH results, the silhouette scores in the new space using the Hypercube method are generally lower compared to the original space. Negative silhouette scores suggest potential challenges in clustering quality.
+The clustering time difference is relatively big, indicating a comparable efficiency in clustering between the original and new spaces. Negative silhouette scores suggest potential challenges in clustering quality.
+Using Lloyd's algorithm, the complexity is for Assignment = O(nkd), and for Update = O(nd), so since d is decreased, we have better performance in time but with the representation in the smaller space we lose some information therefore the conclusion is that 30*1 is not a good representation of the original dataset.
 
 
 -------Graph Search testings-------:
@@ -69,7 +48,7 @@ tAverageApproximate  |     0.69062 sec.          |   0.0529428 sec.
 tTrue                |     0.962133 sec.         |    0.965861 sec.
 MAF                  |       1.12506             |      2.46728
 
-
+For l = 5
 
 ~~MRNG~~
                      |   in the original space   |  in the new space
@@ -85,6 +64,7 @@ tAverageApproximate  |      0.191546 sec        |    0.075405 sec
 tTrue                |      0.190367 sec        |    0.781213 sec
 MAF                  |          1               |      2.3958
 
+The algorithm requires O(dn^2) for the estimation of distances. The time here is also decreased in the new space since d is smaller then in the original.
 
 
 ------ SECOND ASSIGNMENT-------
