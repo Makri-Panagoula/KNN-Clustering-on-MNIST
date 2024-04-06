@@ -1,13 +1,24 @@
 **_Implementation details and conducted experiments on algorithms' parameters can be found on `Details.txt`_**
 ## KNN -Algorithms
-**LSH**
+**LSH**:
+  
+  We create L hashtables using k hash functions and then store each image of the training dataset based on the LSH technique. Afterward, we perform the LSH and brute-force algorithms on a sample of the images in the query dataset to find and compare the nearest neighbors of a given query image.
 
-**Hypercube**
+**Hypercube**:
+  
+  The hypercube implementation involves creating a single hashtable with 2^d buckets, where d represents the number of dimensions in the hypercube. Utilizing the h functions from LSH, we hash each pixel vector of the datapoint, applying a different h function for each dimension of the hypercube. Subsequently, a uniformly distributed random function f maps the hashed pixel vector to {0,1}, resulting in a binary vector belonging to R^d. This binary vector is then converted to a decimal representation, determining the bucket where the datapoint will be stored (store function). The f function decides the {0,1} value with uniform random distribution, with each h_i(p) serving as the key and the mapped number as the value for maintaining consistency.
+
+  For search operations, the query datapoint is hashed into a bucket, and a traversal of neighboring buckets-vertices of the hypercube is performed with increasing Hamming distance.
+
 
 **Graph Based ANNs**
-- GNN
+- GNN :
+
+While constructing the graph, in order to find the k edges (or less if not as many exist) we search for the k-NN using lsh.  
 - MRNG
 
+  
+In the MRNG construction instead of sorting all the distances of the other images from p to create Rp, we take the k-NN by lsh.Rp won't have all the distances from image p (since lsh only looks for neighbours in each own bucket) but the more we images we check in Rp the less likely it is they will be added in Lp since (they have an increasingly bigger distance from p) so we are still getting a pretty close approximation of Lp.
 
 ## Clustering Algorithms Overview
 
